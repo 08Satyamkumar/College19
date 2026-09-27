@@ -54,6 +54,8 @@ import {
   ArrowRight,
   Lightbulb,
   Bell,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 
 interface CourseItem {
@@ -289,6 +291,162 @@ interface StudentFeedbackData {
   categories: StudentFeedbackCategory[];
 }
 
+interface ReviewParameterBadge {
+  label: string;
+  rating: number;
+}
+
+interface ReviewCategoryParagraph {
+  heading: string;
+  content: string;
+}
+
+interface DetailedReviewCard {
+  id: string;
+  authorName: string;
+  avatarInitial?: string;
+  avatarBgColor?: string;
+  verified: boolean;
+  courseAndBatch: string;
+  overallRating: number;
+  parameterRatings: ReviewParameterBadge[];
+  title: string;
+  paragraphs: ReviewCategoryParagraph[];
+  reviewedDate: string;
+  likesCount?: number;
+  dislikesCount?: number;
+}
+
+
+
+const DEFAULT_DETAILED_REVIEW_CARDS: DetailedReviewCard[] = [
+  {
+    id: "rev-1",
+    authorName: "Abhishek Sharma",
+    avatarInitial: "A",
+    avatarBgColor: "bg-amber-100 text-amber-800",
+    verified: true,
+    courseAndBatch: "B.Tech. in Engineering Physics - Batch of 2028",
+    overallRating: 4.2,
+    parameterRatings: [
+      { label: "Placements", rating: 2.0 },
+      { label: "Infrastructure", rating: 4.0 },
+      { label: "Faculty", rating: 5.0 },
+      { label: "Crowd & Campus Life", rating: 5.0 },
+      { label: "Value for Money", rating: 5.0 },
+    ],
+    title: "It is pretty good and excellent.",
+    paragraphs: [
+      {
+        heading: "Placements",
+        content:
+          "About 40–50 percent of people get placed in different fields such as software, and some of them in consulting. However, a very big chunk of people want to go into research after course completion. Hence, a very big chunk of people get admission to foreign universities for further studies.",
+      },
+      {
+        heading: "Infrastructure",
+        content:
+          "There are many facilities provided, with different types of labs, tools, and equipment. Talking about Wi-Fi, there is no doubt about the Wi-Fi connection. It is available all the time with no limit. Classrooms and infrastructure are quite good. The quality, specifically in my hostel, is great.",
+      },
+      {
+        heading: "Faculty",
+        content:
+          "Teachers are very helpful regarding the course. The course is relevant when you are going into research. But if you want to go into software and consulting fields, you need to prepare yourself. Teachers do provide some real implementation and assignments for practical learning.",
+      },
+      {
+        heading: "Other",
+        content:
+          "The reason I chose this course is my interest in physics. It is also helpful for people who are going into software or consulting. There are so many opportunities you get at my college.",
+      },
+    ],
+    reviewedDate: "Reviewed on 27 Aug 2026",
+    likesCount: 14,
+    dislikesCount: 1,
+  },
+  {
+    id: "rev-2",
+    authorName: "Priya Deshmukh",
+    avatarInitial: "P",
+    avatarBgColor: "bg-purple-100 text-purple-800",
+    verified: true,
+    courseAndBatch: "B.Tech. in Computer Science and Engineering - Batch of 2027",
+    overallRating: 4.8,
+    parameterRatings: [
+      { label: "Placements", rating: 5.0 },
+      { label: "Infrastructure", rating: 4.5 },
+      { label: "Faculty", rating: 4.8 },
+      { label: "Crowd & Campus Life", rating: 4.7 },
+      { label: "Value for Money", rating: 4.9 },
+    ],
+    title: "World-class coding environment and stellar placement packages.",
+    paragraphs: [
+      {
+        heading: "Placements",
+        content:
+          "Nearly 95%+ batch gets placed with top domestic and international offers. Major recruiters like Google, Microsoft, Uber, Rubrik, and Jane Street participate with median CTC above 24 LPA.",
+      },
+      {
+        heading: "Infrastructure",
+        content:
+          "Supercomputing labs, 24/7 air-conditioned central library, gigabit internet connectivity, and modern sports complexes make campus life exceptionally comfortable.",
+      },
+      {
+        heading: "Faculty",
+        content:
+          "Professors are top researchers globally. Courses are rigorous with high practical exposure, algorithm design projects, and open-source contributions encouraged.",
+      },
+      {
+        heading: "Other",
+        content:
+          "Peer group is the biggest asset here. Everyone is hardworking and ambitious, which pushes you to achieve your highest potential.",
+      },
+    ],
+    reviewedDate: "Reviewed on 14 Jul 2026",
+    likesCount: 28,
+    dislikesCount: 0,
+  },
+  {
+    id: "rev-3",
+    authorName: "Rohan Mehta",
+    avatarInitial: "R",
+    avatarBgColor: "bg-blue-100 text-blue-800",
+    verified: true,
+    courseAndBatch: "M.Tech. in Mechanical Design - Batch of 2026",
+    overallRating: 4.4,
+    parameterRatings: [
+      { label: "Placements", rating: 4.2 },
+      { label: "Infrastructure", rating: 4.6 },
+      { label: "Faculty", rating: 4.5 },
+      { label: "Crowd & Campus Life", rating: 4.3 },
+      { label: "Value for Money", rating: 4.7 },
+    ],
+    title: "Advanced research infrastructure and industry collaboration.",
+    paragraphs: [
+      {
+        heading: "Placements",
+        content:
+          "Core engineering companies like Tata Motors, Mercedes-Benz, ISRO, GE, and Airbus visit for postgraduate placements. Average package is around 18-20 LPA for M.Tech.",
+      },
+      {
+        heading: "Infrastructure",
+        content:
+          "State-of-the-art wind tunnels, CAD/CAM simulation centers, and advanced manufacturing labs with precision CNC machines.",
+      },
+      {
+        heading: "Faculty",
+        content:
+          "Faculty guides are deeply invested in research publications, patent filing, and direct industry consultancy projects.",
+      },
+      {
+        heading: "Other",
+        content:
+          "Campus fests Rendezvous and Tryst offer great balance alongside academic commitments.",
+      },
+    ],
+    reviewedDate: "Reviewed on 02 Jun 2026",
+    likesCount: 19,
+    dislikesCount: 2,
+  },
+];
 
 const DEFAULT_STUDENT_FEEDBACK_CATEGORIES: StudentFeedbackCategory[] = [
   {
@@ -329,6 +487,7 @@ interface ReviewsArticleData {
   histogram?: ReviewHistogramItem[];
   parameters?: ReviewParameterItem[];
   studentFeedback?: StudentFeedbackData;
+  reviewCards?: DetailedReviewCard[];
 }
 
 interface RankingsArticleData {
@@ -1281,6 +1440,7 @@ type MiniModalId =
   | "fees"
   | "reviews"
   | "studentFeedback"
+  | "reviewCards"
   | "admissions"
   | "placements"
   | "placements_article"
@@ -1514,6 +1674,8 @@ export default function CollegeDetailPage() {
   const [reviewsModalTab, setReviewsModalTab] = useState<"overall" | "parameters">("overall");
   const [hoveredStarBarIdx, setHoveredStarBarIdx] = useState<number | null>(null);
   const [activeFeedbackCategory, setActiveFeedbackCategory] = useState<string>("Placements");
+  const [expandedReviewCardIds, setExpandedReviewCardIds] = useState<Record<string, boolean>>({});
+  const [reviewHelpfulVotes, setReviewHelpfulVotes] = useState<Record<string, "up" | "down" | null>>({});
   const [rankingsModalTab, setRankingsModalTab] = useState<"overview" | "international" | "national" | "course_boxes" | "faqs">("overview");
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -2725,6 +2887,10 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
           heading: "What students say about " + (college.fullName || college.name),
           categories: DEFAULT_STUDENT_FEEDBACK_CATEGORIES,
         },
+        reviewCards:
+          college.reviewsArticle.reviewCards && college.reviewsArticle.reviewCards.length > 0
+            ? college.reviewsArticle.reviewCards
+            : DEFAULT_DETAILED_REVIEW_CARDS,
       };
     }
 
@@ -2739,6 +2905,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
         heading: "What students say about " + (college.fullName || college.name),
         categories: DEFAULT_STUDENT_FEEDBACK_CATEGORIES,
       },
+      reviewCards: DEFAULT_DETAILED_REVIEW_CARDS,
     };
   };
 
@@ -6563,6 +6730,192 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                 {activeItem?.dislikesCountText || "Based on Student Reviews"}
                               </span>
                             </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* DETAILED STUDENT REVIEW CARDS (INDIVIDUAL BOXES WITH READ MORE/LESS & RATINGS) */}
+                    {(() => {
+                      const cards = (revData.reviewCards && revData.reviewCards.length > 0)
+                        ? revData.reviewCards
+                        : DEFAULT_DETAILED_REVIEW_CARDS;
+
+                      return (
+                        <div className="p-4 sm:p-7 pt-2 space-y-4 sm:space-y-5">
+                          {/* Header Row with Total Reviews & Admin Edit Button */}
+                          <div className="flex items-center justify-between gap-3 pt-2">
+                            <h4 className="font-outfit font-bold text-base sm:text-lg text-slate-900">
+                              Detailed Student Reviews ({cards.length})
+                            </h4>
+                            {isAdmin && (
+                              <button
+                                type="button"
+                                onClick={() => openMiniModal("reviewCards")}
+                                className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit Review Cards</span>
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Render Individual Review Cards */}
+                          <div className="space-y-4">
+                            {cards.map((card: DetailedReviewCard, cIdx: number) => {
+                              const isExpanded = !!expandedReviewCardIds[card.id];
+                              const userVote = reviewHelpfulVotes[card.id];
+
+                              return (
+                                <div
+                                  key={card.id || cIdx}
+                                  className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow duration-300 space-y-4"
+                                >
+                                  {/* Top Row: Avatar + Author Info + Score Badge */}
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                      {/* Avatar Initial Circle */}
+                                      <div
+                                        className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-bold text-base sm:text-lg font-outfit shrink-0 shadow-2xs ${
+                                          card.avatarBgColor || "bg-amber-100 text-amber-800"
+                                        }`}
+                                      >
+                                        {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                      </div>
+
+                                      {/* Name & Degree */}
+                                      <div>
+                                        <div className="flex items-center gap-1.5">
+                                          <h5 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-snug">
+                                            {card.authorName}
+                                          </h5>
+                                          {card.verified && (
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500 shrink-0" />
+                                          )}
+                                        </div>
+                                        <p className="text-xs text-slate-500 font-medium leading-tight pt-0.5">
+                                          {card.courseAndBatch}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    {/* Overall Rating Badge */}
+                                    <div className="px-2.5 py-1 rounded-md bg-[#00a859] text-white font-bold text-xs sm:text-[13px] flex items-center gap-1 shrink-0 shadow-2xs select-none">
+                                      <span className="text-[11px]">★</span>
+                                      <span>{Number(card.overallRating).toFixed(1)}</span>
+                                    </div>
+                                  </div>
+
+                                  {/* Parameter Rating Badges Pill Row */}
+                                  {card.parameterRatings && card.parameterRatings.length > 0 && (
+                                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                                      {card.parameterRatings.map((p: ReviewParameterBadge, pIdx: number) => {
+                                        const isLow = p.rating < 3.0;
+                                        return (
+                                          <div
+                                            key={pIdx}
+                                            className={`px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border ${
+                                              isLow
+                                                ? "bg-rose-50/50 border-rose-200/80 text-rose-700"
+                                                : "bg-white border-slate-200/90 text-slate-700 shadow-2xs"
+                                            }`}
+                                          >
+                                            <span className={isLow ? "text-rose-500 font-black" : "text-emerald-600 font-black"}>
+                                              ★
+                                            </span>
+                                            <span className="font-bold text-slate-900">{Number(p.rating).toFixed(1)}</span>
+                                            <span className="text-slate-600">{p.label}</span>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+
+                                  {/* Review Title / Tagline */}
+                                  <h4 className="font-outfit font-bold text-sm sm:text-[15px] text-slate-900 pt-0.5 leading-snug">
+                                    {card.title}
+                                  </h4>
+
+                                  {/* Review Paragraphs (Collapsed vs Expanded) */}
+                                  <div className="space-y-2.5 text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                                    {(isExpanded
+                                      ? card.paragraphs
+                                      : (card.paragraphs || []).slice(0, 2)
+                                    ).map((para: ReviewCategoryParagraph, pIdx: number) => (
+                                      <p key={pIdx} className="leading-relaxed">
+                                        <strong className="font-bold text-slate-900 font-outfit">
+                                          {para.heading}:{" "}
+                                        </strong>
+                                        <span>{para.content}</span>
+                                      </p>
+                                    ))}
+                                  </div>
+
+                                  {/* Footer Row: Reviewed Date & Read More / Less Toggle */}
+                                  <div className="flex items-center justify-between gap-3 pt-1">
+                                    <span className="text-[11.5px] sm:text-xs font-medium text-slate-400">
+                                      {card.reviewedDate}
+                                    </span>
+
+                                    {(card.paragraphs || []).length > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setExpandedReviewCardIds((prev) => ({
+                                            ...prev,
+                                            [card.id]: !prev[card.id],
+                                          }));
+                                        }}
+                                        className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer select-none transition-colors"
+                                      >
+                                        {isExpanded ? "Read Less" : "Read More"}
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  {/* Subtle Bottom Action Bar (Thumbs Up / Down) */}
+                                  <div className="border-t border-dashed border-slate-200/80 pt-3 flex items-center gap-4 text-slate-500">
+                                    {/* Like Button */}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setReviewHelpfulVotes((prev) => ({
+                                          ...prev,
+                                          [card.id]: prev[card.id] === "up" ? null : "up",
+                                        }));
+                                      }}
+                                      className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                                        userVote === "up"
+                                          ? "text-blue-600 bg-blue-50 font-bold"
+                                          : "hover:text-slate-800 hover:bg-slate-100"
+                                      }`}
+                                    >
+                                      <ThumbsUp className="w-3.5 h-3.5" />
+                                      <span>{(card.likesCount || 10) + (userVote === "up" ? 1 : 0)}</span>
+                                    </button>
+
+                                    {/* Dislike Button */}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setReviewHelpfulVotes((prev) => ({
+                                          ...prev,
+                                          [card.id]: prev[card.id] === "down" ? null : "down",
+                                        }));
+                                      }}
+                                      className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                                        userVote === "down"
+                                          ? "text-red-600 bg-red-50 font-bold"
+                                          : "hover:text-slate-800 hover:bg-slate-100"
+                                      }`}
+                                    >
+                                      <ThumbsDown className="w-3.5 h-3.5" />
+                                      <span>{(card.dislikesCount || 0) + (userVote === "down" ? 1 : 0)}</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       );
@@ -13639,7 +13992,400 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                   </div>
                 )}
 
-                {/* MODAL: STUDENT FEEDBACK (LIKES & DISLIKES) */}
+                {/* MODAL: DETAILED STUDENT REVIEW CARDS */}
+                {activeMiniModal === "reviewCards" && (
+                  <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+                    {(() => {
+                      const curRev = tempData.reviewsArticle || getCollegeReviewsArticle(tempData);
+                      const cards = (curRev.reviewCards && curRev.reviewCards.length > 0)
+                        ? curRev.reviewCards
+                        : DEFAULT_DETAILED_REVIEW_CARDS;
+
+                      return (
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                              Detailed Student Review Cards ({cards.length})
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newCard: DetailedReviewCard = {
+                                  id: `rev-${Date.now()}`,
+                                  authorName: "New Student",
+                                  avatarInitial: "N",
+                                  avatarBgColor: "bg-emerald-100 text-emerald-800",
+                                  verified: true,
+                                  courseAndBatch: "B.Tech. in Engineering - Batch of 2028",
+                                  overallRating: 4.5,
+                                  parameterRatings: [
+                                    { label: "Placements", rating: 4.5 },
+                                    { label: "Infrastructure", rating: 4.5 },
+                                    { label: "Faculty", rating: 4.5 },
+                                    { label: "Crowd & Campus Life", rating: 4.5 },
+                                    { label: "Value for Money", rating: 4.5 },
+                                  ],
+                                  title: "Great campus environment and academics.",
+                                  paragraphs: [
+                                    {
+                                      heading: "Placements",
+                                      content: "Placement process is well coordinated with leading MNCs participating.",
+                                    },
+                                    {
+                                      heading: "Infrastructure",
+                                      content: "Well-equipped laboratories and spacious modern classrooms.",
+                                    },
+                                    {
+                                      heading: "Faculty",
+                                      content: "Professors are knowledgeable and supportive.",
+                                    },
+                                    {
+                                      heading: "Other",
+                                      content: "Exciting campus fests and active extracurricular clubs.",
+                                    },
+                                  ],
+                                  reviewedDate: `Reviewed on ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`,
+                                  likesCount: 5,
+                                  dislikesCount: 0,
+                                };
+                                const updated = [...cards, newCard];
+                                setTempData({
+                                  ...tempData,
+                                  reviewsArticle: {
+                                    ...curRev,
+                                    reviewCards: updated,
+                                  },
+                                });
+                              }}
+                              className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-200 flex items-center gap-1"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add Review Card</span>
+                            </button>
+                          </div>
+
+                          <div className="space-y-4">
+                            {cards.map((card: DetailedReviewCard, cIdx: number) => (
+                              <div
+                                key={card.id || cIdx}
+                                className="p-4 bg-white border border-slate-200 rounded-xl space-y-3 shadow-2xs relative"
+                              >
+                                {/* Top Controls & Delete */}
+                                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                  <span className="text-xs font-bold text-slate-800">
+                                    Review Card #{cIdx + 1}
+                                  </span>
+                                  {cards.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updated = cards.filter((_: any, i: number) => i !== cIdx);
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: {
+                                            ...curRev,
+                                            reviewCards: updated,
+                                          },
+                                        });
+                                      }}
+                                      className="p-1 text-red-500 hover:bg-red-50 rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <span>Delete</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Author Name, Verified & Avatar */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                  <div>
+                                    <label className="text-[10.5px] font-bold text-slate-600 block">Author Name</label>
+                                    <input
+                                      type="text"
+                                      value={card.authorName}
+                                      onChange={(e) => {
+                                        const updated = [...cards];
+                                        updated[cIdx] = { ...updated[cIdx], authorName: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: { ...curRev, reviewCards: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-[10.5px] font-bold text-slate-600 block">Avatar Letter / Color</label>
+                                    <input
+                                      type="text"
+                                      value={card.avatarInitial || ""}
+                                      placeholder="e.g. A"
+                                      onChange={(e) => {
+                                        const updated = [...cards];
+                                        updated[cIdx] = { ...updated[cIdx], avatarInitial: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: { ...curRev, reviewCards: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-[10.5px] font-bold text-slate-600 block">Overall Score (out of 5)</label>
+                                    <input
+                                      type="number"
+                                      step="0.1"
+                                      min="1"
+                                      max="5"
+                                      value={card.overallRating}
+                                      onChange={(e) => {
+                                        const updated = [...cards];
+                                        updated[cIdx] = { ...updated[cIdx], overallRating: parseFloat(e.target.value) || 4.5 };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: { ...curRev, reviewCards: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-emerald-700"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Course & Batch */}
+                                <div>
+                                  <label className="text-[10.5px] font-bold text-slate-600 block">Course & Batch</label>
+                                  <input
+                                    type="text"
+                                    value={card.courseAndBatch}
+                                    onChange={(e) => {
+                                      const updated = [...cards];
+                                      updated[cIdx] = { ...updated[cIdx], courseAndBatch: e.target.value };
+                                      setTempData({
+                                        ...tempData,
+                                        reviewsArticle: { ...curRev, reviewCards: updated },
+                                      });
+                                    }}
+                                    className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium"
+                                  />
+                                </div>
+
+                                {/* Title / Tagline */}
+                                <div>
+                                  <label className="text-[10.5px] font-bold text-slate-600 block">Review Headline Title</label>
+                                  <input
+                                    type="text"
+                                    value={card.title}
+                                    onChange={(e) => {
+                                      const updated = [...cards];
+                                      updated[cIdx] = { ...updated[cIdx], title: e.target.value };
+                                      setTempData({
+                                        ...tempData,
+                                        reviewsArticle: { ...curRev, reviewCards: updated },
+                                      });
+                                    }}
+                                    className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                                  />
+                                </div>
+
+                                {/* Parameter Ratings Row */}
+                                <div>
+                                  <label className="text-[10.5px] font-bold text-slate-700 block mb-1">
+                                    5 Parameter Ratings:
+                                  </label>
+                                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+                                    {(card.parameterRatings || []).map((p: ReviewParameterBadge, pIdx: number) => (
+                                      <div key={pIdx} className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                                        <input
+                                          type="text"
+                                          value={p.label}
+                                          onChange={(e) => {
+                                            const updated = [...cards];
+                                            const params = [...updated[cIdx].parameterRatings];
+                                            params[pIdx] = { ...params[pIdx], label: e.target.value };
+                                            updated[cIdx] = { ...updated[cIdx], parameterRatings: params };
+                                            setTempData({
+                                              ...tempData,
+                                              reviewsArticle: { ...curRev, reviewCards: updated },
+                                            });
+                                          }}
+                                          className="w-full px-1 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-bold"
+                                        />
+                                        <input
+                                          type="number"
+                                          step="0.1"
+                                          min="1"
+                                          max="5"
+                                          value={p.rating}
+                                          onChange={(e) => {
+                                            const updated = [...cards];
+                                            const params = [...updated[cIdx].parameterRatings];
+                                            params[pIdx] = { ...params[pIdx], rating: parseFloat(e.target.value) || 4.0 };
+                                            updated[cIdx] = { ...updated[cIdx], parameterRatings: params };
+                                            setTempData({
+                                              ...tempData,
+                                              reviewsArticle: { ...curRev, reviewCards: updated },
+                                            });
+                                          }}
+                                          className="w-full px-1 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-bold text-center"
+                                        />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Categorized Review Paragraphs */}
+                                <div className="space-y-2 pt-1">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-[10.5px] font-bold text-slate-700 block">
+                                      Categorized Paragraphs:
+                                    </label>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updated = [...cards];
+                                        const paras = [
+                                          ...updated[cIdx].paragraphs,
+                                          { heading: "Section", content: "Review content..." },
+                                        ];
+                                        updated[cIdx] = { ...updated[cIdx], paragraphs: paras };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: { ...curRev, reviewCards: updated },
+                                        });
+                                      }}
+                                      className="text-[10.5px] font-bold text-indigo-600 hover:underline"
+                                    >
+                                      + Add Paragraph
+                                    </button>
+                                  </div>
+
+                                  <div className="space-y-2">
+                                    {(card.paragraphs || []).map((para: ReviewCategoryParagraph, paraIdx: number) => (
+                                      <div key={paraIdx} className="p-2 bg-slate-50 border border-slate-200 rounded-lg space-y-1 relative">
+                                        <div className="flex items-center justify-between gap-2">
+                                          <input
+                                            type="text"
+                                            value={para.heading}
+                                            onChange={(e) => {
+                                              const updated = [...cards];
+                                              const paras = [...updated[cIdx].paragraphs];
+                                              paras[paraIdx] = { ...paras[paraIdx], heading: e.target.value };
+                                              updated[cIdx] = { ...updated[cIdx], paragraphs: paras };
+                                              setTempData({
+                                                ...tempData,
+                                                reviewsArticle: { ...curRev, reviewCards: updated },
+                                              });
+                                            }}
+                                            placeholder="Heading (e.g. Placements, Infrastructure)"
+                                            className="w-1/2 px-2 py-0.5 bg-white border border-slate-200 rounded text-xs font-bold text-slate-800"
+                                          />
+                                          {card.paragraphs.length > 1 && (
+                                            <button
+                                              type="button"
+                                              onClick={() => {
+                                                const updated = [...cards];
+                                                const paras = updated[cIdx].paragraphs.filter((_: any, i: number) => i !== paraIdx);
+                                                updated[cIdx] = { ...updated[cIdx], paragraphs: paras };
+                                                setTempData({
+                                                  ...tempData,
+                                                  reviewsArticle: { ...curRev, reviewCards: updated },
+                                                });
+                                              }}
+                                              className="text-red-500 hover:text-red-700 p-0.5"
+                                            >
+                                              <Trash2 className="w-3 h-3" />
+                                            </button>
+                                          )}
+                                        </div>
+                                        <textarea
+                                          rows={2}
+                                          value={para.content}
+                                          onChange={(e) => {
+                                            const updated = [...cards];
+                                            const paras = [...updated[cIdx].paragraphs];
+                                            paras[paraIdx] = { ...paras[paraIdx], content: e.target.value };
+                                            updated[cIdx] = { ...updated[cIdx], paragraphs: paras };
+                                            setTempData({
+                                              ...tempData,
+                                              reviewsArticle: { ...curRev, reviewCards: updated },
+                                            });
+                                          }}
+                                          placeholder="Review content details..."
+                                          className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs font-normal"
+                                        />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Date & Votes */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+                                  <div>
+                                    <label className="text-[10px] font-bold text-slate-600 block">Reviewed Date String</label>
+                                    <input
+                                      type="text"
+                                      value={card.reviewedDate}
+                                      onChange={(e) => {
+                                        const updated = [...cards];
+                                        updated[cIdx] = { ...updated[cIdx], reviewedDate: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: { ...curRev, reviewCards: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-medium"
+                                    />
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-1/2">
+                                      <label className="text-[10px] font-bold text-slate-600 block">Likes Count</label>
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        value={card.likesCount || 0}
+                                        onChange={(e) => {
+                                          const updated = [...cards];
+                                          updated[cIdx] = { ...updated[cIdx], likesCount: parseInt(e.target.value) || 0 };
+                                          setTempData({
+                                            ...tempData,
+                                            reviewsArticle: { ...curRev, reviewCards: updated },
+                                          });
+                                        }}
+                                        className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-bold text-center"
+                                      />
+                                    </div>
+                                    <div className="w-1/2">
+                                      <label className="text-[10px] font-bold text-slate-600 block">Dislikes Count</label>
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        value={card.dislikesCount || 0}
+                                        onChange={(e) => {
+                                          const updated = [...cards];
+                                          updated[cIdx] = { ...updated[cIdx], dislikesCount: parseInt(e.target.value) || 0 };
+                                          setTempData({
+                                            ...tempData,
+                                            reviewsArticle: { ...curRev, reviewCards: updated },
+                                          });
+                                        }}
+                                        className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-bold text-center"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {`/* MODAL: STUDENT FEEDBACK (LIKES & DISLIKES) */`}
                 {activeMiniModal === "studentFeedback" && (
                   <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
                     {(() => {
