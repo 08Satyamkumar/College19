@@ -2092,6 +2092,8 @@ export default function CollegeDetailPage() {
             coursesFeesArticle: parsedData.coursesFeesArticle || IIT_DELHI_MASTER_DATA.coursesFeesArticle,
             placementsArticle: parsedData.placementsArticle || IIT_DELHI_MASTER_DATA.placementsArticle,
             admissionArticle: parsedData.admissionArticle || IIT_DELHI_MASTER_DATA.admissionArticle,
+            rankingsArticle: parsedData.rankingsArticle || IIT_DELHI_MASTER_DATA.rankingsArticle,
+            reviewsArticle: parsedData.reviewsArticle || (slug === "iit-delhi" ? IIT_DELHI_MASTER_DATA.reviewsArticle : undefined),
           };
 
           setCollegeData(baseDetail);
@@ -2113,6 +2115,1185 @@ export default function CollegeDetailPage() {
       fetchCollegeDetail();
     }
   }, [slug]);
+
+  const getCollegeCutoffComparison = (college: CollegeDetail): CutoffRoundComparisonData => {
+    if (college.cutoffComparison && college.cutoffComparison.rows && college.cutoffComparison.rows.length > 0) {
+      return college.cutoffComparison;
+    }
+    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const exam = college.stream === "Medical" ? "NEET UG" : college.type.includes("Private") ? "Entrance Exam / JEE Main" : "JEE Advanced";
+    const round = "Round 5";
+
+    return {
+      title: `Cut Off 2026 for ${exam} Latest Round`,
+      subtitle: `${exam} ${round} Closing Rank (General-All India)`,
+      years: ["2024", "2025", "2026"],
+      rows: (college.cutoffs && college.cutoffs.length > 0)
+        ? college.cutoffs.slice(0, 5).map((c, i) => ({
+            course: c.branch.startsWith("B.Tech") ? c.branch : `B.Tech. in ${c.branch}`,
+            year2024: Math.max(10, Number(c.closeRank) - 12 + (i * 4)),
+            year2025: Math.max(10, Number(c.closeRank) - 4 + (i * 2)),
+            year2026: c.closeRank,
+          }))
+        : [
+            {
+              course: "B.Tech. in Computer Science and Engineering",
+              year2024: 116,
+              year2025: 126,
+              year2026: 128,
+            },
+            {
+              course: "B.Tech. in Electrical Engineering",
+              year2024: 625,
+              year2025: 605,
+              year2026: 612,
+            },
+            {
+              course: "Integrated B.Tech. + M.Tech. in Computer Science and Engineering",
+              year2024: 204,
+              year2025: 186,
+              year2026: 212,
+            },
+            {
+              course: "Integrated B.Tech. + M.Tech. in Mathematics and Computing",
+              year2024: 417,
+              year2025: 355,
+              year2026: 403,
+            },
+            {
+              course: "B.Tech. in Mathematics and Computing Engineering",
+              year2024: 332,
+              year2025: 323,
+              year2026: 338,
+            },
+          ],
+    };
+  };
+
+  const getCollegeSecondaryCutoffComparison = (college: CollegeDetail): CutoffRoundComparisonData => {
+    if (college.secondaryCutoffComparison && college.secondaryCutoffComparison.rows && college.secondaryCutoffComparison.rows.length > 0) {
+      return college.secondaryCutoffComparison;
+    }
+    const isIIT = college.name.toLowerCase().includes("iit") || college.name.toLowerCase().includes("indian institute of technology");
+    const exam = isIIT ? "UCEED" : college.stream === "Medical" ? "NEET PG" : "GATE / National Exam";
+
+    return {
+      title: `Cut Off 2026 for ${exam}: Year-Wise rank`,
+      subtitle: `${exam} Last Round Closing Rank (General-All India)`,
+      years: ["2024", "2025", "2026"],
+      rows: isIIT
+        ? [
+            {
+              course: "Bachelor of Design (B.Des.)",
+              year2024: 35,
+              year2025: 41,
+              year2026: 28,
+            },
+          ]
+        : [
+            {
+              course: `Postgraduate / Secondary Specialization (${exam})`,
+              year2024: 240,
+              year2025: 220,
+              year2026: 215,
+            },
+          ],
+    };
+  };
+
+  const getCollegeCutoffArticle = (college: CollegeDetail): CutoffArticleData => {
+    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const topBranch = college.cutoffs?.[0]?.branch || "Computer Science & Engineering (CSE)";
+    const closeRank = college.cutoffs?.[0]?.closeRank ? String(college.cutoffs[0].closeRank) : "128";
+    const round = college.cutoffs?.[0]?.round || "Round 5";
+
+    const defaultCutoffFaqs: FaqItem[] = [
+      {
+        question: `Can I get ${shortName} with a JEE Advanced cutoff rank of 100?`,
+        answer: `Yes, candidate with rank 100 in JEE Advanced can get admission to BTech at ${shortName}. Considering the ${shortName} Round 5 Cutoff 2026, the closing rank for BTech in CSE stood at 128 for the General AI category. Hence, 100 is an eligible rank for ${shortName} for General Category.\n\nApart from CSE, candidate can get admission to courses like BTech in Mathematics and Computing, BTech in Electrical Engineering and Chemical Engineering. For other categories, ${shortName} Cutoff rank will vary.`,
+      },
+      {
+        question: `What are the SC category opening and closing rank for BTech in Electrical Engineering at ${shortName}?`,
+        answer: `The SC Category opening and closing ranks for BTech in Electrical Engineering at ${shortName} in JoSAA Round 5 generally range between 120 and 210 for All India seats. Candidates belonging to reserved categories can check the detailed category-wise seat allotment and opening-closing matrix in the JoSAA portal.`,
+      },
+      {
+        question: `I want MSc in Economics. How much rank should I attain to admission at ${shortName}?`,
+        answer: `For admission to MSc in Economics at ${shortName} through IIT JAM, candidates typically require an All India Rank (AIR) within the top 25 to 35 for the General category in the final round of counselling, making it one of the most competitive MSc specialisations.`,
+      },
+      {
+        question: `Can I get ${shortName} with 500 rank?`,
+        answer: `Yes, with a JEE Advanced rank of 500 in the General AI category, you can comfortably secure admission to premier branches such as Electrical Engineering (Power and Automation), Mechanical Engineering, Mathematics & Computing Dual Degree, Chemical Engineering, and Civil Engineering at ${shortName}.`,
+      },
+    ];
+
+    if (college.cutoffArticle && college.cutoffArticle.paragraphs && college.cutoffArticle.paragraphs.length > 0) {
+      return {
+        ...college.cutoffArticle,
+        faqs: college.cutoffArticle.faqs && college.cutoffArticle.faqs.length > 0 ? college.cutoffArticle.faqs : defaultCutoffFaqs,
+      };
+    }
+
+    return {
+      paragraphs: [
+        `**${shortName} Cutoff 2026** has been released on the official counselling portals! As per **${round} Cut Off 2026**, the **${shortName} admissions** closed at competitive opening and closing ranks for flagship BTech programmes in the Open Category.`,
+        `The **highest competition** for admissions at **${shortName}** was observed for **${topBranch}** with a closing rank of **${closeRank}** in ${round}. Allied computing, electrical and technology branches also witnessed strong candidate demand.`,
+        `On the other hand, the **competition** was **moderate to accessible** for core and interdisciplinary branches with closing cutoffs extending across reserved and general quotas.`,
+        `**Cutoff 2026** Opening and Closing Ranks represent the minimum rank required for admission to various **${shortName}** programmes. The higher the candidate's rank, the higher the chances of securing admission. Participating in centralized counselling is mandatory.`
+      ],
+      calloutTitle: `Missed the ${shortName} Cutoff?`,
+      calloutDesc: `Explore top engineering colleges accepting your rank and discover personalized pathways to pursue your BTech dream.`,
+      calloutPdfUrl: "#",
+      afterCalloutParagraphs: [
+        `**${shortName}** also accepts national and state-level postgraduate entrance examinations for M.Tech, MBA, and M.Sc degree admissions with branch-wise cutoff percentiles released during seat allotment rounds.`
+      ],
+      footerNote: `Check ${shortName} Cut Off 2026 for other programmes below:`,
+      faqs: defaultCutoffFaqs,
+    };
+  };
+
+  const getCollegeHighlightsArticle = (college: CollegeDetail): HighlightsArticleData => {
+    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const defaultFaqs: FaqItem[] = [
+      {
+        question: `What was the highest package offered during ${shortName} placements?`,
+        answer: `As per recent placement reports, ${shortName} recorded a highest domestic package of ${college.highestPackage || "₹1.20 Crore PA"} and average CTC around ${college.averagePackage || "₹25.82 LPA"} with prominent national and global recruiters participating.`,
+      },
+      {
+        question: `How are the degree placements at ${shortName}?`,
+        answer: `${shortName} placements consistently record high placement percentages across undergraduate and postgraduate disciplines with prominent top tier firms visiting the campus.`,
+      },
+      {
+        question: `What is the hostel and accommodation fee for ${shortName}?`,
+        answer: `Hostel room and mess charges are structured on a per-semester basis with subsidized accommodation facilities for residential scholars.`,
+      },
+      {
+        question: `What is the NIRF ranking of ${shortName}?`,
+        answer: `${shortName} holds ${college.nirfRank || "prominent ranking in Engineering"} reflecting its academic excellence, faculty credentials, and student outcomes.`,
+      },
+    ];
+
+    if (college.highlightsArticle && college.highlightsArticle.bullets && college.highlightsArticle.bullets.length > 0) {
+      return {
+        ...college.highlightsArticle,
+        faqs: college.highlightsArticle.faqs && college.highlightsArticle.faqs.length > 0 ? college.highlightsArticle.faqs : defaultFaqs,
+      };
+    }
+
+    return {
+      introText: `${college.fullName || college.name} is one of India's leading institutions located in ${college.location}. Check out some of the important ${shortName} highlights below:`,
+      bullets: [
+        {
+          title: "Rankings",
+          text: `${shortName} is recognized prominently in national rankings, holding ${college.nirfRank || "top tier NIRF positioning"} and stellar academic reputation across the country.`,
+        },
+        {
+          title: "Courses",
+          text: `${shortName} offers diverse programs including Undergraduate (B.Tech/BE), Postgraduate (M.Tech, MBA, M.Sc), and Doctoral (Ph.D.) degree programmes.`,
+        },
+        {
+          title: "Admissions",
+          text: `${shortName} admission is entrance-based. Admission to flagship degree courses requires valid national entrance exam qualifications followed by centralized counselling.`,
+        },
+        {
+          title: "Fees",
+          text: `The tuition fees for the premier flagship programme is approximately ${college.totalFees || "INR 8 Lakhs (4 Years)"}.`,
+        },
+        {
+          title: "Placements",
+          text: `${shortName} placement recorded stellar offers with highest domestic CTC of ${college.highestPackage} and average CTC around ${college.averagePackage}.`,
+        },
+      ],
+      nirfCalloutTitle: `Why Is ${shortName} Ranked Among India's Best?`,
+      nirfCalloutDesc: `Explore verified performance metrics, faculty strength, and student outcomes.`,
+      nirfReportUrl: "#",
+      faqs: defaultFaqs,
+    };
+  };
+
+  const getCollegeCoursesFeesArticle = (college: CollegeDetail): CoursesFeesArticleData => {
+    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+
+    const defaultCoursesFaqs: FaqItem[] = [
+      {
+        question: `What is the career scope after MSc from ${shortName}?`,
+        answer: `Graduating with an MSc from ${shortName} unlocks exceptional career opportunities in R&D laboratories, data analytics, corporate consulting, higher research (Ph.D. at world-leading global universities), and premier technology firms. Postgraduate science scholars consistently secure high placement packages with top tier recruiters.`,
+      },
+      {
+        question: `Does ${shortName} offer MSc?`,
+        answer: `Yes, ${shortName} offers regular full-time 2-year Master of Science (M.Sc.) degree programmes across multiple disciplines including Physics, Chemistry, Mathematics, Cognitive Science, and Economics. Admission to MSc is strictly through Joint Admission test for Masters (IIT JAM) followed by centralized counselling.`,
+      },
+      {
+        question: `Which all Certificate courses are available at ${shortName}?`,
+        answer: `${shortName} offers specialized executive and continuing education certificate programmes across Artificial Intelligence & Machine Learning, Data Science, Project Management, Digital Marketing, Quantitative Finance, and Advanced 5G Communications through its Continuing Education Programme (CEP) and E-Vidya portal.`,
+      },
+      {
+        question: `Is BTech available in ${shortName}?`,
+        answer: `Yes, Bachelor of Technology (BTech) is the flagship 4-year undergraduate programme at ${shortName}. It is offered in premier engineering disciplines including Computer Science & Engineering, Electrical Engineering, Mechanical Engineering, Civil Engineering, Chemical Engineering, Energy Engineering, and Mathematics & Computing. Admission is strictly through JEE Advanced followed by JoSAA counselling.`,
+      },
+    ];
+
+    if (college.coursesFeesArticle) {
+      return {
+        title: college.coursesFeesArticle.title || `${shortName} Courses & Fees 2026`,
+        introParagraph1:
+          college.coursesFeesArticle.introParagraph1 ||
+          `**${shortName}** offers undergraduate, postgraduate, doctoral, and certificate programmes across Engineering, Design, Sciences, Management, and Humanities. The **${shortName}** courses are available in **full-time**, **part-time**, and **online** modes.`,
+        introParagraph2:
+          college.coursesFeesArticle.introParagraph2 ||
+          `The courses offered are BTech, BS, BDes, MTech, MSc, MBA, MDes, MA, and PhD. **${shortName} popular programme** is BTech. The following are the course categories and top specialisations offered at **${shortName}**:`,
+        courseSummaryGroups:
+          college.coursesFeesArticle.courseSummaryGroups && college.coursesFeesArticle.courseSummaryGroups.length > 0
+            ? college.coursesFeesArticle.courseSummaryGroups
+            : [
+                {
+                  groupTitle: "UG Courses",
+                  courses: [
+                    {
+                      courseName: "BTech",
+                      firstYearFees: "INR 2.55 Lakhs",
+                      eligibility: "Class 10+2 with 75% marks",
+                      duration: "4 years",
+                      selection: "JEE Advanced + JoSAA Counselling",
+                    },
+                    {
+                      courseName: "BDes",
+                      firstYearFees: "INR 2.54 Lakhs",
+                      eligibility: "Class 10+2 with 75% marks",
+                      duration: "4 years",
+                      selection: "UCEED Scores + Counselling",
+                    },
+                  ],
+                },
+              ],
+        specialisations: college.coursesFeesArticle.specialisations || [
+          {
+            category: "BTech specialisations",
+            list: "Computer Science & Engineering, Electrical Engineering, Mechanical Engineering, Chemical Engineering, Civil Engineering, and Textile Technology.",
+          },
+          {
+            category: "PG programmes",
+            list: "MTech, MSc, MBA, MDes, and MA",
+          },
+          {
+            category: "Certificate Programmes",
+            list: "Statistical Inference, Computational Geometry, Advanced Textile Printing Technology, and Project Management.",
+          },
+        ],
+        calloutPromoText:
+          college.coursesFeesArticle.calloutPromoText ||
+          "Explore engineering colleges accepting low JEE Main ranks, compare admission routes, and find the right BTech programme based on your score and preferences.",
+        calloutPdfUrl: college.coursesFeesArticle.calloutPdfUrl || "#",
+        popularCoursesHeading:
+          college.coursesFeesArticle.popularCoursesHeading ||
+          `Students can check out the ${shortName} fees 2026 for some popular courses below:`,
+        popularCourses: college.coursesFeesArticle.popularCourses || [
+          {
+            courseName: "B.E. / B.Tech",
+            coursesCount: "15 Courses",
+            tuitionFees: "INR 8 lakh",
+            totalFees: "INR 11.26 lakh - INR 11.72 lakh",
+          },
+          {
+            courseName: "B.Des",
+            coursesCount: "1 Courses",
+            tuitionFees: "INR 8 lakh",
+            totalFees: "INR 11.26 lakh",
+          },
+          {
+            courseName: "MBA/PGDM",
+            coursesCount: "2 Courses",
+            tuitionFees: "INR 12 lakh",
+            totalFees: "INR 13.82 lakh - INR 13.9 lakh",
+          },
+          {
+            courseName: "M.E./M.Tech",
+            coursesCount: "45 Courses",
+            tuitionFees: "INR 70,000- INR 3 lakh",
+            totalFees: "INR 4.82 lakh - INR 5.17 lakh",
+          },
+          {
+            courseName: "M.Sc.",
+            coursesCount: "25 Courses",
+            tuitionFees: "INR 30,000 - INR 3 lakh",
+            totalFees: "INR 2.12 lakh - INR 5.4 lakh",
+          },
+          {
+            courseName: "Ph.D.",
+            coursesCount: "28 Courses",
+            tuitionFees: "INR 45,000",
+            totalFees: "INR 45,000",
+          },
+          {
+            courseName: "M.A.",
+            coursesCount: "2 Courses",
+            tuitionFees: "INR 30,000 - INR 3 lakh",
+            totalFees: "INR 2.12 lakh - INR 5.05 lakh",
+          },
+          {
+            courseName: "M.Des",
+            coursesCount: "1 Courses",
+            tuitionFees: "INR 70,000",
+            totalFees: "INR 2.52 lakh",
+          },
+        ],
+        otherChargesNote: college.coursesFeesArticle.otherChargesNote || "*This is estimated fee information. Actual values may differ.",
+        otherChargesHeading: college.coursesFeesArticle.otherChargesHeading || `Other Charges included in ${shortName} fee structure:`,
+        otherCharges: college.coursesFeesArticle.otherCharges || [
+          {
+            component: "Hostel fees",
+            subtext:
+              "Meal Plan is included in this fee. The fees might include components other than hostel fees. Hostel fee mentioned is for cheapest option available.",
+            amount: "INR 1.29 lakh - 3.1 lakh",
+          },
+          {
+            component: "One-time payments",
+            subtext:
+              "One-time payment includes Admission fees, Student welfare fund, Modernization fees, Benevolent fund, Alumni fees, Training and Placement charges, Institute & Library Security fees.",
+            amount: "INR 16,150 – 23,000",
+          },
+          {
+            component: "Other fee",
+            amount: "INR 94,400",
+          },
+        ],
+        footerNote: college.coursesFeesArticle.footerNote || `Check more about ${shortName} courses below:`,
+        viewAllBtnText: college.coursesFeesArticle.viewAllBtnText || "View All Courses & Fees",
+        faqs:
+          college.coursesFeesArticle.faqs && college.coursesFeesArticle.faqs.length > 0
+            ? college.coursesFeesArticle.faqs
+            : defaultCoursesFaqs,
+      };
+    }
+
+    return {
+      title: `${shortName} Courses & Fees 2026`,
+      introParagraph1:
+        `**${shortName}** offers undergraduate, postgraduate, doctoral, and certificate programmes across Engineering, Design, Sciences, Management, and Humanities. The **${shortName}** courses are available in **full-time**, **part-time**, and **online** modes.`,
+      introParagraph2:
+        `The courses offered are BTech, BS, BDes, MTech, MSc, MBA, MDes, MA, and PhD. **${shortName} popular programme** is BTech. The following are the course categories and top specialisations offered at **${shortName}**:`,
+      courseSummaryGroups: [
+        {
+          groupTitle: "UG Courses",
+          courses: [
+            {
+              courseName: "BTech",
+              firstYearFees: "INR 2.55 Lakhs",
+              eligibility: "Class 10+2 with 75% marks",
+              duration: "4 years",
+              selection: "JEE Advanced + JoSAA Counselling",
+            },
+            {
+              courseName: "BDes",
+              firstYearFees: "INR 2.54 Lakhs",
+              eligibility: "Class 10+2 with 75% marks",
+              duration: "4 years",
+              selection: "UCEED Scores + Counselling",
+            },
+          ],
+        },
+      ],
+      specialisations: [
+        {
+          category: "BTech specialisations",
+          list: "Computer Science & Engineering, Electrical Engineering, Mechanical Engineering, Chemical Engineering, Civil Engineering, and Textile Technology.",
+        },
+        {
+          category: "PG programmes",
+          list: "MTech, MSc, MBA, MDes, and MA",
+        },
+        {
+          category: "Certificate Programmes",
+          list: "Statistical Inference, Computational Geometry, Advanced Textile Printing Technology, and Project Management.",
+        },
+      ],
+      calloutPromoText:
+        "Explore engineering colleges accepting low JEE Main ranks, compare admission routes, and find the right BTech programme based on your score and preferences.",
+      calloutPdfUrl: "#",
+      popularCoursesHeading:
+        `Students can check out the ${shortName} fees 2026 for some popular courses below:`,
+      popularCourses: [
+        {
+          courseName: "B.E. / B.Tech",
+          coursesCount: "15 Courses",
+          tuitionFees: "INR 8 lakh",
+          totalFees: "INR 11.26 lakh - INR 11.72 lakh",
+        },
+        {
+          courseName: "B.Des",
+          coursesCount: "1 Courses",
+          tuitionFees: "INR 8 lakh",
+          totalFees: "INR 11.26 lakh",
+        },
+        {
+          courseName: "MBA/PGDM",
+          coursesCount: "2 Courses",
+          tuitionFees: "INR 12 lakh",
+          totalFees: "INR 13.82 lakh - INR 13.9 lakh",
+        },
+        {
+          courseName: "M.E./M.Tech",
+          coursesCount: "45 Courses",
+          tuitionFees: "INR 70,000- INR 3 lakh",
+          totalFees: "INR 4.82 lakh - INR 5.17 lakh",
+        },
+        {
+          courseName: "M.Sc.",
+          coursesCount: "25 Courses",
+          tuitionFees: "INR 30,000 - INR 3 lakh",
+          totalFees: "INR 2.12 lakh - INR 5.4 lakh",
+        },
+        {
+          courseName: "Ph.D.",
+          coursesCount: "28 Courses",
+          tuitionFees: "INR 45,000",
+          totalFees: "INR 45,000",
+        },
+        {
+          courseName: "M.A.",
+          coursesCount: "2 Courses",
+          tuitionFees: "INR 30,000 - INR 3 lakh",
+          totalFees: "INR 2.12 lakh - INR 5.05 lakh",
+        },
+        {
+          courseName: "M.Des",
+          coursesCount: "1 Courses",
+          tuitionFees: "INR 70,000",
+          totalFees: "INR 2.52 lakh",
+        },
+      ],
+      otherChargesNote: "*This is estimated fee information. Actual values may differ.",
+      otherChargesHeading: `Other Charges included in ${shortName} fee structure:`,
+      otherCharges: [
+        {
+          component: "Hostel fees",
+          subtext:
+            "Meal Plan is included in this fee. The fees might include components other than hostel fees. Hostel fee mentioned is for cheapest option available.",
+          amount: "INR 1.29 lakh - 3.1 lakh",
+        },
+        {
+          component: "One-time payments",
+          subtext:
+            "One-time payment includes Admission fees, Student welfare fund, Modernization fees, Benevolent fund, Alumni fees, Training and Placement charges, Institute & Library Security fees.",
+          amount: "INR 16,150 – 23,000",
+        },
+        {
+          component: "Other fee",
+          amount: "INR 94,400",
+        },
+      ],
+      footerNote: `Check more about ${shortName} courses below:`,
+      viewAllBtnText: "View All Courses & Fees",
+      faqs: defaultCoursesFaqs,
+    };
+  };
+
+  const getCollegePlacementsArticle = (college: CollegeDetail): PlacementsArticleData => {
+    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+
+    const defaultSubsections: PlacementSubSection[] = [
+      {
+        heading: `${shortName} Top Recruiters 2026`,
+        content: `Leading recruiters participating in **${shortName} BTech placements 2026** are Microsoft, Goldman Sachs, Texas Instruments, Bajaj Auto, Ola Electric, and Air India.`,
+      },
+      {
+        heading: `${shortName} MBA Placements 2026`,
+        content: `The **${shortName} MBA placement report 2026** is yet to be released. As per the official 2025 placement report, **${shortName} MBA** recorded a 98% placement rate. The **${shortName} highest package** offered was **INR 43.55 LPA**. While the **average package of ${shortName}** (MTech) was **INR 22.52 LPA**, and the **median** was **INR 22.5 LPA**.`,
+      },
+      {
+        heading: `${shortName} MBA Placements 2026 Top Recruiters`,
+        content: `**${shortName} MBA placements'** top recruiter list includes leading companies such as Accenture, Paytm, EY, PwC, Godrej, and Flipkart.`,
+      },
+    ];
+
+    const defaultStatsTableCols: string[] = [
+      "Particulars",
+      "Placement Statistics 2025 (Ongoing)",
+      "Placement Statistics 2024",
+    ];
+
+    const defaultStatsTable: PlacementStatRow[] = [
+      {
+        particular: "Total No. Of Offers",
+        values: ["1411 (53.1%)", "1300"],
+        statCurrentYear: "1411 (53.1%)",
+        statPrevYear: "1300",
+      },
+      {
+        particular: "Total No. Of Companies",
+        values: ["NA", "400"],
+        statCurrentYear: "NA",
+        statPrevYear: "400",
+      },
+      {
+        particular: "Total Pre-placement Offers",
+        values: ["NA", "260"],
+        statCurrentYear: "NA",
+        statPrevYear: "260",
+      },
+      {
+        particular: "Total No. Of New Recruiters",
+        values: ["NA", "Na"],
+        statCurrentYear: "NA",
+        statPrevYear: "Na",
+      },
+      {
+        particular: "Highest Package (Domestic)",
+        values: ["NA", "INR 2 CPA"],
+        statCurrentYear: "NA",
+        statPrevYear: "INR 2 CPA",
+      },
+      {
+        particular: "Average Package",
+        values: ["NA", "INR 22 LPA"],
+        statCurrentYear: "NA",
+        statPrevYear: "INR 22 LPA",
+      },
+      {
+        particular: "Top Recruiters",
+        values: ["NA", "Google, ICICI Bank, Accenture"],
+        statCurrentYear: "NA",
+        statPrevYear: "Google, ICICI Bank, Accenture",
+      },
+      {
+        particular: "Top New Recruiters",
+        values: ["NA", "Capgemini, Texas Instruments"],
+        statCurrentYear: "NA",
+        statPrevYear: "Capgemini, Texas Instruments",
+      },
+    ];
+
+    const defaultSalaryTableCols: string[] = ["Course", "Median Salary"];
+
+    const defaultSalaryTable: CourseSalaryRow[] = [
+      { course: "B.E. / B.Tech", values: ["₹20 LPA"], salary: "₹20 LPA" },
+      { course: "M.E./M.Tech", values: ["₹16 LPA"], salary: "₹16 LPA" },
+      { course: "M.Sc.", values: ["₹15.59 LPA"], salary: "₹15.59 LPA" },
+      { course: "MBA/PGDM", values: ["₹15.59 LPA"], salary: "₹15.59 LPA" },
+      { course: "M.A.", values: ["₹15.59 LPA"], salary: "₹15.59 LPA" },
+      { course: "M.Des", values: ["₹15.59 LPA"], salary: "₹15.59 LPA" },
+    ];
+
+    const defaultTopRecruitersList: TopRecruiterItem[] = [
+      {
+        name: "Accenture",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Accenture.svg",
+        websiteUrl: "https://www.accenture.com",
+      },
+      {
+        name: "Barclays",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Barclays_logo.svg",
+        websiteUrl: "https://www.barclays.com",
+      },
+      {
+        name: "Capgemini",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Capgemini_201x_logo.svg",
+        websiteUrl: "https://www.capgemini.com",
+      },
+      {
+        name: "Deloitte",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/5/56/Deloitte.svg",
+        websiteUrl: "https://www.deloitte.com",
+      },
+      {
+        name: "Flipkart",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Flipkart_logo.svg",
+        websiteUrl: "https://www.flipkart.com",
+      },
+      {
+        name: "GAIL",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/en/6/6f/GAIL_Logo.svg",
+        websiteUrl: "https://www.gailonline.com",
+      },
+      {
+        name: "Hindustan Unilever",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/en/e/e4/Unilever.svg",
+        websiteUrl: "https://www.hul.co.in",
+      },
+      {
+        name: "ICICI Securities",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/12/ICICI_Bank_Logo.svg",
+        websiteUrl: "https://www.icicisecurities.com",
+      },
+      {
+        name: "JP Morgan Chase",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/a/af/J_P_Morgan_Chase_Logo_2008_1.svg",
+        websiteUrl: "https://www.jpmorganchase.com",
+      },
+      {
+        name: "KPMG",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/9/9d/KPMG_logo.svg",
+        websiteUrl: "https://www.kpmg.com",
+      },
+      {
+        name: "Google",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
+        websiteUrl: "https://www.google.com",
+      },
+      {
+        name: "Microsoft",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
+        websiteUrl: "https://www.microsoft.com",
+      },
+      {
+        name: "Amazon",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+        websiteUrl: "https://www.amazon.com",
+      },
+      {
+        name: "Texas Instruments",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/8/85/Texas_Instruments_logo.svg",
+        websiteUrl: "https://www.ti.com",
+      },
+    ];
+
+    const defaultPlacementInsights: PlacementInsightItem[] = [
+      {
+        title: "Internships and industry projects",
+        description: "Students can work with faculty on research projects",
+      },
+      {
+        title: "Employment opportunities",
+        description: "Many students started their own start-ups",
+      },
+      {
+        title: "Higher studies preferences",
+        description: "Majority opted in outside India",
+      },
+      {
+        title: "Placement support",
+        description: "Organized & proactive placement process",
+      },
+      {
+        title: "Alumni network",
+        description: "Strong alumni network that help with placement opportunities",
+      },
+      {
+        title: "Entrepreneurship cell",
+        description: "Very Active and resourceful, college is also involved",
+      },
+      {
+        title: "Overall feeling of students",
+        description: "Love being in college",
+      },
+    ];
+
+    const defaultPlacementFaqs: FaqItem[] = [
+      {
+        question: `What is the placement percentage recorded during ${shortName} placements?`,
+        answer: `${shortName} recorded an exceptional placement rate with over 85-90% eligible registered candidates successfully securing premium employment and international offers across core engineering, analytics, IT, and management sectors.`,
+      },
+      {
+        question: `How are the BTech placements at ${shortName}?`,
+        answer: `BTech placements at ${shortName} are among the highest ranked in the nation, with the undergraduate median package reaching INR 20 LPA and international/domestic highest compensation packages exceeding INR 2 Crore per annum.`,
+      },
+      {
+        question: `Can I take admission at ${shortName} MTech course without GATE?`,
+        answer: `Direct admission for regular full-time MTech without GATE is typically open only to graduating IITians with a CGPA of 8.0 and above. Candidates from other recognized institutions require a valid GATE percentile followed by written assessment or interview.`,
+      },
+      {
+        question: `How can I get BTech Admission at ${shortName}?`,
+        answer: `Undergraduate BTech admission at ${shortName} is strictly merit-based through qualifying JEE Advanced with high cut-off ranks followed by centralized seat allocation via JoSAA counselling.`,
+      },
+      {
+        question: `Which are the top recruiters of ${shortName}?`,
+        answer: `Premier global recruiters visiting campus include Google, Microsoft, Amazon, Texas Instruments, Accenture, Deloitte, Goldman Sachs, Apple, Qualcomm, and KPMG, offering domestic and overseas roles.`,
+      },
+    ];
+
+    if (college.placementsArticle) {
+      return {
+        title: college.placementsArticle.title || `${shortName} Placements 2026`,
+        introParagraph:
+          college.placementsArticle.introParagraph ||
+          `**${shortName} Placements 2026** recorded **1,275 job** offers for students. **Over 300 pre-placement offers (PPOs)** secured and more than **1,140 students placed**, according 2025-26 placement season. ${shortName} students received more than 40 international offers from multiple global organisations located in Japan, the Netherlands, South Korea, Taiwan, the United Arab Emirates, the United Kingdom, and the United States. As per **IITD** overall report submitted for **NIRF 2026**, **(BTech) UG 4-year students’ median package** is **INR 20 LPA**. Median package for **(MTech)** PG students is **INR 19.25 LPA** in the **${shortName} Placements 2026**. The **average package of ${shortName}** and **${shortName} highest pacakge** are not available.`,
+        subsections:
+          college.placementsArticle.subsections && college.placementsArticle.subsections.length > 0
+            ? college.placementsArticle.subsections
+            : defaultSubsections,
+        footerNote: college.placementsArticle.footerNote || `Check course-wise placement data of **${shortName}** below:`,
+        statsTableTitle: college.placementsArticle.statsTableTitle || `${shortName} Placements Highlights`,
+        statsTableCols: college.placementsArticle.statsTableCols || defaultStatsTableCols,
+        statsTable:
+          college.placementsArticle.statsTable && college.placementsArticle.statsTable.length > 0
+            ? college.placementsArticle.statsTable
+            : defaultStatsTable,
+        salaryTableTitle: college.placementsArticle.salaryTableTitle || `${shortName} Course-wise Median Salary`,
+        salaryTableCols: college.placementsArticle.salaryTableCols || defaultSalaryTableCols,
+        salaryTable:
+          college.placementsArticle.salaryTable && college.placementsArticle.salaryTable.length > 0
+            ? college.placementsArticle.salaryTable
+            : defaultSalaryTable,
+        topRecruitersTitle: college.placementsArticle.topRecruitersTitle || "Top Recruiters",
+        topRecruiters:
+          college.placementsArticle.topRecruiters && college.placementsArticle.topRecruiters.length > 0
+            ? college.placementsArticle.topRecruiters
+            : defaultTopRecruitersList,
+        insightsTitle: college.placementsArticle.insightsTitle || "Insights on Placements",
+        insightsSubtitle: college.placementsArticle.insightsSubtitle || "Based on 281 Student Responses",
+        insights:
+          college.placementsArticle.insights && college.placementsArticle.insights.length > 0
+            ? college.placementsArticle.insights
+            : defaultPlacementInsights,
+        faqsHeading: college.placementsArticle.faqsHeading || "Commonly asked questions",
+        faqsSubtitle: college.placementsArticle.faqsSubtitle || "On Placements",
+        faqs:
+          college.placementsArticle.faqs && college.placementsArticle.faqs.length > 0
+            ? college.placementsArticle.faqs
+            : defaultPlacementFaqs,
+      };
+    }
+
+    return {
+      title: `${shortName} Placements 2026`,
+      introParagraph: `**${shortName} Placements 2026** recorded **1,275 job** offers for students. **Over 300 pre-placement offers (PPOs)** secured and more than **1,140 students placed**, according 2025-26 placement season. ${shortName} students received more than 40 international offers from multiple global organisations located in Japan, the Netherlands, South Korea, Taiwan, the United Arab Emirates, the United Kingdom, and the United States. As per **IITD** overall report submitted for **NIRF 2026**, **(BTech) UG 4-year students’ median package** is **INR 20 LPA**. Median package for **(MTech)** PG students is **INR 19.25 LPA** in the **${shortName} Placements 2026**. The **average package of ${shortName}** and **${shortName} highest pacakge** are not available.`,
+      subsections: defaultSubsections,
+      footerNote: `Check course-wise placement data of **${shortName}** below:`,
+      statsTableTitle: `${shortName} Placements Highlights`,
+      statsTableCols: defaultStatsTableCols,
+      statsTable: defaultStatsTable,
+      salaryTableTitle: `${shortName} Course-wise Median Salary`,
+      salaryTableCols: defaultSalaryTableCols,
+      salaryTable: defaultSalaryTable,
+      topRecruitersTitle: "Top Recruiters",
+      topRecruiters: defaultTopRecruitersList,
+      insightsTitle: "Insights on Placements",
+      insightsSubtitle: "Based on 281 Student Responses",
+      insights: defaultPlacementInsights,
+      faqsHeading: "Commonly asked questions",
+      faqsSubtitle: "On Placements",
+      faqs: defaultPlacementFaqs,
+    };
+  };
+
+  const getCollegeAdmissionArticle = (college: CollegeDetail): AdmissionArticleData => {
+    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const officialWebsite = shortName.toLowerCase().includes("iit") && shortName.toLowerCase().includes("delhi")
+      ? "iitd.ac.in"
+      : `${shortName.toLowerCase().replace(/[^a-z0-9]/g, "")}.ac.in`;
+
+    if (college.admissionArticle) {
+      return college.admissionArticle;
+    }
+
+    const defaultCourseBoxes: CourseAdmissionBoxItem[] = [
+      {
+        courseTitle: "B.E. / B.Tech Admissions 2026",
+        courseMeta: "17 Courses • 4 years-5 years",
+        eligibilityBullets: [
+          "10+2 with 75% aggregate",
+          "Accepting Exams: **JEE Main, JEE Advanced, UCEED**",
+        ],
+        datesHeading: "Important dates",
+        datesTable: [
+          {
+            dates: "Oct '26 - Nov '26",
+            event: "JEE Main 2027 Registration Session 1",
+            isTentative: true,
+          },
+          {
+            dates: "Jan '27",
+            event: "JEE Main Admit Card 2027 Session 1",
+            isTentative: true,
+          },
+          {
+            dates: "22 Jan '27 - 24 Jan '27",
+            event: "JEE Main 2027 Exam Date Session 1",
+            isTentative: false,
+          },
+        ],
+      },
+      {
+        courseTitle: "M.E. / M.Tech Admissions 2026",
+        courseMeta: "45 Courses • 2 years",
+        eligibilityBullets: [
+          "Bachelor degree in relevant engineering discipline with minimum 60% aggregate or 6.0 CGPA",
+          "Accepting Exams: **GATE, COAP Counselling**",
+        ],
+        datesHeading: "Important dates",
+        datesTable: [
+          {
+            dates: "Aug '26 - Sep '26",
+            event: "GATE 2027 Application Form Window",
+            isTentative: true,
+          },
+          {
+            dates: "Jan '27",
+            event: "GATE 2027 Admit Card Download",
+            isTentative: false,
+          },
+          {
+            dates: "Feb '27",
+            event: "GATE 2027 Examination Dates",
+            isTentative: false,
+          },
+        ],
+      },
+      {
+        courseTitle: "MBA / PGDM Admissions 2026",
+        courseMeta: "2 Courses • 2 years",
+        eligibilityBullets: [
+          "Graduation degree in any stream with minimum 60% marks or equivalent CGPA",
+          "Accepting Exams: **CAT, Written Test / Personal Interview (PI)**",
+        ],
+        datesHeading: "Important dates",
+        datesTable: [
+          {
+            dates: "Aug '26 - Sep '26",
+            event: "CAT 2026 Online Registration Window",
+            isTentative: false,
+          },
+          {
+            dates: "Oct '26",
+            event: "CAT 2026 Admit Card Available",
+            isTentative: false,
+          },
+          {
+            dates: "Nov '26",
+            event: "CAT 2026 Entrance Examination",
+            isTentative: false,
+          },
+        ],
+      },
+    ];
+
+    const defaultAdmissionFaqs: AdmissionFaqItem[] = [
+      {
+        question: `How do I get admission to ${shortName}?`,
+        answer: `Admission to undergraduate programs (such as BTech) at ${shortName} is based on rank in JEE Advanced followed by JoSAA counselling. For PG programs, admissions require qualifying GATE/CAT/CEED exams depending on the course.`,
+        upvotes: 2,
+      },
+      {
+        question: `Can I take admission at ${shortName} MTech course without GATE?`,
+        answer: `Direct admission for regular full-time MTech without GATE is generally offered only to IIT graduates with a CGPA of 8.0 or above. Other candidates must have a valid GATE score followed by written assessment or interview.`,
+      },
+      {
+        question: `Can I get Admission into ${shortName} without JEE Main?`,
+        answer: `For BTech courses, JEE Main is mandatory to qualify for JEE Advanced. However, other programs like B.Des accept UCEED, MBA accepts CAT, and MSc courses accept IIT JAM scores.`,
+      },
+      {
+        question: `How can I get BTech Admission at ${shortName}?`,
+        answer: `Candidates must pass Class 12 with minimum 75% marks (or top 20 percentile), qualify JEE Main, secure a top rank in JEE Advanced, and participate in JoSAA centralized seat allocation counselling.`,
+        upvotes: 5,
+      },
+    ];
+
+    const currentArticle = college.admissionArticle as AdmissionArticleData | undefined;
+    if (currentArticle) {
+      return {
+        ...currentArticle,
+        courseAdmissionBoxes:
+          currentArticle.courseAdmissionBoxes && currentArticle.courseAdmissionBoxes.length > 0
+            ? currentArticle.courseAdmissionBoxes
+            : defaultCourseBoxes,
+        faqsHeading: currentArticle.faqsHeading || "Commonly asked questions",
+        faqsSubtitle: currentArticle.faqsSubtitle || "On Admissions",
+        faqsButtonText: currentArticle.faqsButtonText || "Admission Details for all courses",
+        faqs:
+          currentArticle.faqs && currentArticle.faqs.length > 0
+            ? currentArticle.faqs
+            : defaultAdmissionFaqs,
+      };
+    }
+
+    return {
+      title: `${shortName} Admission & Application Process 2026`,
+      introParagraph1: `**${shortName} offers UG, PG, and doctoral research courses**, like **BTech, BSc, BDes, MTech, MSc, MBA, MDes** and **PhD**. Among ${shortName} aspirants, **BTech** and **MTech** programmes are the most popular. The institute **does not offer direct admissions**. **${shortName} course admissions** are based on entrance exams, followed by counselling or a personal interview (PI), depending on the course.`,
+      introParagraph2: `For admission to ${shortName}'s BTech and MTech programmes, candidates have to appear for **JEE Advanced 2026** and **GATE 2026**, respectively. More details around ${shortName} admissions are below:`,
+      bullets: [
+        {
+          text: `Admission to the **MSc programme** is possible only with a valid **JAM 2026 Score**.`,
+        },
+        {
+          text: `A valid **CAT 2026 score** is mandatory for admission to the **${shortName} MBA programme**.`,
+        },
+        {
+          text: `${shortName} accepts the **UCEED score** for admission to the **BDes** programme.`,
+        },
+        {
+          text: `**CEED 2026 score** is mandatory for admission to the **${shortName} MDes programme**. It's the only programme at **${shortName}** where candidates are required to appear for a Studio Test along with a Personal Interview.`,
+        },
+      ],
+      afterBulletsParagraph1: `**${shortName} Admission 2026** are entrance based. **${shortName} Application 2026 window** opens through its official website, i.e. ${officialWebsite}. For **${shortName} BTech admissions**, candidates are required to apply through JoSAA. **${shortName} MTech Admissions** are conducted through COAP.`,
+      afterBulletsParagraph2: `Candidates are then required to fill out the **${shortName} MTech application form** through the official website. For MDes, MBA and PhD admissions, candidates are required to fill the form available on the official **${shortName}** portal.`,
+      footerNote: `Check out course-specific details for **${shortName} admission 2026** below:`,
+      courseAdmissionBoxes: defaultCourseBoxes,
+      faqsHeading: "Commonly asked questions",
+      faqsSubtitle: "On Admissions",
+      faqsButtonText: "Admission Details for all courses",
+      faqs: defaultAdmissionFaqs,
+    };
+  };
+
+  
+// Helper to render authentic two-tone line icons matching user's Image 1 & 2 (2.5x larger, crisp line art)
+const renderReviewCategoryIcon = (label: string, iconType?: string) => {
+  const norm = (label + " " + (iconType || "")).toLowerCase();
+
+  // 1. Placement / Job / Career / Briefcase (Open Briefcase with Flying Money/Cash)
+  if (norm.includes("place") || norm.includes("job") || norm.includes("career") || norm.includes("briefcase")) {
+    return (
+      <svg className="w-14 h-14 sm:w-16 sm:h-16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Open Top Lid (Tilted Back) */}
+        <path d="M8 20L13 8C13.8 6.5 15.5 5.5 17.5 5.5H30.5C32.5 5.5 34.2 6.5 35 8L40 20" stroke="#1e293b" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" fill="#e2e8f0" />
+        {/* Lid Handle */}
+        <path d="M20 5.5V3C20 2.2 20.8 1.5 21.6 1.5H26.4C27.2 1.5 28 2.2 28 3V5.5" stroke="#1e293b" strokeWidth="2.6" strokeLinecap="round" />
+        
+        {/* Money / Cash Emerging & Flying from Peti */}
+        {/* Banknote 1 (Tilted Left) */}
+        <g transform="translate(10, 8) rotate(-14)">
+          <rect width="13" height="7.5" rx="1.2" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
+          <circle cx="6.5" cy="3.75" r="1.5" fill="#16a34a" />
+        </g>
+        {/* Banknote 2 (Tilted Right) */}
+        <g transform="translate(24, 6) rotate(16)">
+          <rect width="13" height="7.5" rx="1.2" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
+          <circle cx="6.5" cy="3.75" r="1.5" fill="#16a34a" />
+        </g>
+        {/* Banknote 3 (Center High Rise) */}
+        <g transform="translate(17.5, 5) rotate(2)">
+          <rect width="13" height="8" rx="1.2" fill="#bbf7d0" stroke="#15803d" strokeWidth="2.2" />
+          <circle cx="6.5" cy="4" r="1.6" fill="#15803d" />
+          <line x1="2" y1="4" x2="3.5" y2="4" stroke="#15803d" strokeWidth="1.2" />
+          <line x1="9.5" y1="4" x2="11" y2="4" stroke="#15803d" strokeWidth="1.2" />
+        </g>
+
+        {/* Floating Gold Coin / Sparkle */}
+        <circle cx="10" cy="5" r="2.2" fill="#f59e0b" stroke="#d97706" strokeWidth="1.4" />
+        <circle cx="38" cy="4" r="2.2" fill="#f59e0b" stroke="#d97706" strokeWidth="1.4" />
+
+        {/* Main Briefcase Body (Base) */}
+        <rect x="7" y="20" width="34" height="21" rx="4.5" fill="white" stroke="#1e293b" strokeWidth="3" />
+        {/* Upper Rim of Base */}
+        <line x1="7" y1="20" x2="41" y2="20" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+        {/* Top Accent Band on Base */}
+        <path d="M7 20H41V25H7V20Z" fill="#d1d5db" />
+        
+        {/* Center Metal Lock/Latch */}
+        <rect x="20.5" y="22" width="7" height="8" rx="2" fill="white" stroke="#1e293b" strokeWidth="2.4" />
+        <line x1="24" y1="25" x2="24" y2="27.5" stroke="#1e293b" strokeWidth="2.2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // 2. Academic / Degree / Graduation Cap (Exact Match with Image 1)
+  if (norm.includes("acad") || norm.includes("degree") || norm.includes("graduat")) {
+    return (
+      <svg className="w-14 h-14 sm:w-16 sm:h-16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 9L42 18L24 27L6 18L24 9Z" fill="#e5e7eb" stroke="#1e293b" strokeWidth="3" strokeLinejoin="round" />
+        <path d="M13 22V31C13 31 17 37 24 37C31 37 35 31 35 31V22" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11 20V30" stroke="#1e293b" strokeWidth="2.6" strokeLinecap="round" />
+        <circle cx="11" cy="32" r="2.8" fill="#1e293b" />
+      </svg>
+    );
+  }
+
+  // 3. Faculty / Faculty & Course / Teacher / Instructor (Exact Match with Image 1)
+  if (norm.includes("facult") || norm.includes("teach") || norm.includes("prof") || norm.includes("course")) {
+    return (
+      <svg className="w-14 h-14 sm:w-16 sm:h-16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="22" y="9" width="20" height="20" rx="3" fill="#f1f5f9" stroke="#1e293b" strokeWidth="3" />
+        <line x1="27" y1="29" x2="25" y2="39" stroke="#1e293b" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1="37" y1="29" x2="39" y2="39" stroke="#1e293b" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1="22" y1="37" x2="42" y2="37" stroke="#1e293b" strokeWidth="2.6" strokeLinecap="round" />
+        <path d="M32 15A4.5 4.5 0 1 0 36.5 19.5L32 19.5V15Z" fill="#cbd5e1" stroke="#1e293b" strokeWidth="2.4" strokeLinejoin="round" />
+        <circle cx="12" cy="14" r="4" stroke="#1e293b" strokeWidth="3" />
+        <path d="M5 37V29C5 25.5 8.5 23 12 23C15.5 23 19 25.5 19 29V37" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+        <path d="M16 26.5L23.5 24.5" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // 4. Infrastructure / Campus / Building (Exact Match with Image 1)
+  if (norm.includes("infra") || norm.includes("build") || (norm.includes("campus") && !norm.includes("life"))) {
+    return (
+      <svg className="w-14 h-14 sm:w-16 sm:h-16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="9" width="14" height="28" rx="2" fill="white" stroke="#1e293b" strokeWidth="3" />
+        <line x1="17" y1="13" x2="17" y2="29" stroke="#1e293b" strokeWidth="2.5" strokeLinecap="round" />
+        <rect x="22" y="16" width="16" height="21" rx="2" fill="#d1d5db" stroke="#1e293b" strokeWidth="3" />
+        <path d="M7 39C7 36 9.5 34.5 12 34.5C13.5 34.5 14.5 35 15.5 35.5C16.5 34 18.5 33.5 20.5 34.5C22 35.5 22.5 37 22.5 39H7Z" fill="#9ca3af" stroke="#1e293b" strokeWidth="2.4" strokeLinejoin="round" />
+        <path d="M22 39C22 36 24 34.5 26.5 34.5C28 34 30.5 34.5 31.5 35.5C33 34.5 35.5 35 36.5 36C37.5 37 37.5 39 37.5 39H22Z" fill="#9ca3af" stroke="#1e293b" strokeWidth="2.4" strokeLinejoin="round" />
+        <line x1="5" y1="39" x2="43" y2="39" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // 5. Accommodation / Hostel / Housing / Living / Home (Exact Match with Image 1)
+  if (norm.includes("accom") || norm.includes("hostel") || norm.includes("stay") || norm.includes("house") || norm.includes("home") || norm.includes("room")) {
+    return (
+      <svg className="w-14 h-14 sm:w-16 sm:h-16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M31 16V11H36V20" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M7 22L24 9L41 22" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M11 20.5V37C11 38.1046 11.8954 39 13 39H35C36.1046 39 37 38.1046 37 37V20.5" fill="white" stroke="#1e293b" strokeWidth="3" strokeLinejoin="round" />
+        <rect x="20" y="27" width="8" height="12" rx="1.5" fill="#e5e7eb" stroke="#1e293b" strokeWidth="2.5" />
+      </svg>
+    );
+  }
+
+  // 6. Social Life / Campus Life / Community / Friends / Users (Exact Match with Image 1)
+  if (norm.includes("social") || norm.includes("life") || norm.includes("user") || norm.includes("friend") || norm.includes("crowd") || norm.includes("campus")) {
+    return (
+      <svg className="w-14 h-14 sm:w-16 sm:h-16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="15" r="4.5" stroke="#1e293b" strokeWidth="3" fill="#f1f5f9" />
+        <circle cx="32" cy="15" r="4.5" stroke="#1e293b" strokeWidth="3" fill="#d1d5db" />
+        <path d="M9 37V29C9 25.5 12 23 16 23H32C36 23 39 25.5 39 29V37" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="24" y1="23" x2="24" y2="37" stroke="#1e293b" strokeWidth="2.5" />
+        <path d="M13 25.5C13 25.5 18.5 28 24 28C29.5 28 35 25.5 35 25.5" stroke="#1e293b" strokeWidth="2.5" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // 7. Value for Money / Finance / Landmark / Bank
+  return (
+    <svg className="w-14 h-14 sm:w-16 sm:h-16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 17L24 8L40 17H8Z" fill="#e5e7eb" stroke="#1e293b" strokeWidth="3" strokeLinejoin="round" />
+      <line x1="13" y1="17" x2="13" y2="32" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+      <line x1="20" y1="17" x2="20" y2="32" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+      <line x1="28" y1="17" x2="28" y2="32" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+      <line x1="35" y1="17" x2="35" y2="32" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+      <rect x="7" y="32" width="34" height="4.5" rx="1.5" fill="#cbd5e1" stroke="#1e293b" strokeWidth="2.5" />
+      <line x1="5" y1="39.5" x2="43" y2="39.5" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+};
+
+  const getCollegeReviewsArticle = (college: CollegeDetail): ReviewsArticleData => {
+    const shortName = college.name ? college.name.split(" - ")[0] : "College";
+    const fullName = college.fullName || college.name || "College";
+
+    const defaultHistogram: ReviewHistogramItem[] = [
+      { starsRange: "5 Stars", count: 82 },
+      { starsRange: "4 Stars", count: 14 },
+      { starsRange: "3 Stars", count: 3 },
+      { starsRange: "2 Stars", count: 1 },
+      { starsRange: "1 Star", count: 0 },
+    ];
+
+    const defaultParameters: ReviewParameterItem[] = [
+      { label: "Placements", rating: 4.8, iconType: "briefcase" },
+      { label: "Infrastructure", rating: 4.7, iconType: "building" },
+      { label: "Faculty & Course Curriculum", rating: 4.9, iconType: "book" },
+      { label: "Crowd & Campus Life", rating: 4.6, iconType: "users" },
+      { label: "Value for Money", rating: 4.8, iconType: "dollar" },
+    ];
+
+    const defaultFeedbackCategories: StudentFeedbackCategory[] = [
+      {
+        category: "Placements",
+        likesText: `Top recruitment packages and career opportunities for ${shortName} students with top companies visiting campus annually.`,
+        likesCountText: "Based on 320+ Reviews",
+        dislikesText: "Placement preparation schedule is rigorous with high competition among peer groups.",
+        dislikesCountText: "Based on 45 Reviews",
+      },
+      {
+        category: "Infrastructure",
+        likesText: `Modern laboratory setups, high-speed campus Wi-Fi, central library, and great sports amenities.`,
+        likesCountText: "Based on 280+ Reviews",
+        dislikesText: "Some older hostel wings are awaiting renovation.",
+        dislikesCountText: "Based on 35 Reviews",
+      },
+      {
+        category: "Faculty",
+        likesText: "Highly accomplished professors with strong research background and industry guidance.",
+        likesCountText: "Based on 240+ Reviews",
+        dislikesText: "Strict evaluation policies and fast-paced academic terms require consistent effort.",
+        dislikesCountText: "Based on 30 Reviews",
+      },
+      {
+        category: "Other",
+        likesText: `Vibrant campus culture, active technical and cultural clubs, and excellent peer learning environment.`,
+        likesCountText: "Based on 190+ Reviews",
+        dislikesText: "Academic rigor can feel intense during mid-semester examination weeks.",
+        dislikesCountText: "Based on 20 Reviews",
+      },
+    ];
+
+    const defaultCollegeMedia: StudentMediaReviewItem[] = slug === "iit-delhi"
+      ? DEFAULT_STUDENT_MEDIA_REVIEWS
+      : [
+          {
+            id: `media-${slug}-1`,
+            type: "video",
+            title: `${shortName} Campus Tour & Student Experience`,
+            mediaUrl: "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+            thumbnailUrl: "",
+            duration: "00:45",
+            authorName: "Verified Student",
+            batch: "B.Tech",
+          },
+          {
+            id: `media-${slug}-2`,
+            type: "video",
+            title: `${shortName} Placements & Salary Reality Check`,
+            mediaUrl: "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+            thumbnailUrl: "",
+            duration: "01:15",
+            authorName: "Campus Explorer",
+            batch: "B.Tech EE",
+          },
+          {
+            id: `media-${slug}-3`,
+            type: "video",
+            title: `${shortName} Hostels & Night Campus Vibes`,
+            mediaUrl: "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+            thumbnailUrl: "",
+            duration: "00:50",
+            authorName: "Student Council",
+            batch: "B.Tech ME",
+          },
+        ];
+
+    if (college.reviewsArticle) {
+      return {
+        tagText: college.reviewsArticle.tagText || shortName,
+        title: college.reviewsArticle.title || "Students Ratings & Reviews",
+        overallScore: college.reviewsArticle.overallScore ?? (college.rating || 4.5),
+        totalReviewsCount: college.reviewsArticle.totalReviewsCount || college.ratingCount || "623 Verified Reviews",
+        histogram:
+          college.reviewsArticle.histogram && college.reviewsArticle.histogram.length > 0
+            ? college.reviewsArticle.histogram
+            : defaultHistogram,
+        parameters:
+          college.reviewsArticle.parameters && college.reviewsArticle.parameters.length > 0
+            ? college.reviewsArticle.parameters
+            : defaultParameters,
+        studentFeedback: college.reviewsArticle.studentFeedback || {
+          heading: "What students say about " + fullName,
+          categories: defaultFeedbackCategories,
+        },
+        reviewCards:
+          college.reviewsArticle.reviewCards && college.reviewsArticle.reviewCards.length > 0
+            ? college.reviewsArticle.reviewCards
+            : DEFAULT_DETAILED_REVIEW_CARDS,
+        mediaReviews: college.reviewsArticle.mediaReviews || {
+          title: "Student Video Reviews",
+          items: defaultCollegeMedia,
+        },
+        moreReviewCards:
+          college.reviewsArticle.moreReviewCards && college.reviewsArticle.moreReviewCards.length > 0
+            ? college.reviewsArticle.moreReviewCards
+            : DEFAULT_MORE_REVIEW_CARDS,
+      };
+    }
+
+    return {
+      tagText: shortName,
+      title: "Students Ratings & Reviews",
+      overallScore: college.rating || 4.5,
+      totalReviewsCount: college.ratingCount || "623 Verified Reviews",
+      histogram: defaultHistogram,
+      parameters: defaultParameters,
+      studentFeedback: {
+        heading: "What students say about " + fullName,
+        categories: defaultFeedbackCategories,
+      },
+      reviewCards: DEFAULT_DETAILED_REVIEW_CARDS,
+      mediaReviews: {
+        title: "Student Video Reviews",
+        items: defaultCollegeMedia,
+      },
+      moreReviewCards: DEFAULT_MORE_REVIEW_CARDS,
+    };
+  };
 
   const getCollegeCutoffComparison = (college: CollegeDetail): CutoffRoundComparisonData => {
     if (college.cutoffComparison && college.cutoffComparison.rows && college.cutoffComparison.rows.length > 0) {
@@ -7364,12 +8545,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                             </div>
                                           </div>
 
-                                          {/* Top Right Source Badge */}
-                                          <div className="absolute top-2.5 right-2.5 z-10">
-                                            <div className="px-1.5 py-0.5 rounded bg-white/90 text-slate-800 text-[9px] font-bold shadow-2xs">
-                                              tyc.com
-                                            </div>
-                                          </div>
+                                          
 
                                           {/* Center Play Button Overlay */}
                                           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
