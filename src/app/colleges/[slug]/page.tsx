@@ -14997,6 +14997,104 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                   </div>
                                 </div>
 
+                                {/* Student Profile Photo (Image URL or File Upload) */}
+                                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                      <ImageIcon className="w-3.5 h-3.5 text-indigo-600" />
+                                      <span>Student Profile Photo (Image URL or Upload)</span>
+                                    </label>
+                                    {card.avatarUrl && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const updated = [...cards];
+                                          updated[cIdx] = { ...updated[cIdx], avatarUrl: "" };
+                                          setTempData({
+                                            ...tempData,
+                                            reviewsArticle: { ...curRev, moreReviewCards: updated },
+                                          });
+                                        }}
+                                        className="text-[10.5px] text-red-500 hover:text-red-700 font-semibold"
+                                      >
+                                        Remove Photo
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center gap-3">
+                                    {/* Double Size Square Avatar Preview */}
+                                    <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 border-2 border-slate-300 bg-slate-200 flex items-center justify-center relative shadow-sm">
+                                      {card.avatarUrl ? (
+                                        <img
+                                          src={card.avatarUrl}
+                                          alt={card.authorName}
+                                          className="w-full h-full object-cover"
+                                          onError={(e) => {
+                                            (e.currentTarget as HTMLElement).style.display = "none";
+                                          }}
+                                        />
+                                      ) : null}
+                                      <div
+                                        className={`w-full h-full flex items-center justify-center font-black text-xl ${
+                                          card.avatarBgColor || "bg-teal-100 text-teal-800"
+                                        } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                      >
+                                        {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                      </div>
+                                    </div>
+
+                                    <div className="flex-1 space-y-1.5">
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="text"
+                                          value={card.avatarUrl || ""}
+                                          placeholder="Paste student photo image URL..."
+                                          onChange={(e) => {
+                                            const updated = [...cards];
+                                            updated[cIdx] = { ...updated[cIdx], avatarUrl: e.target.value };
+                                            setTempData({
+                                              ...tempData,
+                                              reviewsArticle: { ...curRev, moreReviewCards: updated },
+                                            });
+                                          }}
+                                          className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-slate-800"
+                                        />
+                                        <label className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs active:scale-95 transition-all">
+                                          <Upload className="w-3.5 h-3.5" />
+                                          <span>Upload</span>
+                                          <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                              const file = e.target.files?.[0];
+                                              if (file) {
+                                                const reader = new FileReader();
+                                                reader.onload = (uploadEvent) => {
+                                                  const result = uploadEvent.target?.result as string;
+                                                  if (result) {
+                                                    const updated = [...cards];
+                                                    updated[cIdx] = { ...updated[cIdx], avatarUrl: result };
+                                                    setTempData({
+                                                      ...tempData,
+                                                      reviewsArticle: { ...curRev, moreReviewCards: updated },
+                                                    });
+                                                  }
+                                                };
+                                                reader.readAsDataURL(file);
+                                              }
+                                            }}
+                                          />
+                                        </label>
+                                      </div>
+                                      <p className="text-[10px] text-slate-400">
+                                        Supports JPG, PNG, WEBP, or direct image URLs.
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+
                                 {/* Course & Batch */}
                                 <div>
                                   <label className="text-[10.5px] font-bold text-slate-600 block">Course & Batch</label>
@@ -15806,6 +15904,104 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                       }}
                                       className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-emerald-700"
                                     />
+                                  </div>
+                                </div>
+
+                                {/* Student Profile Photo (Image URL or File Upload) */}
+                                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                      <ImageIcon className="w-3.5 h-3.5 text-indigo-600" />
+                                      <span>Student Profile Photo (Image URL or Upload)</span>
+                                    </label>
+                                    {card.avatarUrl && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const updated = [...cards];
+                                          updated[cIdx] = { ...updated[cIdx], avatarUrl: "" };
+                                          setTempData({
+                                            ...tempData,
+                                            reviewsArticle: { ...curRev, reviewCards: updated },
+                                          });
+                                        }}
+                                        className="text-[10.5px] text-red-500 hover:text-red-700 font-semibold"
+                                      >
+                                        Remove Photo
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center gap-3">
+                                    {/* Double Size Square Avatar Preview */}
+                                    <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 border-2 border-slate-300 bg-slate-200 flex items-center justify-center relative shadow-sm">
+                                      {card.avatarUrl ? (
+                                        <img
+                                          src={card.avatarUrl}
+                                          alt={card.authorName}
+                                          className="w-full h-full object-cover"
+                                          onError={(e) => {
+                                            (e.currentTarget as HTMLElement).style.display = "none";
+                                          }}
+                                        />
+                                      ) : null}
+                                      <div
+                                        className={`w-full h-full flex items-center justify-center font-black text-xl ${
+                                          card.avatarBgColor || "bg-emerald-100 text-emerald-800"
+                                        } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                      >
+                                        {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                      </div>
+                                    </div>
+
+                                    <div className="flex-1 space-y-1.5">
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="text"
+                                          value={card.avatarUrl || ""}
+                                          placeholder="Paste student photo image URL..."
+                                          onChange={(e) => {
+                                            const updated = [...cards];
+                                            updated[cIdx] = { ...updated[cIdx], avatarUrl: e.target.value };
+                                            setTempData({
+                                              ...tempData,
+                                              reviewsArticle: { ...curRev, reviewCards: updated },
+                                            });
+                                          }}
+                                          className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-slate-800"
+                                        />
+                                        <label className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs active:scale-95 transition-all">
+                                          <Upload className="w-3.5 h-3.5" />
+                                          <span>Upload</span>
+                                          <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                              const file = e.target.files?.[0];
+                                              if (file) {
+                                                const reader = new FileReader();
+                                                reader.onload = (uploadEvent) => {
+                                                  const result = uploadEvent.target?.result as string;
+                                                  if (result) {
+                                                    const updated = [...cards];
+                                                    updated[cIdx] = { ...updated[cIdx], avatarUrl: result };
+                                                    setTempData({
+                                                      ...tempData,
+                                                      reviewsArticle: { ...curRev, reviewCards: updated },
+                                                    });
+                                                  }
+                                                };
+                                                reader.readAsDataURL(file);
+                                              }
+                                            }}
+                                          />
+                                        </label>
+                                      </div>
+                                      <p className="text-[10px] text-slate-400">
+                                        Supports JPG, PNG, WEBP, or direct image URLs.
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
 
