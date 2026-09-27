@@ -310,6 +310,7 @@ interface ReviewCategoryParagraph {
 interface DetailedReviewCard {
   id: string;
   authorName: string;
+  avatarUrl?: string;
   avatarInitial?: string;
   avatarBgColor?: string;
   verified: boolean;
@@ -347,6 +348,7 @@ const DEFAULT_MORE_REVIEW_CARDS: DetailedReviewCard[] = [
   {
     id: "more-rev-1",
     authorName: "Sneha Mukherjee",
+    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80",
     avatarInitial: "S",
     avatarBgColor: "bg-teal-100 text-teal-800",
     verified: true,
@@ -389,6 +391,7 @@ const DEFAULT_MORE_REVIEW_CARDS: DetailedReviewCard[] = [
   {
     id: "more-rev-2",
     authorName: "Vikramaditya Rao",
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
     avatarInitial: "V",
     avatarBgColor: "bg-blue-100 text-blue-800",
     verified: true,
@@ -431,6 +434,7 @@ const DEFAULT_MORE_REVIEW_CARDS: DetailedReviewCard[] = [
   {
     id: "more-rev-3",
     authorName: "Ananya Sen",
+    avatarUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300&auto=format&fit=crop&q=80",
     avatarInitial: "A",
     avatarBgColor: "bg-pink-100 text-pink-800",
     verified: true,
@@ -473,6 +477,7 @@ const DEFAULT_MORE_REVIEW_CARDS: DetailedReviewCard[] = [
   {
     id: "more-rev-4",
     authorName: "Harsh Vardhan Singh",
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80",
     avatarInitial: "H",
     avatarBgColor: "bg-indigo-100 text-indigo-800",
     verified: true,
@@ -515,6 +520,7 @@ const DEFAULT_MORE_REVIEW_CARDS: DetailedReviewCard[] = [
   {
     id: "more-rev-5",
     authorName: "Divya Kulkarni",
+    avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80",
     avatarInitial: "D",
     avatarBgColor: "bg-emerald-100 text-emerald-800",
     verified: true,
@@ -651,6 +657,7 @@ const DEFAULT_DETAILED_REVIEW_CARDS: DetailedReviewCard[] = [
   {
     id: "rev-1",
     authorName: "Abhishek Sharma",
+    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
     avatarInitial: "A",
     avatarBgColor: "bg-amber-100 text-amber-800",
     verified: true,
@@ -693,6 +700,7 @@ const DEFAULT_DETAILED_REVIEW_CARDS: DetailedReviewCard[] = [
   {
     id: "rev-2",
     authorName: "Priya Deshmukh",
+    avatarUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&auto=format&fit=crop&q=80",
     avatarInitial: "P",
     avatarBgColor: "bg-purple-100 text-purple-800",
     verified: true,
@@ -735,6 +743,7 @@ const DEFAULT_DETAILED_REVIEW_CARDS: DetailedReviewCard[] = [
   {
     id: "rev-3",
     authorName: "Rohan Mehta",
+    avatarUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop&q=80",
     avatarInitial: "R",
     avatarBgColor: "bg-blue-100 text-blue-800",
     verified: true,
@@ -7160,13 +7169,27 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                   {/* Top Row: Avatar + Author Info + Score Badge */}
                                   <div className="flex items-start justify-between gap-3">
                                     <div className="flex items-center gap-3">
-                                      {/* Avatar Initial Circle */}
-                                      <div
-                                        className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-bold text-base sm:text-lg font-outfit shrink-0 shadow-2xs ${
-                                          card.avatarBgColor || "bg-amber-100 text-amber-800"
-                                        }`}
-                                      >
-                                        {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                      {/* 2X Double Size Square Avatar Box with Photo / Letter */}
+                                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden shrink-0 border-2 border-slate-100 shadow-sm relative bg-slate-100 flex items-center justify-center">
+                                        {card.avatarUrl ? (
+                                          <img
+                                            src={card.avatarUrl}
+                                            alt={card.authorName}
+                                            className="w-full h-full object-cover object-center"
+                                            onError={(e) => {
+                                              (e.currentTarget as HTMLElement).style.display = "none";
+                                              const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                              if (fallback) fallback.style.display = "flex";
+                                            }}
+                                          />
+                                        ) : null}
+                                        <div
+                                          className={`w-full h-full flex items-center justify-center font-black text-xl sm:text-2xl font-outfit ${
+                                            card.avatarBgColor || "bg-amber-100 text-amber-800"
+                                          } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                        >
+                                          {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                        </div>
                                       </div>
 
                                       {/* Name & Degree */}
@@ -7577,13 +7600,27 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                         {/* Top Row: Avatar + Author Info + Score Badge */}
                                         <div className="flex items-start justify-between gap-3">
                                           <div className="flex items-center gap-3">
-                                            {/* Avatar Initial Circle */}
-                                            <div
-                                              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-bold text-base sm:text-lg font-outfit shrink-0 shadow-2xs ${
-                                                card.avatarBgColor || "bg-teal-100 text-teal-800"
-                                              }`}
-                                            >
-                                              {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                            {/* 2X Double Size Square Avatar Box with Photo / Letter */}
+                                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden shrink-0 border-2 border-slate-100 shadow-sm relative bg-slate-100 flex items-center justify-center">
+                                              {card.avatarUrl ? (
+                                                <img
+                                                  src={card.avatarUrl}
+                                                  alt={card.authorName}
+                                                  className="w-full h-full object-cover object-center"
+                                                  onError={(e) => {
+                                                    (e.currentTarget as HTMLElement).style.display = "none";
+                                                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                                    if (fallback) fallback.style.display = "flex";
+                                                  }}
+                                                />
+                                              ) : null}
+                                              <div
+                                                className={`w-full h-full flex items-center justify-center font-black text-xl sm:text-2xl font-outfit ${
+                                                  card.avatarBgColor || "bg-teal-100 text-teal-800"
+                                                } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                              >
+                                                {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                              </div>
                                             </div>
 
                                             {/* Name & Degree */}
@@ -14922,7 +14959,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                   </div>
 
                                   <div>
-                                    <label className="text-[10.5px] font-bold text-slate-600 block">Avatar Letter / Color</label>
+                                    <label className="text-[10.5px] font-bold text-slate-600 block">Avatar Letter (Fallback)</label>
                                     <input
                                       type="text"
                                       value={card.avatarInitial || ""}
@@ -15734,7 +15771,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                   </div>
 
                                   <div>
-                                    <label className="text-[10.5px] font-bold text-slate-600 block">Avatar Letter / Color</label>
+                                    <label className="text-[10.5px] font-bold text-slate-600 block">Avatar Letter (Fallback)</label>
                                     <input
                                       type="text"
                                       value={card.avatarInitial || ""}
