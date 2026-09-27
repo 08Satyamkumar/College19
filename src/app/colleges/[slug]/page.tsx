@@ -56,6 +56,12 @@ import {
   Bell,
   ThumbsUp,
   ThumbsDown,
+  Play,
+  Film,
+  Camera,
+  Eye,
+  Upload,
+  Video,
 } from "lucide-react";
 
 interface CourseItem {
@@ -317,7 +323,77 @@ interface DetailedReviewCard {
   dislikesCount?: number;
 }
 
+interface StudentMediaReviewItem {
+  id: string;
+  type: "video" | "image";
+  title: string;
+  mediaUrl: string;
+  thumbnailUrl?: string;
+  duration?: string;
+  authorName?: string;
+  batch?: string;
+}
 
+interface StudentMediaReviewsData {
+  title?: string;
+  items: StudentMediaReviewItem[];
+}
+
+
+
+
+const DEFAULT_STUDENT_MEDIA_REVIEWS: StudentMediaReviewItem[] = [
+  {
+    id: "media-1",
+    type: "video",
+    title: "#pov : You are at #iit #iitdelhi #lights...",
+    mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80",
+    duration: "00:45",
+    authorName: "Karan Verma",
+    batch: "B.Tech CSE",
+  },
+  {
+    id: "media-2",
+    type: "video",
+    title: "Wondering how IIT Delhi fares in terms of placements?",
+    mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&auto=format&fit=crop&q=80",
+    duration: "01:20",
+    authorName: "Shubham Jain",
+    batch: "B.Tech EE",
+  },
+  {
+    id: "media-3",
+    type: "video",
+    title: "IIT Delhi Placements 2024 | Salary Package...",
+    mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=80",
+    duration: "00:58",
+    authorName: "Ananya Gupta",
+    batch: "B.Tech ME",
+  },
+  {
+    id: "media-4",
+    type: "video",
+    title: "IIT Delhi Campus! IIT Delhi Hostel Room, Reality Check...",
+    mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=600&auto=format&fit=crop&q=80",
+    duration: "02:15",
+    authorName: "Rahul Sharma",
+    batch: "M.Tech Design",
+  },
+  {
+    id: "media-5",
+    type: "image",
+    title: "Campus Fest Rendezvous & Night Vibes #iitdelhi",
+    mediaUrl: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=1200&auto=format&fit=crop&q=80",
+    thumbnailUrl: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=600&auto=format&fit=crop&q=80",
+    duration: "Photo",
+    authorName: "Pooja Singh",
+    batch: "B.Tech Physics",
+  },
+];
 
 const DEFAULT_DETAILED_REVIEW_CARDS: DetailedReviewCard[] = [
   {
@@ -488,6 +564,7 @@ interface ReviewsArticleData {
   parameters?: ReviewParameterItem[];
   studentFeedback?: StudentFeedbackData;
   reviewCards?: DetailedReviewCard[];
+  mediaReviews?: StudentMediaReviewsData;
 }
 
 interface RankingsArticleData {
@@ -1441,6 +1518,7 @@ type MiniModalId =
   | "reviews"
   | "studentFeedback"
   | "reviewCards"
+  | "studentMediaReviews"
   | "admissions"
   | "placements"
   | "placements_article"
@@ -1676,6 +1754,8 @@ export default function CollegeDetailPage() {
   const [activeFeedbackCategory, setActiveFeedbackCategory] = useState<string>("Placements");
   const [expandedReviewCardIds, setExpandedReviewCardIds] = useState<Record<string, boolean>>({});
   const [reviewHelpfulVotes, setReviewHelpfulVotes] = useState<Record<string, "up" | "down" | null>>({});
+  const [activeMediaReviewModal, setActiveMediaReviewModal] = useState<StudentMediaReviewItem | null>(null);
+  const mediaReviewsScrollRef = useRef<HTMLDivElement>(null);
   const [rankingsModalTab, setRankingsModalTab] = useState<"overview" | "international" | "national" | "course_boxes" | "faqs">("overview");
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -2891,6 +2971,10 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
           college.reviewsArticle.reviewCards && college.reviewsArticle.reviewCards.length > 0
             ? college.reviewsArticle.reviewCards
             : DEFAULT_DETAILED_REVIEW_CARDS,
+        mediaReviews: college.reviewsArticle.mediaReviews || {
+          title: "Student Video Reviews",
+          items: DEFAULT_STUDENT_MEDIA_REVIEWS,
+        },
       };
     }
 
@@ -2906,6 +2990,10 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
         categories: DEFAULT_STUDENT_FEEDBACK_CATEGORIES,
       },
       reviewCards: DEFAULT_DETAILED_REVIEW_CARDS,
+      mediaReviews: {
+        title: "Student Video Reviews",
+        items: DEFAULT_STUDENT_MEDIA_REVIEWS,
+      },
     };
   };
 
@@ -6917,6 +7005,139 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                               );
                             })}
                           </div>
+
+                          {/* STUDENT VIDEO & IMAGE REVIEWS CAROUSEL SECTION */}
+                          {(() => {
+                            const mediaData = revData.mediaReviews || {
+                              title: "Student Video Reviews",
+                              items: DEFAULT_STUDENT_MEDIA_REVIEWS,
+                            };
+                            const mediaItems = (mediaData.items && mediaData.items.length > 0)
+                              ? mediaData.items
+                              : DEFAULT_STUDENT_MEDIA_REVIEWS;
+
+                            const scrollMedia = (direction: "left" | "right") => {
+                              if (mediaReviewsScrollRef.current) {
+                                const scrollAmount = 260;
+                                mediaReviewsScrollRef.current.scrollBy({
+                                  left: direction === "left" ? -scrollAmount : scrollAmount,
+                                  behavior: "smooth",
+                                });
+                              }
+                            };
+
+                            return (
+                              <div className="pt-6 mt-4 border-t border-slate-100 space-y-4">
+                                {/* Header Row with Title & Admin Edit Button */}
+                                <div className="flex items-center justify-between gap-3">
+                                  <h4 className="font-outfit font-bold text-base sm:text-lg text-slate-900">
+                                    {mediaData.title || "Student Video Reviews"}
+                                  </h4>
+                                  {isAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openMiniModal("studentMediaReviews")}
+                                      className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                                    >
+                                      <Edit className="w-3.5 h-3.5" />
+                                      <span>Edit Video Reviews</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Carousel Container with Floating Next/Prev Arrow */}
+                                <div className="relative group/carousel">
+                                  {/* Left Scroll Button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => scrollMedia("left")}
+                                    className="absolute -left-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/95 hover:bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/carousel:opacity-100"
+                                  >
+                                    <ChevronLeft className="w-5 h-5" />
+                                  </button>
+
+                                  {/* Horizontal Scroll Cards Row */}
+                                  <div
+                                    ref={mediaReviewsScrollRef}
+                                    className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 no-scrollbar snap-x snap-mandatory"
+                                  >
+                                    {mediaItems.map((item: StudentMediaReviewItem, mIdx: number) => {
+                                      const isVideo = item.type === "video";
+                                      return (
+                                        <div
+                                          key={item.id || mIdx}
+                                          onClick={() => setActiveMediaReviewModal(item)}
+                                          className="w-[170px] sm:w-[200px] h-[290px] sm:h-[330px] shrink-0 rounded-2xl overflow-hidden relative group/card cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 border border-slate-200/90 bg-slate-950 snap-center select-none"
+                                        >
+                                          {/* Background Thumbnail Image */}
+                                          <img
+                                            src={item.thumbnailUrl || item.mediaUrl || "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80"}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500"
+                                          />
+
+                                          {/* Top Tag Badge (Video / Image) */}
+                                          <div className="absolute top-2.5 left-2.5 z-10">
+                                            <div className="px-2 py-0.5 rounded-md bg-black/50 backdrop-blur-md border border-white/20 text-white text-[10.5px] font-bold flex items-center gap-1 shadow-2xs">
+                                              {isVideo ? (
+                                                <Video className="w-3 h-3 text-red-400" />
+                                              ) : (
+                                                <Camera className="w-3 h-3 text-cyan-400" />
+                                              )}
+                                              <span>{isVideo ? "Video" : "Photo"}</span>
+                                            </div>
+                                          </div>
+
+                                          {/* Top Right Source Badge */}
+                                          <div className="absolute top-2.5 right-2.5 z-10">
+                                            <div className="px-1.5 py-0.5 rounded bg-white/90 text-slate-800 text-[9px] font-bold shadow-2xs">
+                                              tyc.com
+                                            </div>
+                                          </div>
+
+                                          {/* Center Play Button Overlay */}
+                                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                            <div className="w-11 h-11 rounded-full bg-white/80 group-hover/card:bg-white text-slate-900 flex items-center justify-center shadow-lg group-hover/card:scale-115 transition-all duration-300 backdrop-blur-xs">
+                                              {isVideo ? (
+                                                <Play className="w-5 h-5 fill-slate-900 text-slate-900 ml-0.5" />
+                                              ) : (
+                                                <Eye className="w-5 h-5 text-slate-900" />
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          {/* Dark Gradient Overlay at Bottom for Readable Caption */}
+                                          <div className="absolute inset-x-0 bottom-0 pt-16 pb-3 px-3 bg-gradient-to-t from-black/95 via-black/60 to-transparent z-10 flex flex-col justify-end">
+                                            {/* Caption Title */}
+                                            <p className="font-outfit font-bold text-xs sm:text-[13px] text-white line-clamp-2 leading-snug drop-shadow-sm">
+                                              {item.title}
+                                            </p>
+
+                                            {/* Footer Duration / Tag */}
+                                            <div className="flex items-center justify-between text-[10.5px] text-slate-300 font-medium pt-1.5">
+                                              <span>{item.authorName || "Student Review"}</span>
+                                              <span className="font-mono font-bold bg-white/20 px-1.5 py-0.2 rounded text-[10px] text-white">
+                                                {item.duration || "00:00"}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+
+                                  {/* Right Scroll Button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => scrollMedia("right")}
+                                    className="absolute -right-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/95 hover:bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/carousel:opacity-100"
+                                  >
+                                    <ChevronRight className="w-5 h-5" />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })()}
                         </div>
                       );
                     })()}
@@ -13992,7 +14213,379 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                   </div>
                 )}
 
-                {/* MODAL: DETAILED STUDENT REVIEW CARDS */}
+                {/* MODAL: STUDENT VIDEO & IMAGE REVIEWS */}
+                {activeMiniModal === "studentMediaReviews" && (
+                  <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+                    {(() => {
+                      const curRev = tempData.reviewsArticle || getCollegeReviewsArticle(tempData);
+                      const curMedia = curRev.mediaReviews || {
+                        title: "Student Video Reviews",
+                        items: DEFAULT_STUDENT_MEDIA_REVIEWS,
+                      };
+                      const items = (curMedia.items && curMedia.items.length > 0)
+                        ? curMedia.items
+                        : DEFAULT_STUDENT_MEDIA_REVIEWS;
+
+                      return (
+                        <div className="space-y-4">
+                          {/* Section Title */}
+                          <div className="space-y-1">
+                            <label className="text-xs font-bold text-slate-700 block">Section Title</label>
+                            <input
+                              type="text"
+                              value={curMedia.title || ""}
+                              onChange={(e) => {
+                                setTempData({
+                                  ...tempData,
+                                  reviewsArticle: {
+                                    ...curRev,
+                                    mediaReviews: {
+                                      ...curMedia,
+                                      title: e.target.value,
+                                    },
+                                  },
+                                });
+                              }}
+                              className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                              placeholder="Student Video Reviews"
+                            />
+                          </div>
+
+                          {/* Media Items List Header */}
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                              Video & Image Items ({items.length})
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newItem: StudentMediaReviewItem = {
+                                  id: `media-${Date.now()}`,
+                                  type: "video",
+                                  title: "New Student Video Review",
+                                  mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+                                  thumbnailUrl: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80",
+                                  duration: "00:45",
+                                  authorName: "Student Name",
+                                  batch: "B.Tech",
+                                };
+                                const updated = [...items, newItem];
+                                setTempData({
+                                  ...tempData,
+                                  reviewsArticle: {
+                                    ...curRev,
+                                    mediaReviews: {
+                                      ...curMedia,
+                                      items: updated,
+                                    },
+                                  },
+                                });
+                              }}
+                              className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-200 flex items-center gap-1"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add Media Item</span>
+                            </button>
+                          </div>
+
+                          {/* Media Items Cards */}
+                          <div className="space-y-4">
+                            {items.map((item: StudentMediaReviewItem, mIdx: number) => (
+                              <div
+                                key={item.id || mIdx}
+                                className="p-4 bg-white border border-slate-200 rounded-xl space-y-3 shadow-2xs relative"
+                              >
+                                {/* Item Header */}
+                                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-bold text-slate-800">
+                                      Media #{mIdx + 1}
+                                    </span>
+                                    {/* Type Switcher */}
+                                    <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const updated = [...items];
+                                          updated[mIdx] = { ...updated[mIdx], type: "video" };
+                                          setTempData({
+                                            ...tempData,
+                                            reviewsArticle: {
+                                              ...curRev,
+                                              mediaReviews: { ...curMedia, items: updated },
+                                            },
+                                          });
+                                        }}
+                                        className={`px-2 py-0.5 rounded text-[10.5px] font-bold ${
+                                          item.type === "video" ? "bg-red-600 text-white shadow-2xs" : "text-slate-600 hover:text-slate-900"
+                                        }`}
+                                      >
+                                        Video
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const updated = [...items];
+                                          updated[mIdx] = { ...updated[mIdx], type: "image" };
+                                          setTempData({
+                                            ...tempData,
+                                            reviewsArticle: {
+                                              ...curRev,
+                                              mediaReviews: { ...curMedia, items: updated },
+                                            },
+                                          });
+                                        }}
+                                        className={`px-2 py-0.5 rounded text-[10.5px] font-bold ${
+                                          item.type === "image" ? "bg-cyan-600 text-white shadow-2xs" : "text-slate-600 hover:text-slate-900"
+                                        }`}
+                                      >
+                                        Image
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {items.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updated = items.filter((_: any, i: number) => i !== mIdx);
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: {
+                                            ...curRev,
+                                            mediaReviews: { ...curMedia, items: updated },
+                                          },
+                                        });
+                                      }}
+                                      className="p-1 text-red-500 hover:bg-red-50 rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <span>Delete</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Title & Duration */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                  <div className="sm:col-span-2">
+                                    <label className="text-[10.5px] font-bold text-slate-600 block">Title / Caption</label>
+                                    <input
+                                      type="text"
+                                      value={item.title}
+                                      onChange={(e) => {
+                                        const updated = [...items];
+                                        updated[mIdx] = { ...updated[mIdx], title: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: {
+                                            ...curRev,
+                                            mediaReviews: { ...curMedia, items: updated },
+                                          },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-[10.5px] font-bold text-slate-600 block">Duration / Tag</label>
+                                    <input
+                                      type="text"
+                                      value={item.duration || ""}
+                                      placeholder="e.g. 00:45"
+                                      onChange={(e) => {
+                                        const updated = [...items];
+                                        updated[mIdx] = { ...updated[mIdx], duration: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: {
+                                            ...curRev,
+                                            mediaReviews: { ...curMedia, items: updated },
+                                          },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Author & Batch */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  <div>
+                                    <label className="text-[10.5px] font-bold text-slate-600 block">Student Author Name</label>
+                                    <input
+                                      type="text"
+                                      value={item.authorName || ""}
+                                      placeholder="e.g. Karan Verma"
+                                      onChange={(e) => {
+                                        const updated = [...items];
+                                        updated[mIdx] = { ...updated[mIdx], authorName: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: {
+                                            ...curRev,
+                                            mediaReviews: { ...curMedia, items: updated },
+                                          },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-[10.5px] font-bold text-slate-600 block">Course / Batch</label>
+                                    <input
+                                      type="text"
+                                      value={item.batch || ""}
+                                      placeholder="e.g. B.Tech CSE"
+                                      onChange={(e) => {
+                                        const updated = [...items];
+                                        updated[mIdx] = { ...updated[mIdx], batch: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: {
+                                            ...curRev,
+                                            mediaReviews: { ...curMedia, items: updated },
+                                          },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Media Source URL & File Upload Support */}
+                                <div className="space-y-1.5 p-2.5 bg-slate-50 rounded-xl border border-slate-200/80">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-[11px] font-bold text-slate-700 block">
+                                      {item.type === "video" ? "Video Source (File Upload or Link)" : "Image Source (File Upload or Link)"}
+                                    </label>
+                                  </div>
+
+                                  {/* Direct URL Input */}
+                                  <input
+                                    type="text"
+                                    value={item.mediaUrl}
+                                    placeholder={item.type === "video" ? "Paste MP4 / YouTube embed URL..." : "Paste Image URL..."}
+                                    onChange={(e) => {
+                                      const updated = [...items];
+                                      updated[mIdx] = { ...updated[mIdx], mediaUrl: e.target.value };
+                                      setTempData({
+                                        ...tempData,
+                                        reviewsArticle: {
+                                          ...curRev,
+                                          mediaReviews: { ...curMedia, items: updated },
+                                        },
+                                      });
+                                    }}
+                                    className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-mono text-slate-800"
+                                  />
+
+                                  {/* File Upload Button */}
+                                  <div className="flex items-center gap-2 pt-1">
+                                    <label className="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:border-slate-400 text-slate-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95">
+                                      <Upload className="w-3.5 h-3.5 text-blue-600" />
+                                      <span>Upload from Computer</span>
+                                      <input
+                                        type="file"
+                                        accept={item.type === "video" ? "video/*" : "image/*"}
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) {
+                                            const reader = new FileReader();
+                                            reader.onload = (uploadEvent) => {
+                                              const result = uploadEvent.target?.result as string;
+                                              if (result) {
+                                                const updated = [...items];
+                                                updated[mIdx] = {
+                                                  ...updated[mIdx],
+                                                  mediaUrl: result,
+                                                  thumbnailUrl: item.type === "image" ? result : updated[mIdx].thumbnailUrl,
+                                                };
+                                                setTempData({
+                                                  ...tempData,
+                                                  reviewsArticle: {
+                                                    ...curRev,
+                                                    mediaReviews: { ...curMedia, items: updated },
+                                                  },
+                                                });
+                                              }
+                                            };
+                                            reader.readAsDataURL(file);
+                                          }
+                                        }}
+                                      />
+                                    </label>
+                                    <span className="text-[10px] text-slate-400">Supports MP4, WebM, JPG, PNG, WEBP</span>
+                                  </div>
+                                </div>
+
+                                {/* Thumbnail Image (URL or Upload) */}
+                                <div className="space-y-1.5 p-2.5 bg-slate-50 rounded-xl border border-slate-200/80">
+                                  <label className="text-[11px] font-bold text-slate-700 block">
+                                    Thumbnail Image Preview (URL or Upload)
+                                  </label>
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={item.thumbnailUrl || ""}
+                                      placeholder="Thumbnail image URL..."
+                                      onChange={(e) => {
+                                        const updated = [...items];
+                                        updated[mIdx] = { ...updated[mIdx], thumbnailUrl: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          reviewsArticle: {
+                                            ...curRev,
+                                            mediaReviews: { ...curMedia, items: updated },
+                                          },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-mono text-slate-800"
+                                    />
+                                    <label className="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:border-slate-400 text-slate-700 text-xs font-bold flex items-center gap-1 cursor-pointer shrink-0 shadow-2xs active:scale-95">
+                                      <Upload className="w-3.5 h-3.5 text-indigo-600" />
+                                      <span>Upload</span>
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) {
+                                            const reader = new FileReader();
+                                            reader.onload = (uploadEvent) => {
+                                              const result = uploadEvent.target?.result as string;
+                                              if (result) {
+                                                const updated = [...items];
+                                                updated[mIdx] = { ...updated[mIdx], thumbnailUrl: result };
+                                                setTempData({
+                                                  ...tempData,
+                                                  reviewsArticle: {
+                                                    ...curRev,
+                                                    mediaReviews: { ...curMedia, items: updated },
+                                                  },
+                                                });
+                                              }
+                                            };
+                                            reader.readAsDataURL(file);
+                                          }
+                                        }}
+                                      />
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {`/* MODAL: DETAILED STUDENT REVIEW CARDS */`}
                 {activeMiniModal === "reviewCards" && (
                   <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
                     {(() => {
