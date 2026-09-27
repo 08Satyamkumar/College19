@@ -6517,7 +6517,8 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    alert("Full Student Feedback on " + (activeItem?.category || "Likes") + ":\n\n" + activeItem?.likesText);
+                                    setActiveTab("reviews");
+                                    document.getElementById("college-nav-tabs-bar")?.scrollIntoView({ behavior: "smooth" });
                                   }}
                                   className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                                 >
@@ -6547,7 +6548,8 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    alert("Full Student Feedback on " + (activeItem?.category || "Dislikes") + ":\n\n" + activeItem?.dislikesText);
+                                    setActiveTab("reviews");
+                                    document.getElementById("college-nav-tabs-bar")?.scrollIntoView({ behavior: "smooth" });
                                   }}
                                   className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                                 >
