@@ -17999,6 +17999,626 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
 
                 
                 
+                
+                {/* MODAL: CAMPUS & FACILITIES COMPLETE EDIT */}
+                {(activeMiniModal === "campus_facilities" || activeMiniModal === "hostel") && (
+                  <div className="space-y-5 max-h-[75vh] overflow-y-auto pr-2">
+                    {(() => {
+                      const curCampus = tempData.campusFacilitiesArticle || getCollegeCampusFacilitiesArticle(tempData);
+                      const highlights = curCampus.highlightsBullets || [];
+                      const feeTable = curCampus.hostelFeeTable || { headers: ["Fee Component", "Amount", "Frequency", "Remark"], rows: [] };
+                      const additionalBullets = curCampus.additionalFacilitiesBullets || [];
+                      const facilityIcons = curCampus.facilityIcons || [];
+                      const insightsCards = curCampus.insightsCards || [];
+
+                      const updateCampus = (updatedFields: Partial<CampusFacilitiesArticleData>) => {
+                        setTempData({
+                          ...tempData,
+                          campusFacilitiesArticle: {
+                            ...curCampus,
+                            ...updatedFields,
+                          },
+                        });
+                      };
+
+                      return (
+                        <div className="space-y-6">
+                          <div className="bg-purple-50 p-3.5 rounded-2xl border border-purple-100 text-xs text-purple-900 font-medium">
+                            Edit all information for Campus & Facilities: Section Heading, Area, Highlights, Hostel Guides, Fee Structure Table, Additional Facilities, Icon Row, and Infrastructure Insights Cards.
+                          </div>
+
+                          {/* 1. GENERAL CAMPUS OVERVIEW */}
+                          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                              1. General Section Details
+                            </h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              <div className="sm:col-span-2">
+                                <label className="text-[11px] font-bold text-slate-600 block mb-1">Section Title</label>
+                                <input
+                                  type="text"
+                                  value={curCampus.title || ""}
+                                  onChange={(e) => updateCampus({ title: e.target.value })}
+                                  placeholder="IIT Delhi Campus & Facilities 2026"
+                                  className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-600 block mb-1">Campus Area</label>
+                                <input
+                                  type="text"
+                                  value={curCampus.campusArea || ""}
+                                  onChange={(e) => updateCampus({ campusArea: e.target.value })}
+                                  placeholder="e.g. 320 Acres"
+                                  className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="text-[11px] font-bold text-slate-600 block mb-1">Introductory Paragraph</label>
+                              <textarea
+                                rows={3}
+                                value={curCampus.introText || ""}
+                                onChange={(e) => updateCampus({ introText: e.target.value })}
+                                placeholder="Introductory overview of campus infrastructure..."
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs"
+                              />
+                            </div>
+                          </div>
+
+                          {/* 2. CAMPUS HIGHLIGHTS BULLETS */}
+                          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                                2. Campus Highlights Bullets ({highlights.length})
+                              </h4>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  updateCampus({
+                                    highlightsBullets: [...highlights, { text: "New campus highlight point..." }],
+                                  });
+                                }}
+                                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add Bullet</span>
+                              </button>
+                            </div>
+
+                            <div>
+                              <label className="text-[11px] font-bold text-slate-600 block mb-1">Highlights Heading</label>
+                              <input
+                                type="text"
+                                value={curCampus.highlightsHeading || ""}
+                                onChange={(e) => updateCampus({ highlightsHeading: e.target.value })}
+                                placeholder="IIT Delhi Campus Highlights"
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              {highlights.map((bullet: CampusHighlightBullet, bIdx: number) => (
+                                <div key={bIdx} className="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-xl">
+                                  <span className="text-xs font-bold text-slate-400 w-5 text-center">{bIdx + 1}</span>
+                                  <input
+                                    type="text"
+                                    value={bullet.text}
+                                    onChange={(e) => {
+                                      const updated = [...highlights];
+                                      updated[bIdx] = { text: e.target.value };
+                                      updateCampus({ highlightsBullets: updated });
+                                    }}
+                                    className="flex-1 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = highlights.filter((_, i) => i !== bIdx);
+                                      updateCampus({ highlightsBullets: updated });
+                                    }}
+                                    className="text-red-500 hover:text-red-700 p-1 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* 3. HOSTEL DETAILS & RULE BOOK CALLOUT */}
+                          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                              3. Hostel Details & Rule Book Guide
+                            </h4>
+                            <div>
+                              <label className="text-[11px] font-bold text-slate-600 block mb-1">Hostel Subheading</label>
+                              <input
+                                type="text"
+                                value={curCampus.hostelHeading || ""}
+                                onChange={(e) => updateCampus({ hostelHeading: e.target.value })}
+                                placeholder="How are IIT Delhi Hostels?"
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="text-[11px] font-bold text-slate-600 block mb-1">Hostel Overview Paragraph</label>
+                              <textarea
+                                rows={3}
+                                value={curCampus.hostelIntroText || ""}
+                                onChange={(e) => updateCampus({ hostelIntroText: e.target.value })}
+                                placeholder="Hostel overview description..."
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs"
+                              />
+                            </div>
+
+                            <div className="p-3 bg-white border border-slate-200 rounded-xl space-y-2">
+                              <label className="text-[11px] font-bold text-slate-700 block">Download Rule Book Callout Box</label>
+                              <textarea
+                                rows={2}
+                                value={curCampus.hostelGuideCallout?.text || ""}
+                                onChange={(e) =>
+                                  updateCampus({
+                                    hostelGuideCallout: {
+                                      ...curCampus.hostelGuideCallout,
+                                      text: e.target.value,
+                                      linkText: curCampus.hostelGuideCallout?.linkText || "Download Hostel Guide",
+                                      downloadUrl: curCampus.hostelGuideCallout?.downloadUrl || "#",
+                                    },
+                                  })
+                                }
+                                placeholder="Rule book callout text..."
+                                className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                              />
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <input
+                                  type="text"
+                                  value={curCampus.hostelGuideCallout?.linkText || ""}
+                                  onChange={(e) =>
+                                    updateCampus({
+                                      hostelGuideCallout: {
+                                        ...curCampus.hostelGuideCallout,
+                                        text: curCampus.hostelGuideCallout?.text || "",
+                                        linkText: e.target.value,
+                                        downloadUrl: curCampus.hostelGuideCallout?.downloadUrl || "#",
+                                      },
+                                    })
+                                  }
+                                  placeholder="Link text (e.g. Download IIT Delhi Hostel Guide)"
+                                  className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold"
+                                />
+                                <input
+                                  type="text"
+                                  value={curCampus.hostelGuideCallout?.downloadUrl || ""}
+                                  onChange={(e) =>
+                                    updateCampus({
+                                      hostelGuideCallout: {
+                                        ...curCampus.hostelGuideCallout,
+                                        text: curCampus.hostelGuideCallout?.text || "",
+                                        linkText: curCampus.hostelGuideCallout?.linkText || "Download Hostel Guide",
+                                        downloadUrl: e.target.value,
+                                      },
+                                    })
+                                  }
+                                  placeholder="Download URL or PDF link..."
+                                  className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 4. HOSTEL FEE TABLE */}
+                          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                                4. Hostel Fee Structure Table ({feeTable.rows.length} Rows)
+                              </h4>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newRow: HostelFeeRow = {
+                                    component: "New Fee Component",
+                                    amount: "10,000",
+                                    frequency: "Per Semester",
+                                    remark: "Standard charge",
+                                  };
+                                  updateCampus({
+                                    hostelFeeTable: {
+                                      ...feeTable,
+                                      rows: [...feeTable.rows, newRow],
+                                    },
+                                  });
+                                }}
+                                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add Fee Row</span>
+                              </button>
+                            </div>
+
+                            <div>
+                              <label className="text-[11px] font-bold text-slate-600 block mb-1">Fee Table Intro Text</label>
+                              <input
+                                type="text"
+                                value={curCampus.hostelFeeIntroText || ""}
+                                onChange={(e) => updateCampus({ hostelFeeIntroText: e.target.value })}
+                                placeholder="Total hostel fee consists of one-time charges..."
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs"
+                              />
+                            </div>
+
+                            <div className="space-y-2.5">
+                              {feeTable.rows.map((row: HostelFeeRow, rIdx: number) => (
+                                <div key={rIdx} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2">
+                                  <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                                    <span className="text-xs font-bold text-slate-700">Fee Item #{rIdx + 1}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updatedRows = feeTable.rows.filter((_, i) => i !== rIdx);
+                                        updateCampus({
+                                          hostelFeeTable: { ...feeTable, rows: updatedRows },
+                                        });
+                                      }}
+                                      className="text-red-500 hover:text-red-700 text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <span>Delete</span>
+                                    </button>
+                                  </div>
+                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <input
+                                      type="text"
+                                      value={row.component}
+                                      onChange={(e) => {
+                                        const updated = [...feeTable.rows];
+                                        updated[rIdx] = { ...updated[rIdx], component: e.target.value };
+                                        updateCampus({ hostelFeeTable: { ...feeTable, rows: updated } });
+                                      }}
+                                      placeholder="Component (e.g. Security Deposit)"
+                                      className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-semibold"
+                                    />
+                                    <input
+                                      type="text"
+                                      value={row.amount}
+                                      onChange={(e) => {
+                                        const updated = [...feeTable.rows];
+                                        updated[rIdx] = { ...updated[rIdx], amount: e.target.value };
+                                        updateCampus({ hostelFeeTable: { ...feeTable, rows: updated } });
+                                      }}
+                                      placeholder="Amount (e.g. 15,000)"
+                                      className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-bold text-emerald-700"
+                                    />
+                                    <input
+                                      type="text"
+                                      value={row.frequency}
+                                      onChange={(e) => {
+                                        const updated = [...feeTable.rows];
+                                        updated[rIdx] = { ...updated[rIdx], frequency: e.target.value };
+                                        updateCampus({ hostelFeeTable: { ...feeTable, rows: updated } });
+                                      }}
+                                      placeholder="Frequency (e.g. One Time / Per Sem)"
+                                      className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs"
+                                    />
+                                  </div>
+                                  <input
+                                    type="text"
+                                    value={row.remark || ""}
+                                    onChange={(e) => {
+                                      const updated = [...feeTable.rows];
+                                      updated[rIdx] = { ...updated[rIdx], remark: e.target.value };
+                                      updateCampus({ hostelFeeTable: { ...feeTable, rows: updated } });
+                                    }}
+                                    placeholder="Remark (e.g. Refundable / Applicable only to New Hostel)"
+                                    className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs text-slate-500"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* 5. REVIEWER NOTE & COMPULSORY Q&A */}
+                          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                              5. Student Reviewer Note & Hostel Policy Q&A
+                            </h4>
+                            <div>
+                              <label className="text-[11px] font-bold text-slate-600 block mb-1">Student Reviewer Quote</label>
+                              <textarea
+                                rows={2}
+                                value={curCampus.hostelReviewerNote || ""}
+                                onChange={(e) => updateCampus({ hostelReviewerNote: e.target.value })}
+                                placeholder="Student reviewer quote on hostel food and rooms..."
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs"
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-600 block mb-1">Hostel Compulsory Question</label>
+                                <input
+                                  type="text"
+                                  value={curCampus.hostelCompulsoryQA?.question || ""}
+                                  onChange={(e) =>
+                                    updateCampus({
+                                      hostelCompulsoryQA: {
+                                        question: e.target.value,
+                                        answer: curCampus.hostelCompulsoryQA?.answer || "",
+                                      },
+                                    })
+                                  }
+                                  placeholder="Wondering if Hostel Compulsory in IIT Delhi?"
+                                  className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-600 block mb-1">Hostel Compulsory Answer</label>
+                                <textarea
+                                  rows={2}
+                                  value={curCampus.hostelCompulsoryQA?.answer || ""}
+                                  onChange={(e) =>
+                                    updateCampus({
+                                      hostelCompulsoryQA: {
+                                        question: curCampus.hostelCompulsoryQA?.question || "",
+                                        answer: e.target.value,
+                                      },
+                                    })
+                                  }
+                                  placeholder="No, staying at the hostel is not compulsory..."
+                                  className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 6. ADDITIONAL FACILITIES BULLETS */}
+                          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                                6. Additional Campus Facilities ({additionalBullets.length})
+                              </h4>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  updateCampus({
+                                    additionalFacilitiesBullets: [...additionalBullets, "New facility item..."],
+                                  });
+                                }}
+                                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add Facility</span>
+                              </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-600 block mb-1">Heading</label>
+                                <input
+                                  type="text"
+                                  value={curCampus.additionalFacilitiesHeading || ""}
+                                  onChange={(e) => updateCampus({ additionalFacilitiesHeading: e.target.value })}
+                                  placeholder="Additional Campus Facilities"
+                                  className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-600 block mb-1">Intro Subtitle</label>
+                                <input
+                                  type="text"
+                                  value={curCampus.additionalFacilitiesIntro || ""}
+                                  onChange={(e) => updateCampus({ additionalFacilitiesIntro: e.target.value })}
+                                  placeholder="Students at IIT Delhi also benefit from:"
+                                  className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              {additionalBullets.map((item: string, idx: number) => (
+                                <div key={idx} className="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-xl">
+                                  <span className="text-xs font-bold text-slate-400 w-5 text-center">{idx + 1}</span>
+                                  <input
+                                    type="text"
+                                    value={item}
+                                    onChange={(e) => {
+                                      const updated = [...additionalBullets];
+                                      updated[idx] = e.target.value;
+                                      updateCampus({ additionalFacilitiesBullets: updated });
+                                    }}
+                                    className="flex-1 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = additionalBullets.filter((_, i) => i !== idx);
+                                      updateCampus({ additionalFacilitiesBullets: updated });
+                                    }}
+                                    className="text-red-500 hover:text-red-700 p-1 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* 7. TOP FACILITY ICONS ROW */}
+                          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                                7. Top Facility Icons ({facilityIcons.length})
+                              </h4>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newIcon: CampusFacilityIconItem = {
+                                    id: `fac-${Date.now()}`,
+                                    name: "Facility Name",
+                                    iconType: "library",
+                                  };
+                                  updateCampus({
+                                    facilityIcons: [...facilityIcons, newIcon],
+                                  });
+                                }}
+                                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add Icon</span>
+                              </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              {facilityIcons.map((fac: CampusFacilityIconItem, fIdx: number) => (
+                                <div key={fac.id || fIdx} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-slate-700">Icon #{fIdx + 1}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updated = facilityIcons.filter((_, i) => i !== fIdx);
+                                        updateCampus({ facilityIcons: updated });
+                                      }}
+                                      className="text-red-500 hover:text-red-700 text-xs font-semibold cursor-pointer"
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div>
+                                      <label className="text-[10px] font-bold text-slate-500 block">Name</label>
+                                      <input
+                                        type="text"
+                                        value={fac.name}
+                                        onChange={(e) => {
+                                          const updated = [...facilityIcons];
+                                          updated[fIdx] = { ...updated[fIdx], name: e.target.value };
+                                          updateCampus({ facilityIcons: updated });
+                                        }}
+                                        className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-bold"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="text-[10px] font-bold text-slate-500 block">Type (library, cafeteria, hostel, sports, labs, wifi)</label>
+                                      <input
+                                        type="text"
+                                        value={fac.iconType}
+                                        onChange={(e) => {
+                                          const updated = [...facilityIcons];
+                                          updated[fIdx] = { ...updated[fIdx], iconType: e.target.value };
+                                          updateCampus({ facilityIcons: updated });
+                                        }}
+                                        className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* 8. INSIGHTS ON INFRASTRUCTURE CAROUSEL CARDS */}
+                          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                                8. Insights on Infrastructure Cards ({insightsCards.length})
+                              </h4>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newCard: InfrastructureInsightCard = {
+                                    id: `ins-${Date.now()}`,
+                                    heading: "New Insight Heading",
+                                    content: "Detailed student review insight description...",
+                                  };
+                                  updateCampus({
+                                    insightsCards: [...insightsCards, newCard],
+                                  });
+                                }}
+                                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add Insight Card</span>
+                              </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-600 block mb-1">Carousel Heading</label>
+                                <input
+                                  type="text"
+                                  value={curCampus.insightsHeading || ""}
+                                  onChange={(e) => updateCampus({ insightsHeading: e.target.value })}
+                                  placeholder="Insights on Infrastructure"
+                                  className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-600 block mb-1">Carousel Subtitle</label>
+                                <input
+                                  type="text"
+                                  value={curCampus.insightsSubtitle || ""}
+                                  onChange={(e) => updateCampus({ insightsSubtitle: e.target.value })}
+                                  placeholder="Based on 280 Student Responses"
+                                  className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="space-y-3">
+                              {insightsCards.map((card: InfrastructureInsightCard, cIdx: number) => (
+                                <div key={card.id || cIdx} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2">
+                                  <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="text-purple-600 text-xs font-bold">✦</span>
+                                      <span className="text-xs font-bold text-slate-800">{card.heading || `Insight #${cIdx + 1}`}</span>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updated = insightsCards.filter((_, i) => i !== cIdx);
+                                        updateCampus({ insightsCards: updated });
+                                      }}
+                                      className="text-red-500 hover:text-red-700 text-xs font-semibold cursor-pointer"
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                  <input
+                                    type="text"
+                                    value={card.heading}
+                                    onChange={(e) => {
+                                      const updated = [...insightsCards];
+                                      updated[cIdx] = { ...updated[cIdx], heading: e.target.value };
+                                      updateCampus({ insightsCards: updated });
+                                    }}
+                                    placeholder="Heading (e.g. Sports facilities, Mess food)"
+                                    className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold"
+                                  />
+                                  <textarea
+                                    rows={2}
+                                    value={card.content}
+                                    onChange={(e) => {
+                                      const updated = [...insightsCards];
+                                      updated[cIdx] = { ...updated[cIdx], content: e.target.value };
+                                      updateCampus({ insightsCards: updated });
+                                    }}
+                                    placeholder="Insight description content..."
+                                    className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+
                 {/* MODAL: FACULTY DETAILS EDIT */}
                 {activeMiniModal === "faculty" && (
                   <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
