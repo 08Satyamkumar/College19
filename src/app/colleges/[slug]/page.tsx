@@ -272,6 +272,92 @@ interface CampusFacilityIconItem {
   iconType: string;
 }
 
+interface FacultyMember {
+  id?: string;
+  name: string;
+  designation: string;
+  department?: string;
+  dept?: string;
+  qualification?: string;
+  experience?: string;
+  phone?: string;
+  websiteUrl?: string;
+  avatarUrl?: string;
+}
+
+interface CollegeFacultySectionData {
+  title?: string;
+  subtitle?: string;
+  members: FacultyMember[];
+}
+
+const DEFAULT_FACULTY_MEMBERS: FacultyMember[] = [
+  {
+    id: "fac-1",
+    name: "Aaditeshwar Seth",
+    designation: "Professor",
+    department: "Computer Science & Engineering",
+    phone: "9126597256",
+    avatarUrl: "",
+  },
+  {
+    id: "fac-2",
+    name: "Naveen Garg",
+    designation: "Professor",
+    department: "Algorithms, Complexity, Optimization",
+    phone: "9126591290",
+    avatarUrl: "",
+  },
+  {
+    id: "fac-3",
+    name: "Kolin Paul",
+    designation: "Professor",
+    department: "Affordable Health Care, Embedded Systems",
+    phone: "9126596033",
+    avatarUrl: "",
+  },
+  {
+    id: "fac-4",
+    name: "Mausam",
+    designation: "Professor",
+    department: "Artificial Intelligence, Natural Language...",
+    phone: "9126596076",
+    avatarUrl: "",
+  },
+  {
+    id: "fac-5",
+    name: "Subhashis Banerjee",
+    designation: "Professor",
+    department: "Computer Vision, Artificial Intelligence",
+    phone: "9126591288",
+    avatarUrl: "",
+  },
+  {
+    id: "fac-6",
+    name: "Prem Kumar Kalra",
+    designation: "Professor",
+    department: "Computer Graphics, Virtual Reality",
+    phone: "9126591299",
+    avatarUrl: "",
+  },
+  {
+    id: "fac-7",
+    name: "Amitabha Bagchi",
+    designation: "Professor",
+    department: "Networks, Data Structures, Algorithms",
+    phone: "9126596054",
+    avatarUrl: "",
+  },
+  {
+    id: "fac-8",
+    name: "Smruti Ranjan Sarangi",
+    designation: "Professor",
+    department: "Computer Architecture, Operating Systems",
+    phone: "9126597054",
+    avatarUrl: "",
+  },
+];
+
 interface InfrastructureInsightCard {
   id?: string;
   heading: string;
@@ -1137,13 +1223,7 @@ interface GalleryPhoto {
   category: string;
 }
 
-interface FacultyMember {
-  name: string;
-  designation: string;
-  dept: string;
-  qualification: string;
-  experience: string;
-}
+// Merged into unified FacultyMember
 
 interface TableOfContentItem {
   label: string;
@@ -1279,6 +1359,8 @@ interface CollegeDetail {
   rankingsArticle?: RankingsArticleData;
   reviewsArticle?: ReviewsArticleData;
   campusFacilitiesArticle?: CampusFacilitiesArticleData;
+  facultyDetails?: CollegeFacultySectionData;
+  shortName?: string;
 }
 
 // Master Benchmark Dataset for IIT Delhi
@@ -1989,6 +2071,7 @@ Spanning over 320 acres in the historic and posh area of Hauz Khas in South Delh
     { label: "IIT Delhi Popular Courses", targetId: "courses-section", tabId: "info" },
     { label: "IIT Delhi College comparison", targetId: "compare-section", tabId: "info" },
     { label: "IIT Delhi Campus & Facilities 2026", targetId: "campus-section", tabId: "info" },
+    { label: "IIT Delhi Faculty Details", targetId: "faculty-section", tabId: "info" },
     { label: "IIT Delhi Colleges/Departments", targetId: "faculty-section", tabId: "info" },
     { label: "Top online courses you might be interested in", targetId: "courses-section", tabId: "info" },
     { label: "IIT Delhi Notable Alumni", targetId: "about-section", tabId: "info" },
@@ -2268,6 +2351,8 @@ export default function CollegeDetailPage() {
   const [activeMediaReviewModal, setActiveMediaReviewModal] = useState<StudentMediaReviewItem | null>(null);
   const mediaReviewsScrollRef = useRef<HTMLDivElement>(null);
   const infraInsightsScrollRef = useRef<HTMLDivElement>(null);
+  const facultyScrollRef = useRef<HTMLDivElement>(null);
+  const facultyTabScrollRef = useRef<HTMLDivElement>(null);
   const [rankingsModalTab, setRankingsModalTab] = useState<"overview" | "international" | "national" | "course_boxes" | "faqs">("overview");
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -3673,7 +3758,24 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
     };
   };
 
-    const getCollegeCampusFacilitiesArticle = (college: CollegeDetail): CampusFacilitiesArticleData => {
+    const getCollegeFacultyData = (college: CollegeDetail): CollegeFacultySectionData => {
+    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const abbr = (college as any).shortName || shortName.replace(/[^A-Z]/g, '') || "IITD";
+    if (college.facultyDetails && college.facultyDetails.members && college.facultyDetails.members.length > 0) {
+      return {
+        title: college.facultyDetails.title || `${college.name} [${abbr}] Faculty Details`,
+        subtitle: college.facultyDetails.subtitle || `Basic Information about the Faculty of ${college.name} [${abbr}]`,
+        members: college.facultyDetails.members,
+      };
+    }
+    return {
+      title: `${college.name} [${abbr}] Faculty Details`,
+      subtitle: `Basic Information about the Faculty of ${college.name} [${abbr}]`,
+      members: DEFAULT_FACULTY_MEMBERS,
+    };
+  };
+
+  const getCollegeCampusFacilitiesArticle = (college: CollegeDetail): CampusFacilitiesArticleData => {
     const shortName = college.name ? college.name.split(" - ")[0].split("(")[0].trim() : "College";
     const area = college.campusArea || "320 acres";
 
