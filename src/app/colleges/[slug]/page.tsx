@@ -8530,8 +8530,8 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                               </div>
 
                               {/* Footer Progress Indicator & View All Link */}
-                              <div className="flex items-center justify-between pt-1">
-                                <div className="flex items-center gap-1.5">
+                              <div className="relative flex items-center justify-between pt-2">
+                                <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 pointer-events-none">
                                   <div className="w-6 h-1.5 rounded-full bg-slate-800"></div>
                                   <div className="w-10 h-1.5 rounded-full bg-slate-200"></div>
                                 </div>
@@ -8539,14 +8539,14 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    const el = document.getElementById("reviews-section");
-                                    if (el) {
-                                      const yOffset = -90;
-                                      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                                      window.scrollTo({ top: y, behavior: "smooth" });
+                                    setActiveTab("hostel");
+                                    if (tabScrollRef.current) {
+                                      tabScrollRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                                    } else {
+                                      window.scrollTo({ top: 380, behavior: "smooth" });
                                     }
                                   }}
-                                  className="text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-[13px] flex items-center gap-1 hover:underline cursor-pointer"
+                                  className="ml-auto text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-[13px] flex items-center gap-1 hover:underline cursor-pointer"
                                 >
                                   <span>View All</span>
                                   <span>→</span>
@@ -8892,8 +8892,8 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                               </div>
 
                               {/* Footer Progress Indicator & View All Link */}
-                              <div className="flex items-center justify-between pt-1">
-                                <div className="flex items-center gap-1.5">
+                              <div className="relative flex items-center justify-between pt-2">
+                                <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 pointer-events-none">
                                   <div className="w-6 h-1.5 rounded-full bg-slate-800"></div>
                                   <div className="w-10 h-1.5 rounded-full bg-slate-200"></div>
                                 </div>
@@ -8901,14 +8901,14 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    const el = document.getElementById("reviews-section");
-                                    if (el) {
-                                      const yOffset = -90;
-                                      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                                      window.scrollTo({ top: y, behavior: "smooth" });
+                                    setActiveTab("hostel");
+                                    if (tabScrollRef.current) {
+                                      tabScrollRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                                    } else {
+                                      window.scrollTo({ top: 380, behavior: "smooth" });
                                     }
                                   }}
-                                  className="text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-[13px] flex items-center gap-1 hover:underline cursor-pointer"
+                                  className="ml-auto text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-[13px] flex items-center gap-1 hover:underline cursor-pointer"
                                 >
                                   <span>View All</span>
                                   <span>→</span>
