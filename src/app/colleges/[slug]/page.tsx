@@ -16862,7 +16862,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                   </div>
                 )}
 
-                {`/* MODAL: STUDENT VIDEO & IMAGE REVIEWS */`}
+                
                 {activeMiniModal === "studentMediaReviews" && (
                   <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
                     {(() => {
@@ -17772,7 +17772,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                   </div>
                 )}
 
-                {`/* MODAL: STUDENT FEEDBACK (LIKES & DISLIKES) */`}
+                
                 {activeMiniModal === "studentFeedback" && (
                   <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
                     {(() => {
@@ -17997,7 +17997,246 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                   </div>
                 )}
 
-                {`/* MODAL: QA */`}
+                
+                
+                {/* MODAL: FACULTY DETAILS EDIT */}
+                {activeMiniModal === "faculty" && (
+                  <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+                    {(() => {
+                      const curFac = tempData.facultyDetails || getCollegeFacultyData(tempData);
+                      const members: FacultyMember[] = curFac.members && curFac.members.length > 0 ? curFac.members : DEFAULT_FACULTY_MEMBERS;
+
+                      const handleImageUpload = (file: File, memberIndex: number) => {
+                        const reader = new FileReader();
+                        reader.onload = (uploadEvent) => {
+                          const result = uploadEvent.target?.result as string;
+                          if (result) {
+                            const updated = [...members];
+                            updated[memberIndex] = { ...updated[memberIndex], avatarUrl: result };
+                            setTempData({
+                              ...tempData,
+                              facultyDetails: { ...curFac, members: updated },
+                            });
+                          }
+                        };
+                        reader.readAsDataURL(file);
+                      };
+
+                      return (
+                        <div className="space-y-4">
+                          <div className="bg-purple-50 p-3 rounded-xl border border-purple-100 text-xs text-purple-900 font-medium">
+                            Edit Faculty Details section heading, subtitle, and list of faculty members. You can also paste image URLs or directly upload faculty photos from your device.
+                          </div>
+
+                          {/* Section Title & Subtitle */}
+                          <div className="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                            <div>
+                              <label className="text-xs font-bold text-slate-700 block mb-1">Section Title</label>
+                              <input
+                                type="text"
+                                value={curFac.title || ""}
+                                onChange={(e) =>
+                                  setTempData({
+                                    ...tempData,
+                                    facultyDetails: { ...curFac, title: e.target.value },
+                                  })
+                                }
+                                placeholder="IIT Delhi Faculty Details"
+                                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-bold text-slate-700 block mb-1">Section Subtitle</label>
+                              <input
+                                type="text"
+                                value={curFac.subtitle || ""}
+                                onChange={(e) =>
+                                  setTempData({
+                                    ...tempData,
+                                    facultyDetails: { ...curFac, subtitle: e.target.value },
+                                  })
+                                }
+                                placeholder="Basic Information about the Faculty..."
+                                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Faculty Members List */}
+                          <div className="flex items-center justify-between pt-2">
+                            <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wide">
+                              Faculty Members ({members.length})
+                            </h4>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newMember: FacultyMember = {
+                                  id: `fac-${Date.now()}`,
+                                  name: "New Faculty Member",
+                                  designation: "Professor",
+                                  department: "Department / Specialization",
+                                  phone: "9126590000",
+                                  avatarUrl: "",
+                                };
+                                setTempData({
+                                  ...tempData,
+                                  facultyDetails: { ...curFac, members: [newMember, ...members] },
+                                });
+                              }}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add Faculty Member</span>
+                            </button>
+                          </div>
+
+                          <div className="space-y-3">
+                            {members.map((member: FacultyMember, mIdx: number) => (
+                              <div
+                                key={member.id || mIdx}
+                                className="p-4 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-3"
+                              >
+                                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-9 h-9 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-200">
+                                      {member.avatarUrl ? (
+                                        <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover" />
+                                      ) : (
+                                        <span className="text-xs font-bold text-slate-500">{mIdx + 1}</span>
+                                      )}
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-800">{member.name || `Faculty #${mIdx + 1}`}</span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = members.filter((_, i) => i !== mIdx);
+                                      setTempData({
+                                        ...tempData,
+                                        facultyDetails: { ...curFac, members: updated },
+                                      });
+                                    }}
+                                    className="text-red-500 hover:text-red-700 font-bold text-xs hover:underline cursor-pointer flex items-center gap-1"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <span>Delete</span>
+                                  </button>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="text-[11px] font-bold text-slate-600 block mb-1">Faculty Name</label>
+                                    <input
+                                      type="text"
+                                      value={member.name}
+                                      onChange={(e) => {
+                                        const updated = [...members];
+                                        updated[mIdx] = { ...updated[mIdx], name: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          facultyDetails: { ...curFac, members: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-[11px] font-bold text-slate-600 block mb-1">Designation (e.g. Professor)</label>
+                                    <input
+                                      type="text"
+                                      value={member.designation}
+                                      onChange={(e) => {
+                                        const updated = [...members];
+                                        updated[mIdx] = { ...updated[mIdx], designation: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          facultyDetails: { ...curFac, members: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-[11px] font-bold text-slate-600 block mb-1">Department / Research Area</label>
+                                    <input
+                                      type="text"
+                                      value={member.department || ""}
+                                      onChange={(e) => {
+                                        const updated = [...members];
+                                        updated[mIdx] = { ...updated[mIdx], department: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          facultyDetails: { ...curFac, members: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-[11px] font-bold text-slate-600 block mb-1">Phone Number / Contact</label>
+                                    <input
+                                      type="text"
+                                      value={member.phone || ""}
+                                      onChange={(e) => {
+                                        const updated = [...members];
+                                        updated[mIdx] = { ...updated[mIdx], phone: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          facultyDetails: { ...curFac, members: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Photo URL and Direct File Upload */}
+                                <div className="space-y-1.5 pt-1 border-t border-slate-100">
+                                  <label className="text-[11px] font-bold text-slate-600 block">Faculty Photo</label>
+                                  <div className="flex flex-col sm:flex-row items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={member.avatarUrl || ""}
+                                      onChange={(e) => {
+                                        const updated = [...members];
+                                        updated[mIdx] = { ...updated[mIdx], avatarUrl: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          facultyDetails: { ...curFac, members: updated },
+                                        });
+                                      }}
+                                      placeholder="https://... or upload photo from device"
+                                      className="w-full sm:flex-1 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                                    />
+                                    <label className="w-full sm:w-auto px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold cursor-pointer transition-colors text-center shrink-0 flex items-center justify-center gap-1.5">
+                                      <Upload className="w-3.5 h-3.5" />
+                                      <span>Upload Photo</span>
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          if (e.target.files && e.target.files[0]) {
+                                            handleImageUpload(e.target.files[0], mIdx);
+                                          }
+                                        }}
+                                      />
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+
                 {activeMiniModal === "qa" && (
                   <div className="space-y-3">
                     <div className="max-h-72 overflow-y-auto space-y-3 pr-1">
