@@ -305,6 +305,76 @@ interface CollegeFacultySectionData {
   members: FacultyMember[];
 }
 
+
+interface CollegeFaqsArticleData {
+  title?: string;
+  subtitle?: string;
+  faqs?: FaqItem[];
+}
+
+const DEFAULT_COLLEGE_FAQS: FaqItem[] = [
+  {
+    question: "Is it worth doing MSc from IIT Delhi?",
+    answer: "Yes, pursuing an MSc from IIT Delhi is highly rewarding due to world-class research infrastructure, esteemed faculty, and vibrant laboratory facilities. Students get excellent academic exposure, opportunities for sponsored research projects, and placements across research labs, top ed-tech firms, analytics, and R&D divisions.",
+  },
+  {
+    question: "Which college is better for B.Tech in Mechanical Engineering: IIT Delhi or IIT Bombay?",
+    answer: "Both IIT Delhi and IIT Bombay are premier institutions in India with NIRF Top 3 rankings. IIT Delhi excels in automotive engineering, robotics, thermal sciences, and interdisciplinary computational mechanics with deep industry connections across the NCR region. IIT Bombay offers outstanding manufacturing and aerospace collaborations. Students typically choose based on location preference and specific elective labs.",
+  },
+  {
+    question: "Why you should NOT choose IIT Delhi?",
+    answer: "You might reconsider IIT Delhi only if you prefer a quiet, rural, or isolated campus environment away from a bustling metropolitan city, or if you prefer a less rigorous academic schedule. Delhi's fast-paced urban lifestyle and competitive atmosphere can be intense for students seeking a relaxed pace.",
+  },
+  {
+    question: "How many seats are available for IIT Delhi M.Tech course?",
+    answer: "IIT Delhi offers around 1,500+ seats across more than 40 M.Tech specializations and interdisciplinary programs. Admissions are primarily conducted through GATE scores followed by COAP counselling and departmental written tests/interviews.",
+  },
+  {
+    question: "Does IIT Delhi offer direct admission for BTech?",
+    answer: "No, IIT Delhi does not offer direct admissions or management quota for B.Tech programs. Admission is strictly based on the All India Rank (AIR) secured in the JEE Advanced examination followed by the centralized JoSAA counselling process.",
+  },
+  {
+    question: "What is the highest and average package offered at IIT Delhi placements?",
+    answer: "In recent placement seasons, the highest international package offered reached ₹2.40 Crore PA and domestic packages touched ₹1.20+ Crore PA. The overall average CTC across all B.Tech branches stood at ₹25.82 LPA, with Computer Science and Electrical branches averaging ₹38+ LPA.",
+  },
+  {
+    question: "What is the JEE Advanced cutoff rank for B.Tech Computer Science at IIT Delhi?",
+    answer: "For the General Category (Gender-Neutral), the opening rank for B.Tech CSE is typically around AIR 25-30, and the closing rank in Round 6 JoSAA counselling is approximately AIR 115-118. For Female candidates (Supernumerary), the closing rank extends up to AIR 420.",
+  },
+  {
+    question: "How is the hostel accommodation and mess food at IIT Delhi?",
+    answer: "IIT Delhi provides fully furnished on-campus hostels (such as Nilgiri, Karakoram, Aravali, Girnar, Kailash, and Himadri) equipped with high-speed Wi-Fi, 24/7 power backup, sports grounds, reading rooms, and multi-cuisine mess facilities managed by student mess committees.",
+  },
+  {
+    question: "Are scholarships available for undergraduate and postgraduate students at IIT Delhi?",
+    answer: "Yes! 100% tuition fee waiver is granted to all SC, ST, and PwD students. General/OBC students with annual family income under ₹1 Lakh get 100% tuition waiver, and those between ₹1–5 Lakhs receive a 66.6% tuition waiver under the Govt. Merit-cum-Means (MCM) scheme. Free mess and institute merit awards are also provided.",
+  },
+  {
+    question: "Is attendance mandatory at IIT Delhi? What is the attendance policy?",
+    answer: "Yes, IIT Delhi generally expects a minimum of 75% attendance in lectures, tutorials, and laboratory sessions. Individual course coordinators and professors have the authority to stipulate specific grade audit rules or withhold grades if attendance criteria are not satisfied.",
+  },
+  {
+    question: "Can international students apply for degree programs at IIT Delhi?",
+    answer: "Yes, international students can apply for B.Tech through JEE Advanced under foreign national quota or direct international channels (ASEAN/SAARC fellowships) and for PG/Ph.D. through the International Students Office and Study in India (SII) portal.",
+  },
+  {
+    question: "What is the fee structure for BTech at IIT Delhi per semester?",
+    answer: "For General/OBC students with annual income above ₹5 Lakhs, the tuition fee is ₹1,00,000 per semester plus institute fees (~₹15,000–₹20,000) and hostel/mess charges (~₹35,000). Tuition fee waivers are applicable based on category and income slab.",
+  },
+  {
+    question: "How are the research facilities and incubation centres at IIT Delhi?",
+    answer: "IIT Delhi houses the Foundation for Innovation and Technology Transfer (FITT), deep-tech incubators, state-of-the-art supercomputing facilities, nanotech cleanrooms, and has incubated over 150+ successful startups and registered hundreds of patents annually.",
+  },
+  {
+    question: "What fests and cultural activities happen at IIT Delhi?",
+    answer: "IIT Delhi hosts Rendezvous (North India's largest annual cultural fest), Tryst (premier technical fest), Sportech (inter-college sports festival), and Literati (literary fest), drawing participation from colleges across the nation.",
+  },
+  {
+    question: "What is the NIRF and global QS ranking of IIT Delhi?",
+    answer: "IIT Delhi is consistently ranked #2 in the Engineering category and #4 in the Overall category in NIRF India Rankings. In QS World University Rankings 2025/2026, IIT Delhi is ranked among the Top 150 universities globally and #1 in India for employer reputation.",
+  },
+];
+
 const DEFAULT_ALUMNI_LIST: AlumniItem[] = [
   {
     id: "alm-1",
@@ -1414,6 +1484,7 @@ interface CollegeDetail {
   campusFacilitiesArticle?: CampusFacilitiesArticleData;
   facultyDetails?: CollegeFacultySectionData;
   alumniArticle?: AlumniArticleData;
+  faqsArticle?: CollegeFaqsArticleData;
   shortName?: string;
 }
 
@@ -2079,28 +2150,12 @@ Spanning over 320 acres in the historic and posh area of Hauz Khas in South Delh
       cons: "Old hostel wings could use modern renovation.",
     },
   ],
-  faqs: [
-    {
-      question: "What is the minimum JEE Advanced rank required for IIT Delhi Computer Science (CSE)?",
-      answer: "For the General Category (Gender-Neutral), the opening rank for B.Tech CSE is around 28 and the closing rank in Round 6 of JoSAA counselling is approximately 115–118. For Female candidates (Supernumerary), the closing rank extends up to rank 420.",
-    },
-    {
-      question: "What is the average and highest placement package at IIT Delhi?",
-      answer: "In the 2024-25 placement drive, the highest domestic CTC offered was ₹1.20 Crore PA, while the highest international offer touched ₹2.40 Crore PA. The overall average package across all B.Tech branches stood at ₹25.82 Lakhs PA, with CSE average exceeding ₹39.5 Lakhs PA.",
-    },
-    {
-      question: "What are the hostel and mess fees at IIT Delhi?",
-      answer: "Hostel seat rent and amenities charge around ₹8,000 to ₹12,000 per semester. Mess advance is approximately ₹25,000 to ₹30,000 per semester. Overall hostel and mess expenditure is around ₹70,000–₹80,000 annually.",
-    },
-    {
-      question: "Does IIT Delhi offer fee concessions or scholarships for economically weaker students?",
-      answer: "Yes! 100% tuition fee waiver is granted to all SC, ST, and PwD students. Additionally, General/OBC students with family income below ₹1 Lakh/year receive 100% tuition waiver, and those between ₹1–5 Lakhs/year get a 66.6% tuition fee waiver under the Govt. Merit-cum-Means (MCM) scheme.",
-    },
-    {
-      question: "How can I apply for MBA at Department of Management Studies (DMS) IIT Delhi?",
-      answer: "Admission to the 2-Year Full-Time MBA at DMS IIT Delhi requires a valid CAT percentile (typically 98.5+ percentile for General category). Shortlisted candidates undergo a Personal Interview (PI) and analytical evaluation.",
-    },
-  ],
+  faqs: DEFAULT_COLLEGE_FAQS,
+  faqsArticle: {
+    title: "IIT Delhi FAQs",
+    subtitle: "Frequently asked questions regarding admissions, courses, cutoffs, placements, and campus life at IIT Delhi.",
+    faqs: DEFAULT_COLLEGE_FAQS,
+  },
   gallery: [
     { url: "/images/iitdelhi_real.jpg", caption: "IIT Delhi Main Iconic Administration Building", category: "Campus" },
     { url: "/images/galgotias_real.jpg", caption: "Dogra Hall & Academic Complex", category: "Academic" },
@@ -2493,6 +2548,11 @@ export default function CollegeDetailPage() {
             rankingsArticle: parsedData.rankingsArticle || IIT_DELHI_MASTER_DATA.rankingsArticle,
             reviewsArticle: parsedData.reviewsArticle || (slug === "iit-delhi" ? IIT_DELHI_MASTER_DATA.reviewsArticle : undefined),
             campusFacilitiesArticle: parsedData.campusFacilitiesArticle || (slug === "iit-delhi" ? DEFAULT_CAMPUS_FACILITIES_DATA : undefined),
+            faqsArticle: parsedData.faqsArticle || (slug === "iit-delhi" ? {
+              title: "IIT Delhi FAQs",
+              subtitle: "Frequently asked questions regarding admissions, courses, cutoffs, placements, and campus life at IIT Delhi.",
+              faqs: DEFAULT_COLLEGE_FAQS,
+            } : undefined),
             alumniArticle: parsedData.alumniArticle || (slug === "iit-delhi" ? {
               title: "IIT Delhi Alumni",
               subtitle: "The following table lists notable alumni of the Indian Institute of Technology, Delhi.",
@@ -3823,7 +3883,22 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
     };
   };
 
-    const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
+    
+const getCollegeFaqsArticle = (college: CollegeDetail): CollegeFaqsArticleData => {
+  const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+  const defaultList = DEFAULT_COLLEGE_FAQS;
+  const list = (college.faqsArticle?.faqs && college.faqsArticle.faqs.length > 0)
+    ? college.faqsArticle.faqs
+    : (college.faqs && college.faqs.length > 0 ? college.faqs : defaultList);
+
+  return {
+    title: college.faqsArticle?.title || `${shortName} FAQs`,
+    subtitle: college.faqsArticle?.subtitle || `Frequently asked questions regarding admissions, courses, cutoffs, placements, and campus life at ${shortName}.`,
+    faqs: list,
+  };
+};
+
+const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
     const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
     const fullName = college.fullName || college.name || "Institute";
     if (college.alumniArticle && college.alumniArticle.alumniList && college.alumniArticle.alumniList.length > 0) {
@@ -8977,6 +9052,97 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                   );
                 })()}
 
+
+                {/* 12. TABLE OF CONTENTS FAQ SECTION (EXACT REFERENCE ACCORDION DESIGN) */}
+                {(() => {
+                  const faqsArticle = getCollegeFaqsArticle(collegeData);
+                  const faqsList = faqsArticle.faqs || [];
+                  const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+
+                  return (
+                    <div
+                      id="faq-section"
+                      className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-7 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-24 mt-5 space-y-4"
+                    >
+                      {/* Header Row with Title and Admin Edit Button */}
+                      <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-200/80">
+                        <div>
+                          <h3 className="font-outfit font-black text-xl sm:text-2xl text-slate-900 tracking-tight">
+                            {faqsArticle.title || `${collegeShortName} FAQs`}
+                          </h3>
+                        </div>
+
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("qa")}
+                            className="px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0 active:scale-95"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit FAQs</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Accordion Questions List */}
+                      <div className="divide-y divide-slate-100">
+                        {faqsList.map((faq, fIdx) => {
+                          const isOpen = openFaqIdx === fIdx;
+                          return (
+                            <div key={fIdx} className="py-3.5 sm:py-4 transition-colors">
+                              <button
+                                type="button"
+                                onClick={() => setOpenFaqIdx(isOpen ? null : fIdx)}
+                                className="w-full flex items-center justify-between gap-4 text-left group cursor-pointer"
+                              >
+                                <span className="text-[14px] sm:text-[15px] font-bold text-slate-800 group-hover:text-purple-700 transition-colors">
+                                  Q: {faq.question}
+                                </span>
+                                <ChevronDown
+                                  className={`w-4 h-4 text-slate-500 shrink-0 transition-transform duration-200 ${
+                                    isOpen ? "rotate-180 text-purple-600" : ""
+                                  }`}
+                                />
+                              </button>
+                              <AnimatePresence initial={false}>
+                                {isOpen && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="overflow-hidden"
+                                  >
+                                    <div className="pt-3 pb-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                                      {faq.answer}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Centered View All FAQs Button */}
+                      <div className="pt-4 flex justify-center border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveTab("qa");
+                            window.scrollTo({ top: 350, behavior: "smooth" });
+                          }}
+                          className="px-6 py-2.5 rounded-full bg-slate-50 hover:bg-purple-50 text-slate-700 hover:text-purple-700 font-bold text-xs sm:text-sm border border-slate-200 hover:border-purple-200 shadow-2xs transition-all flex items-center gap-2 cursor-pointer active:scale-95 group"
+                        >
+                          <span>View All FAQs</span>
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-slate-400 group-hover:text-purple-600" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+
             </div>
           )}
 
@@ -9478,7 +9644,87 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
           )}
 
           {/* TABS OTHER THAN INFO & HOSTEL: CLEAN PLACEHOLDER WHILE BUILDING STEP-BY-STEP */}
-          {activeTab !== "info" && activeTab !== "hostel" && (
+          
+          {/* TAB: Q&A / FAQS (Directly render full FAQs & Community Q&A) */}
+          {activeTab === "qa" && (
+            <div className="space-y-6">
+              {(() => {
+                const faqsArticle = getCollegeFaqsArticle(collegeData);
+                const faqsList = faqsArticle.faqs || [];
+                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+
+                return (
+                  <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-5 sm:p-7 shadow-xs space-y-5">
+                    {/* Header Row */}
+                    <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-200/80">
+                      <div>
+                        <h2 className="text-xl sm:text-2xl font-bold font-outfit text-slate-900 tracking-tight">
+                          {faqsArticle.title || `${collegeShortName} FAQs & Student Q&A`}
+                        </h2>
+                        <p className="text-xs sm:text-sm text-slate-600 font-normal mt-1 leading-relaxed">
+                          {faqsArticle.subtitle || `Find answers to common student queries about admissions, cutoffs, placements, scholarships, and campus life at ${collegeShortName}.`}
+                        </p>
+                      </div>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("qa")}
+                          className="px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0 active:scale-95"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit FAQs</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Accordion Questions List */}
+                    <div className="divide-y divide-slate-100">
+                      {faqsList.map((faq, fIdx) => {
+                        const isOpen = openFaqIdx === fIdx;
+                        return (
+                          <div key={fIdx} className="py-3.5 sm:py-4 transition-colors">
+                            <button
+                              type="button"
+                              onClick={() => setOpenFaqIdx(isOpen ? null : fIdx)}
+                              className="w-full flex items-center justify-between gap-4 text-left group cursor-pointer"
+                            >
+                              <span className="text-[14px] sm:text-[15px] font-bold text-slate-800 group-hover:text-purple-700 transition-colors">
+                                Q: {faq.question}
+                              </span>
+                              <ChevronDown
+                                className={`w-4 h-4 text-slate-500 shrink-0 transition-transform duration-200 ${
+                                  isOpen ? "rotate-180 text-purple-600" : ""
+                                }`}
+                              />
+                            </button>
+                            <AnimatePresence initial={false}>
+                              {isOpen && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="pt-3 pb-1 text-xs sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                                    {faq.answer}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+
+          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && (
             <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-500">
                 <Sparkles className="w-6 h-6" />
@@ -19264,58 +19510,138 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
 
 
                 {activeMiniModal === "qa" && (
-                  <div className="space-y-3">
-                    <div className="max-h-72 overflow-y-auto space-y-3 pr-1">
-                      {tempData.faqs.map((faq, idx) => (
-                        <div key={idx} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2 relative">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const updated = tempData.faqs.filter((_, i) => i !== idx);
-                              setTempData({ ...tempData, faqs: updated });
-                            }}
-                            className="absolute top-2.5 right-2.5 p-1 text-red-500 hover:bg-red-100 rounded-lg"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                          <input
-                            type="text"
-                            value={faq.question}
-                            onChange={(e) => {
-                              const updated = [...tempData.faqs];
-                              updated[idx].question = e.target.value;
-                              setTempData({ ...tempData, faqs: updated });
-                            }}
-                            placeholder="Question"
-                            className="w-5/6 px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold"
-                          />
-                          <textarea
-                            rows={2}
-                            value={faq.answer}
-                            onChange={(e) => {
-                              const updated = [...tempData.faqs];
-                              updated[idx].answer = e.target.value;
-                              setTempData({ ...tempData, faqs: updated });
-                            }}
-                            placeholder="Answer"
-                            className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs resize-none"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setTempData({
-                          ...tempData,
-                          faqs: [...tempData.faqs, { question: "What is the admission procedure?", answer: "Admission is conducted through national entrance tests." }],
-                        })
-                      }
-                      className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold flex items-center gap-1 cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Add FAQ</span>
-                    </button>
+                  <div className="space-y-4">
+                    {(() => {
+                      const curArticle = tempData.faqsArticle || getCollegeFaqsArticle(tempData);
+                      const faqs = (curArticle.faqs && curArticle.faqs.length > 0) ? curArticle.faqs : (tempData.faqs || DEFAULT_COLLEGE_FAQS);
+
+                      return (
+                        <>
+                          {/* Title & Subtitle */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                            <div>
+                              <label className="text-[10.5px] font-bold text-slate-700">Section Title</label>
+                              <input
+                                type="text"
+                                value={curArticle.title || ""}
+                                onChange={(e) => {
+                                  const updated = { ...curArticle, title: e.target.value };
+                                  setTempData({ ...tempData, faqsArticle: updated });
+                                }}
+                                placeholder="IIT Delhi FAQs"
+                                className="w-full mt-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10.5px] font-bold text-slate-700">Subtitle / Description</label>
+                              <input
+                                type="text"
+                                value={curArticle.subtitle || ""}
+                                onChange={(e) => {
+                                  const updated = { ...curArticle, subtitle: e.target.value };
+                                  setTempData({ ...tempData, faqsArticle: updated });
+                                }}
+                                placeholder="Frequently asked questions..."
+                                className="w-full mt-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold"
+                              />
+                            </div>
+                          </div>
+
+                          {/* List of FAQs Header & Add button */}
+                          <div className="flex items-center justify-between pt-1">
+                            <span className="text-xs font-bold text-slate-700">
+                              FAQ Questions List ({faqs.length} questions)
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newFaq: FaqItem = {
+                                  question: "What are the key admission criteria and cutoff requirements?",
+                                  answer: "Admission is conducted based on national entrance exam ranks followed by centralized counselling rounds.",
+                                };
+                                const updatedList = [...faqs, newFaq];
+                                setTempData({
+                                  ...tempData,
+                                  faqs: updatedList,
+                                  faqsArticle: { ...curArticle, faqs: updatedList },
+                                });
+                              }}
+                              className="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold rounded-lg border border-purple-200/80 flex items-center gap-1 cursor-pointer"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add FAQ</span>
+                            </button>
+                          </div>
+
+                          {/* FAQs List */}
+                          <div className="max-h-96 overflow-y-auto space-y-3 pr-1">
+                            {faqs.map((faq, idx) => (
+                              <div
+                                key={idx}
+                                className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2 relative group/item"
+                              >
+                                <div className="flex items-center justify-between pr-8">
+                                  <span className="text-xs font-bold text-purple-700">
+                                    Q{idx + 1}: {faq.question ? (faq.question.length > 55 ? `${faq.question.slice(0, 55)}...` : faq.question) : "Untitled Question"}
+                                  </span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedList = faqs.filter((_, i) => i !== idx);
+                                    setTempData({
+                                      ...tempData,
+                                      faqs: updatedList,
+                                      faqsArticle: { ...curArticle, faqs: updatedList },
+                                    });
+                                  }}
+                                  className="absolute top-2.5 right-2.5 p-1 text-red-500 hover:bg-red-100 rounded-lg cursor-pointer"
+                                  title="Delete FAQ"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                                <div>
+                                  <label className="text-[10px] font-bold text-slate-500">Question</label>
+                                  <input
+                                    type="text"
+                                    value={faq.question}
+                                    onChange={(e) => {
+                                      const updatedList = [...faqs];
+                                      updatedList[idx] = { ...updatedList[idx], question: e.target.value };
+                                      setTempData({
+                                        ...tempData,
+                                        faqs: updatedList,
+                                        faqsArticle: { ...curArticle, faqs: updatedList },
+                                      });
+                                    }}
+                                    placeholder="Enter question"
+                                    className="w-full mt-0.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-[10px] font-bold text-slate-500">Answer</label>
+                                  <textarea
+                                    rows={3}
+                                    value={faq.answer}
+                                    onChange={(e) => {
+                                      const updatedList = [...faqs];
+                                      updatedList[idx] = { ...updatedList[idx], answer: e.target.value };
+                                      setTempData({
+                                        ...tempData,
+                                        faqs: updatedList,
+                                        faqsArticle: { ...curArticle, faqs: updatedList },
+                                      });
+                                    }}
+                                    placeholder="Enter answer"
+                                    className="w-full mt-0.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs resize-y text-slate-700 leading-relaxed"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
 
