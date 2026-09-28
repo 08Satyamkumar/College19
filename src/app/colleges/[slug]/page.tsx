@@ -28,6 +28,7 @@ import {
   DollarSign,
   Check,
   ChevronDown,
+  Globe,
   ChevronLeft,
   ChevronRight,
   Image as ImageIcon,
@@ -2438,6 +2439,11 @@ export default function CollegeDetailPage() {
             rankingsArticle: parsedData.rankingsArticle || IIT_DELHI_MASTER_DATA.rankingsArticle,
             reviewsArticle: parsedData.reviewsArticle || (slug === "iit-delhi" ? IIT_DELHI_MASTER_DATA.reviewsArticle : undefined),
             campusFacilitiesArticle: parsedData.campusFacilitiesArticle || (slug === "iit-delhi" ? DEFAULT_CAMPUS_FACILITIES_DATA : undefined),
+            facultyDetails: parsedData.facultyDetails || (slug === "iit-delhi" ? {
+              title: "IIT Delhi [IITD] Faculty Details",
+              subtitle: "Basic Information about the Faculty of IIT Delhi [IITD]",
+              members: DEFAULT_FACULTY_MEMBERS,
+            } : undefined),
           };
 
           setCollegeData(baseDetail);
@@ -8663,6 +8669,141 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                 );
               })()}
 
+                {/* 10. FACULTY DETAILS SECTION (2 ROWS, HORIZONTAL SCROLL, CUSTOM AVATAR/UPLOAD) */}
+                {(() => {
+                  const facultyData = getCollegeFacultyData(collegeData);
+                  const members = facultyData.members || [];
+
+                  const scrollFaculty = (direction: "left" | "right") => {
+                    const targetRef = facultyScrollRef.current;
+                    if (targetRef) {
+                      const scrollAmount = direction === "left" ? -320 : 320;
+                      targetRef.scrollBy({ left: scrollAmount, behavior: "smooth" });
+                    }
+                  };
+
+                  return (
+                    <div
+                      id="faculty-section"
+                      className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-24 mt-4"
+                    >
+                      {/* Admin Edit Button */}
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("faculty")}
+                          className="absolute top-5 right-5 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-full border border-purple-200 font-bold text-xs transition-all shadow-xs cursor-pointer"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit Faculty</span>
+                        </button>
+                      )}
+
+                      {/* Header */}
+                      <div className="mb-4">
+                        <h3 className="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 tracking-tight">
+                          {facultyData.title || `${collegeData.name} Faculty Details`}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+                          {facultyData.subtitle || `Basic Information about the Faculty of ${collegeData.name}`}
+                        </p>
+                      </div>
+
+                      {/* 2-Row Horizontal Scroll Container */}
+                      <div className="relative group/fac">
+                        {/* Left Scroll Button */}
+                        <button
+                          type="button"
+                          onClick={() => scrollFaculty("left")}
+                          className="absolute -left-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/fac:opacity-100"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+
+                        {/* 2 Rows Grid Flow Col */}
+                        <div
+                          ref={facultyScrollRef}
+                          className="grid grid-rows-2 grid-flow-col gap-4 overflow-x-auto pb-4 pt-8 px-2 no-scrollbar snap-x"
+                          style={{ gridAutoColumns: "minmax(230px, 260px)" }}
+                        >
+                          {members.map((member: FacultyMember, mIdx: number) => (
+                            <div
+                              key={member.id || mIdx}
+                              className="relative bg-white rounded-2xl border border-slate-200/90 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md hover:border-slate-300 transition-all duration-300 pt-8 pb-4 px-3.5 flex flex-col items-center justify-between text-center snap-start select-none min-h-[195px]"
+                            >
+                              {/* Top Floating Circular Avatar */}
+                              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white shadow-sm flex items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50 to-teal-50">
+                                {member.avatarUrl ? (
+                                  <img
+                                    src={member.avatarUrl}
+                                    alt={member.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center relative">
+                                    <svg viewBox="0 0 36 36" fill="none" className="w-8 h-8 text-emerald-600">
+                                      <circle cx="18" cy="11" r="5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                                      <path d="M10 27c0-4 3.5-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                                      <path d="M18 20l7 3.5-7 3.5-7-3.5 7-3.5z" fill="#10b981" stroke="#047857" strokeWidth="1.5" strokeLinejoin="round" />
+                                      <path d="M25 23.5v3" stroke="#047857" strokeWidth="1.5" strokeLinecap="round" />
+                                    </svg>
+                                    <span className="absolute top-1 right-1.5 text-[8px] text-teal-400 font-bold">✦</span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Faculty Info */}
+                              <div className="w-full space-y-1 mt-1">
+                                <h4 className="font-outfit font-bold text-slate-900 text-[14px] sm:text-[15px] leading-tight line-clamp-1">
+                                  {member.name}
+                                </h4>
+
+                                <div className="flex justify-center">
+                                  <span className="bg-[#0b2545] text-white text-[10px] sm:text-[11px] font-semibold px-3 py-0.5 rounded-md shadow-2xs">
+                                    {member.designation || "Professor"}
+                                  </span>
+                                </div>
+
+                                {member.department && (
+                                  <p className="text-[11px] sm:text-xs text-slate-500 font-normal leading-snug line-clamp-2 min-h-[30px] pt-1">
+                                    {member.department}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Phone / Contact / Website */}
+                              <div className="pt-2 w-full border-t border-slate-100 flex items-center justify-center">
+                                {member.phone ? (
+                                  <a
+                                    href={`tel:${member.phone}`}
+                                    className="text-blue-600 hover:text-blue-700 font-medium text-xs flex items-center justify-center gap-1.5 hover:underline"
+                                  >
+                                    <Globe className="w-3.5 h-3.5 text-slate-700 shrink-0" />
+                                    <span>{member.phone}</span>
+                                  </a>
+                                ) : (
+                                  <div className="text-slate-500 text-xs flex items-center justify-center gap-1">
+                                    <Globe className="w-3.5 h-3.5 text-slate-700" />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Right Scroll Button */}
+                        <button
+                          type="button"
+                          onClick={() => scrollFaculty("right")}
+                          className="absolute -right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/fac:opacity-100"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+
             </div>
           )}
 
@@ -9024,6 +9165,142 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                   </div>
                 );
               })()}
+
+                {/* 10. FACULTY DETAILS SECTION (2 ROWS, HORIZONTAL SCROLL, CUSTOM AVATAR/UPLOAD) */}
+                {(() => {
+                  const facultyData = getCollegeFacultyData(collegeData);
+                  const members = facultyData.members || [];
+
+                  const scrollFaculty = (direction: "left" | "right") => {
+                    const targetRef = facultyTabScrollRef.current;
+                    if (targetRef) {
+                      const scrollAmount = direction === "left" ? -320 : 320;
+                      targetRef.scrollBy({ left: scrollAmount, behavior: "smooth" });
+                    }
+                  };
+
+                  return (
+                    <div
+                      id="faculty-tab-section"
+                      className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-24 mt-4"
+                    >
+                      {/* Admin Edit Button */}
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("faculty")}
+                          className="absolute top-5 right-5 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-full border border-purple-200 font-bold text-xs transition-all shadow-xs cursor-pointer"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit Faculty</span>
+                        </button>
+                      )}
+
+                      {/* Header */}
+                      <div className="mb-4">
+                        <h3 className="font-outfit font-extrabold text-lg sm:text-xl text-slate-900 tracking-tight">
+                          {facultyData.title || `${collegeData.name} Faculty Details`}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+                          {facultyData.subtitle || `Basic Information about the Faculty of ${collegeData.name}`}
+                        </p>
+                      </div>
+
+                      {/* 2-Row Horizontal Scroll Container */}
+                      <div className="relative group/fac">
+                        {/* Left Scroll Button */}
+                        <button
+                          type="button"
+                          onClick={() => scrollFaculty("left")}
+                          className="absolute -left-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/fac:opacity-100"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+
+                        {/* 2 Rows Grid Flow Col */}
+                        <div
+                          ref={facultyTabScrollRef}
+                          className="grid grid-rows-2 grid-flow-col gap-4 overflow-x-auto pb-4 pt-8 px-2 no-scrollbar snap-x"
+                          style={{ gridAutoColumns: "minmax(230px, 260px)" }}
+                        >
+                          {members.map((member: FacultyMember, mIdx: number) => (
+                            <div
+                              key={member.id || mIdx}
+                              className="relative bg-white rounded-2xl border border-slate-200/90 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md hover:border-slate-300 transition-all duration-300 pt-8 pb-4 px-3.5 flex flex-col items-center justify-between text-center snap-start select-none min-h-[195px]"
+                            >
+                              {/* Top Floating Circular Avatar */}
+                              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white shadow-sm flex items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50 to-teal-50">
+                                {member.avatarUrl ? (
+                                  <img
+                                    src={member.avatarUrl}
+                                    alt={member.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center relative">
+                                    <svg viewBox="0 0 36 36" fill="none" className="w-8 h-8 text-emerald-600">
+                                      <circle cx="18" cy="11" r="5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                                      <path d="M10 27c0-4 3.5-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                                      <path d="M18 20l7 3.5-7 3.5-7-3.5 7-3.5z" fill="#10b981" stroke="#047857" strokeWidth="1.5" strokeLinejoin="round" />
+                                      <path d="M25 23.5v3" stroke="#047857" strokeWidth="1.5" strokeLinecap="round" />
+                                    </svg>
+                                    <span className="absolute top-1 right-1.5 text-[8px] text-teal-400 font-bold">✦</span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Faculty Info */}
+                              <div className="w-full space-y-1 mt-1">
+                                <h4 className="font-outfit font-bold text-slate-900 text-[14px] sm:text-[15px] leading-tight line-clamp-1">
+                                  {member.name}
+                                </h4>
+
+                                <div className="flex justify-center">
+                                  <span className="bg-[#0b2545] text-white text-[10px] sm:text-[11px] font-semibold px-3 py-0.5 rounded-md shadow-2xs">
+                                    {member.designation || "Professor"}
+                                  </span>
+                                </div>
+
+                                {member.department && (
+                                  <p className="text-[11px] sm:text-xs text-slate-500 font-normal leading-snug line-clamp-2 min-h-[30px] pt-1">
+                                    {member.department}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Phone / Contact / Website */}
+                              <div className="pt-2 w-full border-t border-slate-100 flex items-center justify-center">
+                                {member.phone ? (
+                                  <a
+                                    href={`tel:${member.phone}`}
+                                    className="text-blue-600 hover:text-blue-700 font-medium text-xs flex items-center justify-center gap-1.5 hover:underline"
+                                  >
+                                    <Globe className="w-3.5 h-3.5 text-slate-700 shrink-0" />
+                                    <span>{member.phone}</span>
+                                  </a>
+                                ) : (
+                                  <div className="text-slate-500 text-xs flex items-center justify-center gap-1">
+                                    <Globe className="w-3.5 h-3.5 text-slate-700" />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Right Scroll Button */}
+                        <button
+                          type="button"
+                          onClick={() => scrollFaculty("right")}
+                          className="absolute -right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/fac:opacity-100"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+
             </div>
           )}
 
