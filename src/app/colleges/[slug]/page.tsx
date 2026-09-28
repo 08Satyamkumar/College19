@@ -8913,43 +8913,43 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                         )}
                       </div>
 
-                      {/* Alumni Table */}
-                      <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                      {/* Alumni Table (Exact Theme Color: Dark Navy Header with Soft Ice-Blue Rows) */}
+                      <div className="rounded-2xl border border-[#002b49] overflow-hidden shadow-xs">
                         <div className="overflow-x-auto">
                           <table className="w-full text-left border-collapse">
                             <thead>
                               <tr className="bg-[#002b49] text-white">
-                                <th className="py-3.5 px-5 text-xs sm:text-[13px] font-bold tracking-wide border-r border-[#0a385c]/60 w-[30%]">
+                                <th className="py-3.5 px-5 text-xs sm:text-[13.5px] font-bold tracking-wide border-r border-[#0a385c]/80 w-[30%]">
                                   Name
                                 </th>
-                                <th className="py-3.5 px-5 text-xs sm:text-[13px] font-bold tracking-wide border-r border-[#0a385c]/60 w-[45%]">
+                                <th className="py-3.5 px-5 text-xs sm:text-[13.5px] font-bold tracking-wide border-r border-[#0a385c]/80 w-[45%]">
                                   Profession
                                 </th>
-                                <th className="py-3.5 px-5 text-xs sm:text-[13px] font-bold tracking-wide w-[25%] text-center">
+                                <th className="py-3.5 px-5 text-xs sm:text-[13.5px] font-bold tracking-wide w-[25%] text-center">
                                   Picture
                                 </th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-200 bg-white">
+                            <tbody className="divide-y divide-slate-200/90 bg-[#f0f4fa]">
                               {list.map((alumnus: AlumniItem, aIdx: number) => (
                                 <tr
                                   key={alumnus.id || aIdx}
-                                  className="hover:bg-slate-50/70 transition-colors"
+                                  className="hover:bg-[#e4edf7] transition-colors bg-[#f0f4fa]"
                                 >
                                   {/* Name */}
-                                  <td className="py-3.5 px-5 text-xs sm:text-[13.5px] font-medium text-slate-900 border-r border-slate-200 align-middle">
+                                  <td className="py-3.5 px-5 text-xs sm:text-[13.5px] font-medium text-slate-900 border-r border-slate-200/90 align-middle">
                                     {alumnus.name}
                                   </td>
 
                                   {/* Profession */}
-                                  <td className="py-3.5 px-5 text-xs sm:text-[13px] text-slate-700 border-r border-slate-200 align-middle leading-relaxed">
+                                  <td className="py-3.5 px-5 text-xs sm:text-[13px] text-slate-700 border-r border-slate-200/90 align-middle leading-relaxed">
                                     {alumnus.profession}
                                   </td>
 
                                   {/* Picture */}
                                   <td className="py-3 px-5 align-middle text-center">
                                     <div className="flex justify-center items-center">
-                                      <div className="w-14 h-16 sm:w-16 sm:h-20 rounded-lg overflow-hidden border border-slate-200 shadow-2xs bg-slate-100 flex items-center justify-center">
+                                      <div className="w-14 h-16 sm:w-16 sm:h-20 rounded-md overflow-hidden border border-slate-300 shadow-2xs bg-white flex items-center justify-center">
                                         {alumnus.pictureUrl ? (
                                           <img
                                             src={alumnus.pictureUrl}
