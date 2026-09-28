@@ -8214,6 +8214,18 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                 const firstTwoHighlights = highlightsBullets.slice(0, 2);
                 const feeTable = campusData.hostelFeeTable || { headers: [], rows: [] };
                 const additionalBullets = campusData.additionalFacilitiesBullets || [];
+                const facilityIcons = campusData.facilityIcons || [];
+                const insightsCards = campusData.insightsCards || [];
+
+                const scrollInfra = (direction: "left" | "right") => {
+                  if (infraInsightsScrollRef.current) {
+                    const scrollAmount = direction === "left" ? -280 : 280;
+                    infraInsightsScrollRef.current.scrollBy({
+                      left: scrollAmount,
+                      behavior: "smooth",
+                    });
+                  }
+                };
 
                 return (
                   <div
@@ -8262,7 +8274,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                           transition={{ duration: 0.25, ease: "easeInOut" }}
                           className="overflow-hidden"
                         >
-                          <div className="pt-4 space-y-4 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
+                          <div className="pt-4 space-y-5 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
                             {/* Intro paragraph (Image 1) */}
                             <p className="leading-relaxed">
                               <strong className="text-slate-900 font-bold">{collegeShortName}</strong> offers modern infrastructure and amenities supporting academic, research, student life, and sports. {collegeShortName} campus area in acres is <strong className="text-slate-900 font-bold">{campusData.campusArea || collegeData.campusArea || "320 acres"}</strong>. The <strong className="text-slate-900 font-bold">{collegeShortName} India</strong> has a 24/7 central library, advanced laboratories, sports complexes, hostels, recreation centres, and robust IT infrastructure in <span className="text-blue-600 hover:underline cursor-pointer">{collegeShortName} hostel & campus</span>.
@@ -8437,6 +8449,111 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                 </div>
                               )}
                             </div>
+
+                            {/* --- 1. TOP FACILITIES ICON ROW (Image 1) --- */}
+                            <div className="pt-4 border-t border-slate-100">
+                              <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2 px-1 no-scrollbar">
+                                {facilityIcons.map((fac: CampusFacilityIconItem, fIdx: number) => (
+                                  <div
+                                    key={fac.id || fIdx}
+                                    className="flex flex-col items-center justify-center min-w-[70px] sm:min-w-[84px] text-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group/fac"
+                                  >
+                                    <div className="w-12 h-12 rounded-2xl bg-white border border-slate-150 shadow-2xs group-hover/fac:shadow-sm group-hover/fac:scale-105 transition-all flex items-center justify-center">
+                                      {renderCampusFacilityIcon(fac.iconType || fac.name)}
+                                    </div>
+                                    <span className="text-[11.5px] sm:text-xs font-semibold text-slate-700 group-hover/fac:text-slate-900 leading-tight">
+                                      {fac.name}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* --- 2. INSIGHTS ON INFRASTRUCTURE SECTION (Images 1, 2, 3) --- */}
+                            <div className="pt-4 border-t border-slate-100 space-y-3.5">
+                              {/* Insights Header with Yellow Lightbulb Icon */}
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-amber-50 border border-amber-200/80 flex items-center justify-center shadow-2xs shrink-0">
+                                  <span className="text-xl">💡</span>
+                                </div>
+                                <div>
+                                  <h4 className="font-outfit font-bold text-base sm:text-[17px] text-slate-900 leading-snug">
+                                    {campusData.insightsHeading || "Insights on Infrastructure"}
+                                  </h4>
+                                  <p className="text-xs text-slate-500 font-medium">
+                                    {campusData.insightsSubtitle || "Based on 280 Student Responses"}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Insights Carousel Container with Floating Next/Prev Arrow */}
+                              <div className="relative group/infra">
+                                {/* Left Scroll Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => scrollInfra("left")}
+                                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/infra:opacity-100"
+                                >
+                                  <ChevronLeft className="w-4 h-4" />
+                                </button>
+
+                                {/* Horizontal Scroll Cards Row */}
+                                <div
+                                  ref={infraInsightsScrollRef}
+                                  className="flex gap-3 overflow-x-auto pb-3 pt-1 px-1 no-scrollbar snap-x snap-mandatory"
+                                >
+                                  {insightsCards.map((card: InfrastructureInsightCard, cIdx: number) => (
+                                    <div
+                                      key={card.id || cIdx}
+                                      className="w-[230px] sm:w-[260px] shrink-0 rounded-2xl p-4 sm:p-5 border border-slate-200/90 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-300 transition-all duration-300 snap-start space-y-2 select-none"
+                                    >
+                                      <div className="flex items-start gap-1.5">
+                                        <span className="text-purple-600 text-sm font-bold mt-0.5">✦</span>
+                                        <h5 className="font-outfit font-bold text-[13.5px] sm:text-sm text-slate-900 leading-snug">
+                                          {card.heading}
+                                        </h5>
+                                      </div>
+                                      <p className="text-xs text-slate-600 leading-relaxed pl-4 font-normal">
+                                        {card.content}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* Right Scroll Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => scrollInfra("right")}
+                                  className="absolute -right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/infra:opacity-100"
+                                >
+                                  <ChevronRight className="w-4 h-4" />
+                                </button>
+                              </div>
+
+                              {/* Footer Progress Indicator & View All Link */}
+                              <div className="flex items-center justify-between pt-1">
+                                <div className="flex items-center gap-1.5">
+                                  <div className="w-6 h-1.5 rounded-full bg-slate-800"></div>
+                                  <div className="w-10 h-1.5 rounded-full bg-slate-200"></div>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const el = document.getElementById("reviews-section");
+                                    if (el) {
+                                      const yOffset = -90;
+                                      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                      window.scrollTo({ top: y, behavior: "smooth" });
+                                    }
+                                  }}
+                                  className="text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-[13px] flex items-center gap-1 hover:underline cursor-pointer"
+                                >
+                                  <span>View All</span>
+                                  <span>→</span>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </motion.div>
                       )}
@@ -8448,8 +8565,369 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
             </div>
           )}
 
-          {/* TABS OTHER THAN INFO: CLEAN PLACEHOLDER WHILE BUILDING STEP-BY-STEP */}
-          {activeTab !== "info" && (
+          {/* TAB: HOSTEL & CAMPUS (Directly render Campus & Facilities section) */}
+          {activeTab === "hostel" && (
+            <div className="space-y-6">
+              {/* 9. CAMPUS & FACILITIES 2026 CARD (EXACT USER REFERENCE TEMPLATE) */}
+              {(() => {
+                const campusData = getCollegeCampusFacilitiesArticle(collegeData);
+                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const highlightsBullets = campusData.highlightsBullets || [];
+                const firstTwoHighlights = highlightsBullets.slice(0, 2);
+                const feeTable = campusData.hostelFeeTable || { headers: [], rows: [] };
+                const additionalBullets = campusData.additionalFacilitiesBullets || [];
+                const facilityIcons = campusData.facilityIcons || [];
+                const insightsCards = campusData.insightsCards || [];
+
+                const scrollInfra = (direction: "left" | "right") => {
+                  if (infraInsightsScrollRef.current) {
+                    const scrollAmount = direction === "left" ? -280 : 280;
+                    infraInsightsScrollRef.current.scrollBy({
+                      left: scrollAmount,
+                      behavior: "smooth",
+                    });
+                  }
+                };
+
+                return (
+                  <div
+                    id="campus-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-24"
+                  >
+                    {/* Header Row */}
+                    <div className="flex items-center justify-between gap-3">
+                      <h2 className="text-lg sm:text-xl font-bold font-outfit text-slate-900 tracking-tight">
+                        {campusData.title || `${collegeShortName} Campus & Facilities 2026`}
+                      </h2>
+
+                      <div className="flex items-center gap-2">
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("campus_facilities")}
+                            className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Campus & Facilities</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setIsCampusCardOpen(!isCampusCardOpen)}
+                          aria-label={isCampusCardOpen ? "Collapse Campus Section" : "Expand Campus Section"}
+                          className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 flex items-center justify-center text-slate-600 hover:text-slate-950 transition-all cursor-pointer shadow-2xs active:scale-90"
+                        >
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                              isCampusCardOpen ? "rotate-180 text-blue-600" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Collapsible Body */}
+                    <AnimatePresence initial={false}>
+                      {isCampusCardOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pt-4 space-y-5 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
+                            {/* Intro paragraph (Image 1) */}
+                            <p className="leading-relaxed">
+                              <strong className="text-slate-900 font-bold">{collegeShortName}</strong> offers modern infrastructure and amenities supporting academic, research, student life, and sports. {collegeShortName} campus area in acres is <strong className="text-slate-900 font-bold">{campusData.campusArea || collegeData.campusArea || "320 acres"}</strong>. The <strong className="text-slate-900 font-bold">{collegeShortName} India</strong> has a 24/7 central library, advanced laboratories, sports complexes, hostels, recreation centres, and robust IT infrastructure in <span className="text-blue-600 hover:underline cursor-pointer">{collegeShortName} hostel & campus</span>.
+                            </p>
+
+                            {/* Subheading: Campus Highlights */}
+                            <div className="space-y-2">
+                              <h3 className="font-outfit font-bold text-base sm:text-[17px] text-slate-900">
+                                {campusData.highlightsHeading || `${collegeShortName} Campus Highlights`}
+                              </h3>
+
+                              {/* Highlights Bullets: Collapsed vs Expanded */}
+                              {!isCampusExpanded ? (
+                                <div className="space-y-2">
+                                  <ul className="space-y-1.5 pl-1">
+                                    {firstTwoHighlights.map((b: CampusHighlightBullet, bIdx: number) => (
+                                      <li
+                                        key={bIdx}
+                                        className={`flex items-start gap-2.5 text-slate-700 ${
+                                          bIdx === 1 ? "opacity-40" : ""
+                                        }`}
+                                      >
+                                        <span className="text-slate-800 font-black mt-0.5">•</span>
+                                        <span className="leading-relaxed">{b.text}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+
+                                  {/* Read More button at bottom right (Image 1) */}
+                                  <div className="flex justify-end pt-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => setIsCampusExpanded(true)}
+                                      className="text-blue-600 hover:text-blue-700 font-medium text-xs sm:text-[13px] hover:underline cursor-pointer transition-colors"
+                                    >
+                                      Read more
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="space-y-5 animate-in fade-in duration-300">
+                                  {/* Full Campus Highlights list (Image 2) */}
+                                  <ul className="space-y-1.5 pl-1">
+                                    {highlightsBullets.map((b: CampusHighlightBullet, bIdx: number) => (
+                                      <li key={bIdx} className="flex items-start gap-2.5 text-slate-700">
+                                        <span className="text-slate-800 font-black mt-0.5">•</span>
+                                        <span className="leading-relaxed">{b.text}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+
+                                  {/* How are Hostels? Subheading & Details (Image 3) */}
+                                  <div className="space-y-3 pt-2">
+                                    <h3 className="font-outfit font-bold text-base sm:text-[17px] text-slate-900">
+                                      {campusData.hostelHeading || `How are ${collegeShortName} Hostels?`}
+                                    </h3>
+
+                                    <p className="leading-relaxed">
+                                      <strong className="text-slate-900 font-bold">{collegeShortName}</strong> hostel accommodation has been reviewed as “decent” and “well-maintained” by Shiksha Reviewers. The institute provides <strong className="text-slate-900 font-bold">hostel facilities for male and female students separately</strong>. There are 5 hostels for girls and 12 hostels for boys at {collegeShortName} India. For first-year BTech students, 3-seater rooms are typically available. Meanwhile, 2-seater rooms are also available due to the varied infrastructure across the 17 hostels.
+                                    </p>
+
+                                    {/* Download Hostel Rule Book Guide Callout Box (Image 3) */}
+                                    <div className="p-3.5 bg-slate-50/90 border border-slate-200/80 rounded-xl space-y-2">
+                                      <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed">
+                                        {campusData.hostelGuideCallout?.text || `Can Parents Visit ${collegeShortName} Hostels? What's the Curfew Time? Get the official ${collegeShortName} Hostel Rule Book covering room allocation, visitors, silence hours, hostel fees and stay permissions.`}
+                                      </p>
+                                      <div>
+                                        <a
+                                          href={campusData.hostelGuideCallout?.downloadUrl || "#"}
+                                          onClick={(e) => {
+                                            if (!campusData.hostelGuideCallout?.downloadUrl || campusData.hostelGuideCallout?.downloadUrl === "#") {
+                                              e.preventDefault();
+                                              alert(`Official ${collegeShortName} Hostel Guide PDF download starting...`);
+                                            }
+                                          }}
+                                          className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                        >
+                                          <span className="px-1 py-0.2 bg-red-100 text-red-600 border border-red-200 rounded text-[9px] font-black uppercase tracking-tight">PDF</span>
+                                          <span>{campusData.hostelGuideCallout?.linkText || `Download ${collegeShortName} Hostel Guide`}</span>
+                                        </a>
+                                      </div>
+                                    </div>
+
+                                    {/* Hostel Fee Intro Paragraph */}
+                                    <p className="leading-relaxed">
+                                      {campusData.hostelFeeIntroText || `${collegeShortName}'s total hostel fee consists of one-time charges, recurring semester-wise charges, and centralized A/C charges (for new hostel residents only):`}
+                                    </p>
+
+                                    {/* Hostel Fee Structure Table (Image 4) */}
+                                    <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-2xs">
+                                      <table className="w-full text-left text-xs sm:text-[13px] border-collapse">
+                                        <thead>
+                                          <tr className="bg-[#f8fafd] border-b border-slate-200 text-slate-900 font-bold">
+                                            {feeTable.headers.map((h: string, hIdx: number) => (
+                                              <th key={hIdx} className="py-2.5 px-3.5 sm:px-4 font-bold">
+                                                {h}
+                                              </th>
+                                            ))}
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100 bg-white">
+                                          {feeTable.rows.map((row: HostelFeeRow, rIdx: number) => (
+                                            <tr key={rIdx} className="hover:bg-slate-50/60 transition-colors">
+                                              <td className="py-2.5 px-3.5 sm:px-4 font-semibold text-slate-800">
+                                                {row.component}
+                                              </td>
+                                              <td className="py-2.5 px-3.5 sm:px-4 font-mono font-medium text-slate-700">
+                                                {row.amount}
+                                              </td>
+                                              <td className="py-2.5 px-3.5 sm:px-4 text-slate-700">
+                                                {row.frequency}
+                                              </td>
+                                              <td className="py-2.5 px-3.5 sm:px-4 text-slate-600 text-xs leading-snug">
+                                                {row.remark}
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+
+                                    {/* Reviewer Note (Image 4) */}
+                                    <p className="leading-relaxed text-slate-600 text-xs sm:text-[13px]">
+                                      {campusData.hostelReviewerNote || `Talking about the food and facilities at ${collegeShortName}, another Shiksha Reviewer mentioned that the rooms might feel a bit cramped up and as ${collegeShortName} was established in the 1960s, the infrastructure is also not really high-tech. However, he has mentioned that ${collegeShortName} hostel food is tasty as compared to other college hostels.`}
+                                    </p>
+
+                                    {/* Hostel Compulsory Q&A (Image 5) */}
+                                    <p className="leading-relaxed text-slate-700">
+                                      <em className="text-slate-800 font-medium">
+                                        {campusData.hostelCompulsoryQA?.question || `Wondering if Hostel Compulsory in ${collegeShortName}?`}
+                                      </em>{" "}
+                                      {campusData.hostelCompulsoryQA?.answer || `No, staying at the ${collegeShortName} hostel is not compulsory. Students staying within a 15km radius of the institute are not offered hostel accommodation.`}
+                                    </p>
+
+                                    {/* Additional Campus Facilities (Image 5) */}
+                                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                                      <h3 className="font-outfit font-bold text-base sm:text-[17px] text-slate-900">
+                                        {campusData.additionalFacilitiesHeading || "Additional Campus Facilities"}
+                                      </h3>
+                                      <p className="text-xs sm:text-[13px] text-slate-600">
+                                        {campusData.additionalFacilitiesIntro || `Students at ${collegeShortName} also benefit from:`}
+                                      </p>
+                                      <ul className="space-y-1 pl-1">
+                                        {additionalBullets.map((item: string, iIdx: number) => (
+                                          <li key={iIdx} className="flex items-start gap-2.5 text-slate-700">
+                                            <span className="text-slate-800 font-black mt-0.5">•</span>
+                                            <span className="leading-relaxed">{item}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+
+                                    {/* Read Less button at bottom right (Image 5) */}
+                                    <div className="flex justify-end pt-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setIsCampusExpanded(false);
+                                          const el = document.getElementById("campus-section");
+                                          if (el) {
+                                            const yOffset = -90;
+                                            const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                            window.scrollTo({ top: y, behavior: "smooth" });
+                                          }
+                                        }}
+                                        className="text-blue-600 hover:text-blue-700 font-medium text-xs sm:text-[13px] hover:underline cursor-pointer transition-colors"
+                                      >
+                                        Read less
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* --- 1. TOP FACILITIES ICON ROW (Image 1) --- */}
+                            <div className="pt-4 border-t border-slate-100">
+                              <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2 px-1 no-scrollbar">
+                                {facilityIcons.map((fac: CampusFacilityIconItem, fIdx: number) => (
+                                  <div
+                                    key={fac.id || fIdx}
+                                    className="flex flex-col items-center justify-center min-w-[70px] sm:min-w-[84px] text-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group/fac"
+                                  >
+                                    <div className="w-12 h-12 rounded-2xl bg-white border border-slate-150 shadow-2xs group-hover/fac:shadow-sm group-hover/fac:scale-105 transition-all flex items-center justify-center">
+                                      {renderCampusFacilityIcon(fac.iconType || fac.name)}
+                                    </div>
+                                    <span className="text-[11.5px] sm:text-xs font-semibold text-slate-700 group-hover/fac:text-slate-900 leading-tight">
+                                      {fac.name}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* --- 2. INSIGHTS ON INFRASTRUCTURE SECTION (Images 1, 2, 3) --- */}
+                            <div className="pt-4 border-t border-slate-100 space-y-3.5">
+                              {/* Insights Header with Yellow Lightbulb Icon */}
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-amber-50 border border-amber-200/80 flex items-center justify-center shadow-2xs shrink-0">
+                                  <span className="text-xl">💡</span>
+                                </div>
+                                <div>
+                                  <h4 className="font-outfit font-bold text-base sm:text-[17px] text-slate-900 leading-snug">
+                                    {campusData.insightsHeading || "Insights on Infrastructure"}
+                                  </h4>
+                                  <p className="text-xs text-slate-500 font-medium">
+                                    {campusData.insightsSubtitle || "Based on 280 Student Responses"}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Insights Carousel Container with Floating Next/Prev Arrow */}
+                              <div className="relative group/infra">
+                                {/* Left Scroll Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => scrollInfra("left")}
+                                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/infra:opacity-100"
+                                >
+                                  <ChevronLeft className="w-4 h-4" />
+                                </button>
+
+                                {/* Horizontal Scroll Cards Row */}
+                                <div
+                                  ref={infraInsightsScrollRef}
+                                  className="flex gap-3 overflow-x-auto pb-3 pt-1 px-1 no-scrollbar snap-x snap-mandatory"
+                                >
+                                  {insightsCards.map((card: InfrastructureInsightCard, cIdx: number) => (
+                                    <div
+                                      key={card.id || cIdx}
+                                      className="w-[230px] sm:w-[260px] shrink-0 rounded-2xl p-4 sm:p-5 border border-slate-200/90 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-300 transition-all duration-300 snap-start space-y-2 select-none"
+                                    >
+                                      <div className="flex items-start gap-1.5">
+                                        <span className="text-purple-600 text-sm font-bold mt-0.5">✦</span>
+                                        <h5 className="font-outfit font-bold text-[13.5px] sm:text-sm text-slate-900 leading-snug">
+                                          {card.heading}
+                                        </h5>
+                                      </div>
+                                      <p className="text-xs text-slate-600 leading-relaxed pl-4 font-normal">
+                                        {card.content}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* Right Scroll Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => scrollInfra("right")}
+                                  className="absolute -right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/infra:opacity-100"
+                                >
+                                  <ChevronRight className="w-4 h-4" />
+                                </button>
+                              </div>
+
+                              {/* Footer Progress Indicator & View All Link */}
+                              <div className="flex items-center justify-between pt-1">
+                                <div className="flex items-center gap-1.5">
+                                  <div className="w-6 h-1.5 rounded-full bg-slate-800"></div>
+                                  <div className="w-10 h-1.5 rounded-full bg-slate-200"></div>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const el = document.getElementById("reviews-section");
+                                    if (el) {
+                                      const yOffset = -90;
+                                      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                      window.scrollTo({ top: y, behavior: "smooth" });
+                                    }
+                                  }}
+                                  className="text-blue-600 hover:text-blue-800 font-bold text-xs sm:text-[13px] flex items-center gap-1 hover:underline cursor-pointer"
+                                >
+                                  <span>View All</span>
+                                  <span>→</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* TABS OTHER THAN INFO & HOSTEL: CLEAN PLACEHOLDER WHILE BUILDING STEP-BY-STEP */}
+          {activeTab !== "info" && activeTab !== "hostel" && (
             <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-500">
                 <Sparkles className="w-6 h-6" />
