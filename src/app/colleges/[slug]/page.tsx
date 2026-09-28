@@ -266,6 +266,18 @@ interface RankingFaqItem {
   upvotes?: number;
 }
 
+interface CampusFacilityIconItem {
+  id?: string;
+  name: string;
+  iconType: string;
+}
+
+interface InfrastructureInsightCard {
+  id?: string;
+  heading: string;
+  content: string;
+}
+
 interface CampusHighlightBullet {
   text: string;
 }
@@ -303,6 +315,10 @@ interface CampusFacilitiesArticleData {
   additionalFacilitiesHeading?: string;
   additionalFacilitiesIntro?: string;
   additionalFacilitiesBullets?: string[];
+  facilityIcons?: CampusFacilityIconItem[];
+  insightsHeading?: string;
+  insightsSubtitle?: string;
+  insightsCards?: InfrastructureInsightCard[];
 }
 
 interface CourseRankingBoxItem {
@@ -456,6 +472,57 @@ const DEFAULT_CAMPUS_FACILITIES_DATA: CampusFacilitiesArticleData = {
     "Xerox and STD/ISD/PCO facilities in hostels",
     "On-campus bank and ATMs",
     "Guest house and waiting rooms for visitors and parents",
+  ],
+  facilityIcons: [
+    { id: "fac-1", name: "Library", iconType: "library" },
+    { id: "fac-2", name: "Cafeteria", iconType: "cafeteria" },
+    { id: "fac-3", name: "Hostel", iconType: "hostel" },
+    { id: "fac-4", name: "Sports Complex", iconType: "sports" },
+    { id: "fac-5", name: "Labs", iconType: "labs" },
+  ],
+  insightsHeading: "Insights on Infrastructure",
+  insightsSubtitle: "Based on 280 Student Responses",
+  insightsCards: [
+    {
+      id: "ins-1",
+      heading: "Sports facilities",
+      content: "Multiple sports grounds & coaching present",
+    },
+    {
+      id: "ins-2",
+      heading: "College events",
+      content: "Busy calendar with more than 3-5 weekly events",
+    },
+    {
+      id: "ins-3",
+      heading: "Mess food",
+      content: "Mess and Cooking arrangements are Hygienic",
+    },
+    {
+      id: "ins-4",
+      heading: "Attendance policy",
+      content: "Incomplete attendance invites penalty",
+    },
+    {
+      id: "ins-5",
+      heading: "Dress code",
+      content: "Students can wear whatever they want",
+    },
+    {
+      id: "ins-6",
+      heading: "Additional expenses",
+      content: "Books",
+    },
+    {
+      id: "ins-7",
+      heading: "Consequence of rules violation",
+      content: "Rule breakers are let off with a warning",
+    },
+    {
+      id: "ins-8",
+      heading: "Outside movement of girl students",
+      content: "Not at all restricted",
+    },
   ],
 };
 
@@ -678,6 +745,69 @@ const DEFAULT_MORE_REVIEW_CARDS: DetailedReviewCard[] = [
 ];
 
 // Helper to extract YouTube Video ID from standard URLs, Shorts, youtu.be, embed, etc.
+// Helper to render authentic colorful facility icons matching Shiksha UI
+const renderCampusFacilityIcon = (iconType: string) => {
+  const norm = iconType.toLowerCase();
+  if (norm.includes("lib") || norm.includes("book")) {
+    return (
+      <svg className="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 36 36" fill="none">
+        <rect x="6" y="8" width="5" height="20" rx="1.5" fill="#10B981" />
+        <rect x="13" y="6" width="5.5" height="22" rx="1.5" fill="#F59E0B" />
+        <rect x="20.5" y="10" width="5" height="18" rx="1.5" fill="#6366F1" />
+        <line x1="28" y1="8" x2="33" y2="28" stroke="#EC4899" strokeWidth="4.5" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (norm.includes("cafe") || norm.includes("food") || norm.includes("canteen")) {
+    return (
+      <svg className="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 36 36" fill="none">
+        <path d="M12 6L14 15H22L24 6" stroke="#EF4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="#FEE2E2" />
+        <line x1="18" y1="3" x2="18" y2="12" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+        <path d="M7 23C7 20 10 18 18 18C26 18 29 20 29 23H7Z" fill="#F59E0B" />
+        <rect x="6" y="24" width="24" height="3" rx="1" fill="#10B981" />
+        <path d="M8 28C8 28 10 32 18 32C26 32 28 28 28 28H8Z" fill="#D97706" />
+      </svg>
+    );
+  }
+  if (norm.includes("hostel") || norm.includes("bed") || norm.includes("room")) {
+    return (
+      <svg className="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 36 36" fill="none">
+        <rect x="5" y="14" width="26" height="12" rx="2" fill="#E0E7FF" stroke="#4F46E5" strokeWidth="2" />
+        <circle cx="10" cy="18" r="3" fill="#6366F1" />
+        <rect x="15" y="16" width="14" height="8" rx="1.5" fill="#C7D2FE" />
+        <line x1="5" y1="12" x2="5" y2="29" stroke="#374151" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="31" y1="17" x2="31" y2="29" stroke="#374151" strokeWidth="2.5" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (norm.includes("sport") || norm.includes("complex") || norm.includes("game") || norm.includes("ground")) {
+    return (
+      <svg className="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 36 36" fill="none">
+        <circle cx="14" cy="15" r="9" fill="#F87171" stroke="#DC2626" strokeWidth="2" />
+        <line x1="14" y1="24" x2="9" y2="33" stroke="#B45309" strokeWidth="3.5" strokeLinecap="round" />
+        <circle cx="21" cy="18" r="8" fill="#38BDF8" stroke="#0284C7" strokeWidth="2" />
+        <circle cx="28" cy="12" r="3" fill="#FBBF24" />
+      </svg>
+    );
+  }
+  if (norm.includes("lab") || norm.includes("chem") || norm.includes("research")) {
+    return (
+      <svg className="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 36 36" fill="none">
+        <path d="M15 6H21V13L28 27C29 29 27.5 31 25.5 31H10.5C8.5 31 7 29 8 27L15 13V6Z" fill="#FEF3C7" stroke="#D97706" strokeWidth="2" strokeLinejoin="round" />
+        <line x1="13" y1="6" x2="23" y2="6" stroke="#B45309" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M10 25C13 23 17 26 21 24C23 23 25 24 26 25L26.5 27C27 29 25.5 30 24 30H12C10.5 30 9 29 9.5 27L10 25Z" fill="#F59E0B" />
+        <circle cx="15" cy="20" r="1.5" fill="#D97706" />
+        <circle cx="21" cy="17" r="1.2" fill="#D97706" />
+      </svg>
+    );
+  }
+  return (
+    <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs">
+      🏛️
+    </div>
+  );
+};
+
 const getYouTubeVideoId = (url?: string): string | null => {
   if (!url || typeof url !== "string") return null;
   const trimmed = url.trim();
@@ -2138,6 +2268,7 @@ export default function CollegeDetailPage() {
   const [reviewHelpfulVotes, setReviewHelpfulVotes] = useState<Record<string, "up" | "down" | null>>({});
   const [activeMediaReviewModal, setActiveMediaReviewModal] = useState<StudentMediaReviewItem | null>(null);
   const mediaReviewsScrollRef = useRef<HTMLDivElement>(null);
+  const infraInsightsScrollRef = useRef<HTMLDivElement>(null);
   const [rankingsModalTab, setRankingsModalTab] = useState<"overview" | "international" | "national" | "course_boxes" | "faqs">("overview");
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -3605,6 +3736,57 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
       "Guest house and waiting rooms for visitors and parents",
     ];
 
+    const defaultIcons: CampusFacilityIconItem[] = [
+      { id: "fac-1", name: "Library", iconType: "library" },
+      { id: "fac-2", name: "Cafeteria", iconType: "cafeteria" },
+      { id: "fac-3", name: "Hostel", iconType: "hostel" },
+      { id: "fac-4", name: "Sports Complex", iconType: "sports" },
+      { id: "fac-5", name: "Labs", iconType: "labs" },
+    ];
+
+    const defaultInsights: InfrastructureInsightCard[] = [
+      {
+        id: "ins-1",
+        heading: "Sports facilities",
+        content: "Multiple sports grounds & coaching present",
+      },
+      {
+        id: "ins-2",
+        heading: "College events",
+        content: "Busy calendar with more than 3-5 weekly events",
+      },
+      {
+        id: "ins-3",
+        heading: "Mess food",
+        content: "Mess and Cooking arrangements are Hygienic",
+      },
+      {
+        id: "ins-4",
+        heading: "Attendance policy",
+        content: "Incomplete attendance invites penalty",
+      },
+      {
+        id: "ins-5",
+        heading: "Dress code",
+        content: "Students can wear whatever they want",
+      },
+      {
+        id: "ins-6",
+        heading: "Additional expenses",
+        content: "Books",
+      },
+      {
+        id: "ins-7",
+        heading: "Consequence of rules violation",
+        content: "Rule breakers are let off with a warning",
+      },
+      {
+        id: "ins-8",
+        heading: "Outside movement of girl students",
+        content: "Not at all restricted",
+      },
+    ];
+
     if (college.campusFacilitiesArticle) {
       return {
         title: college.campusFacilitiesArticle.title || `${shortName} Campus & Facilities 2026`,
@@ -3635,6 +3817,16 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
           college.campusFacilitiesArticle.additionalFacilitiesBullets && college.campusFacilitiesArticle.additionalFacilitiesBullets.length > 0
             ? college.campusFacilitiesArticle.additionalFacilitiesBullets
             : defaultAdditional,
+        facilityIcons:
+          college.campusFacilitiesArticle.facilityIcons && college.campusFacilitiesArticle.facilityIcons.length > 0
+            ? college.campusFacilitiesArticle.facilityIcons
+            : defaultIcons,
+        insightsHeading: college.campusFacilitiesArticle.insightsHeading || "Insights on Infrastructure",
+        insightsSubtitle: college.campusFacilitiesArticle.insightsSubtitle || "Based on 280 Student Responses",
+        insightsCards:
+          college.campusFacilitiesArticle.insightsCards && college.campusFacilitiesArticle.insightsCards.length > 0
+            ? college.campusFacilitiesArticle.insightsCards
+            : defaultInsights,
       };
     }
 
@@ -3661,6 +3853,10 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
       additionalFacilitiesHeading: "Additional Campus Facilities",
       additionalFacilitiesIntro: `Students at ${shortName} also benefit from:`,
       additionalFacilitiesBullets: defaultAdditional,
+      facilityIcons: defaultIcons,
+      insightsHeading: "Insights on Infrastructure",
+      insightsSubtitle: "Based on 280 Student Responses",
+      insightsCards: defaultInsights,
     };
   };
 
