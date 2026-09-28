@@ -16179,11 +16179,40 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
 
                 {/* MODAL: STUDENT REVIEWS & RATINGS */}
                 {activeMiniModal === "reviews" && (
-                  <div className="p-3.5 bg-gradient-to-br from-indigo-50/60 via-white to-blue-50/40 border border-indigo-200/80 rounded-2xl space-y-3.5">
+                  <div className="p-4 bg-gradient-to-br from-indigo-50/60 via-white to-blue-50/40 border border-indigo-200/80 rounded-2xl space-y-4">
                     {(() => {
-                      const curRev = tempData.reviewsArticle || getCollegeReviewsArticle(tempData);
-                      const histogram = curRev.histogram || [];
-                      const parameters = curRev.parameters || [];
+                      const curRev = getCollegeReviewsArticle(tempData);
+                      const histogram: ReviewHistogramItem[] =
+                        curRev.histogram && curRev.histogram.length > 0
+                          ? curRev.histogram
+                          : [
+                              { starsRange: "5 Stars", count: 82 },
+                              { starsRange: "4 Stars", count: 14 },
+                              { starsRange: "3 Stars", count: 3 },
+                              { starsRange: "2 Stars", count: 1 },
+                              { starsRange: "1 Star", count: 0 },
+                            ];
+
+                      const parameters: ReviewParameterItem[] =
+                        curRev.parameters && curRev.parameters.length > 0
+                          ? curRev.parameters
+                          : [
+                              { label: "Placements", rating: 4.8, iconType: "briefcase" },
+                              { label: "Infrastructure", rating: 4.7, iconType: "building" },
+                              { label: "Faculty & Course Curriculum", rating: 4.9, iconType: "book" },
+                              { label: "Crowd & Campus Life", rating: 4.6, iconType: "users" },
+                              { label: "Value for Money", rating: 4.8, iconType: "dollar" },
+                            ];
+
+                      const updateReviews = (updatedFields: Partial<ReviewsArticleData>) => {
+                        setTempData({
+                          ...tempData,
+                          reviewsArticle: {
+                            ...curRev,
+                            ...updatedFields,
+                          },
+                        });
+                      };
 
                       return (
                         <div className="space-y-3.5">
