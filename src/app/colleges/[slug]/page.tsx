@@ -273,6 +273,19 @@ interface CampusFacilityIconItem {
   iconType: string;
 }
 
+interface AlumniItem {
+  id?: string;
+  name: string;
+  profession: string;
+  pictureUrl: string;
+}
+
+interface AlumniArticleData {
+  title?: string;
+  subtitle?: string;
+  alumniList: AlumniItem[];
+}
+
 interface FacultyMember {
   id?: string;
   name: string;
@@ -291,6 +304,45 @@ interface CollegeFacultySectionData {
   subtitle?: string;
   members: FacultyMember[];
 }
+
+const DEFAULT_ALUMNI_LIST: AlumniItem[] = [
+  {
+    id: "alm-1",
+    name: "Raghuram Rajan",
+    profession: "Indian Economist, Banker, and Professor",
+    pictureUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Raghuram_Rajan_in_2016.jpg/220px-Raghuram_Rajan_in_2016.jpg",
+  },
+  {
+    id: "alm-2",
+    name: "Chetan Bhagat",
+    profession: "Journalist, Script Writer, and Screen Writer",
+    pictureUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Chetan_Bhagat_at_the_Launch_of_%E2%80%98The_Frontline_Runners_of_the_Hospitality_Industry%E2%80%99_coffee_table_book.jpg/220px-Chetan_Bhagat_at_the_Launch_of_%E2%80%98The_Frontline_Runners_of_the_Hospitality_Industry%E2%80%99_coffee_table_book.jpg",
+  },
+  {
+    id: "alm-3",
+    name: "Kiran Bedi",
+    profession: "Police Officer, Politician, and Writer",
+    pictureUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Kiran_Bedi_2016.jpg/220px-Kiran_Bedi_2016.jpg",
+  },
+  {
+    id: "alm-4",
+    name: "Vinod Khosla",
+    profession: "Businessman and Venture Capitalist",
+    pictureUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Vinod_Khosla_at_World_Economic_Forum_2011.jpg/220px-Vinod_Khosla_at_World_Economic_Forum_2011.jpg",
+  },
+  {
+    id: "alm-5",
+    name: "Sachin Bansal",
+    profession: "Computer Engineer and Entrepreneur",
+    pictureUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Sachin_Bansal.jpg/220px-Sachin_Bansal.jpg",
+  },
+  {
+    id: "alm-6",
+    name: "Jayant Sinha",
+    profession: "Politician",
+    pictureUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Jayant_Sinha_in_2018.jpg/220px-Jayant_Sinha_in_2018.jpg",
+  },
+];
 
 const DEFAULT_FACULTY_MEMBERS: FacultyMember[] = [
   {
@@ -1361,6 +1413,7 @@ interface CollegeDetail {
   reviewsArticle?: ReviewsArticleData;
   campusFacilitiesArticle?: CampusFacilitiesArticleData;
   facultyDetails?: CollegeFacultySectionData;
+  alumniArticle?: AlumniArticleData;
   shortName?: string;
 }
 
@@ -2075,7 +2128,7 @@ Spanning over 320 acres in the historic and posh area of Hauz Khas in South Delh
     { label: "IIT Delhi Faculty Details", targetId: "faculty-section", tabId: "info" },
     { label: "IIT Delhi Colleges/Departments", targetId: "faculty-section", tabId: "info" },
     { label: "Top online courses you might be interested in", targetId: "courses-section", tabId: "info" },
-    { label: "IIT Delhi Notable Alumni", targetId: "about-section", tabId: "info" },
+    { label: "IIT Delhi Alumni", targetId: "alumni-section", tabId: "info" },
     { label: "IIT Delhi FAQs", targetId: "faq-section", tabId: "info" },
   ],
 };
@@ -2130,6 +2183,7 @@ type MiniModalId =
   | "gallery"
   | "hostel"
   | "faculty"
+  | "alumni"
   | "qa"
   | "scholarships"
   | null;
@@ -2439,6 +2493,11 @@ export default function CollegeDetailPage() {
             rankingsArticle: parsedData.rankingsArticle || IIT_DELHI_MASTER_DATA.rankingsArticle,
             reviewsArticle: parsedData.reviewsArticle || (slug === "iit-delhi" ? IIT_DELHI_MASTER_DATA.reviewsArticle : undefined),
             campusFacilitiesArticle: parsedData.campusFacilitiesArticle || (slug === "iit-delhi" ? DEFAULT_CAMPUS_FACILITIES_DATA : undefined),
+            alumniArticle: parsedData.alumniArticle || (slug === "iit-delhi" ? {
+              title: "IIT Delhi Alumni",
+              subtitle: "The following table lists notable alumni of the Indian Institute of Technology, Delhi.",
+              alumniList: DEFAULT_ALUMNI_LIST,
+            } : undefined),
             facultyDetails: parsedData.facultyDetails || (slug === "iit-delhi" ? {
               title: "IIT Delhi [IITD] Faculty Details",
               subtitle: "Basic Information about the Faculty of IIT Delhi [IITD]",
@@ -3764,7 +3823,24 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
     };
   };
 
-    const getCollegeFacultyData = (college: CollegeDetail): CollegeFacultySectionData => {
+    const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
+    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const fullName = college.fullName || college.name || "Institute";
+    if (college.alumniArticle && college.alumniArticle.alumniList && college.alumniArticle.alumniList.length > 0) {
+      return {
+        title: college.alumniArticle.title || `${shortName} Alumni`,
+        subtitle: college.alumniArticle.subtitle || `The following table lists notable alumni of the ${fullName}.`,
+        alumniList: college.alumniArticle.alumniList,
+      };
+    }
+    return {
+      title: `${shortName} Alumni`,
+      subtitle: `The following table lists notable alumni of the ${fullName}.`,
+      alumniList: DEFAULT_ALUMNI_LIST,
+    };
+  };
+
+  const getCollegeFacultyData = (college: CollegeDetail): CollegeFacultySectionData => {
     const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
     const abbr = (college as any).shortName || shortName.replace(/[^A-Z]/g, '') || "IITD";
     if (college.facultyDetails && college.facultyDetails.members && college.facultyDetails.members.length > 0) {
@@ -3989,7 +4065,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
       { label: `${shortName} Campus & Facilities 2026`, targetId: "campus-section", tabId: "info" },
       { label: `${shortName} Colleges/Departments`, targetId: "faculty-section", tabId: "info" },
       { label: `Top online courses you might be interested in`, targetId: "courses-section", tabId: "info" },
-      { label: `${shortName} Notable Alumni`, targetId: "about-section", tabId: "info" },
+      { label: `${shortName} Alumni`, targetId: "alumni-section", tabId: "info" },
       { label: `${shortName} FAQs`, targetId: "faq-section", tabId: "info" },
     ];
   };
@@ -8804,6 +8880,103 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                   );
                 })()}
 
+                {/* 11. NOTABLE ALUMNI TABLE SECTION (EXACT USER BENCHMARK DESIGN) */}
+                {(() => {
+                  const alumniData = getCollegeAlumniArticle(collegeData);
+                  const list = alumniData.alumniList || [];
+
+                  return (
+                    <div
+                      id="alumni-section"
+                      className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-7 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-24 mt-5 space-y-4"
+                    >
+                      {/* Header Row with Title, Subtitle, and Admin Edit Button */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="font-outfit font-black text-xl sm:text-2xl text-slate-900 tracking-tight">
+                            {alumniData.title || `${collegeData.name} Alumni`}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-slate-600 font-normal mt-1 leading-relaxed">
+                            {alumniData.subtitle || `The following table lists notable alumni of the ${collegeData.fullName || collegeData.name}.`}
+                          </p>
+                        </div>
+
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("alumni")}
+                            className="px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0 active:scale-95"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Alumni</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Alumni Table */}
+                      <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="bg-[#002b49] text-white">
+                                <th className="py-3.5 px-5 text-xs sm:text-[13px] font-bold tracking-wide border-r border-[#0a385c]/60 w-[30%]">
+                                  Name
+                                </th>
+                                <th className="py-3.5 px-5 text-xs sm:text-[13px] font-bold tracking-wide border-r border-[#0a385c]/60 w-[45%]">
+                                  Profession
+                                </th>
+                                <th className="py-3.5 px-5 text-xs sm:text-[13px] font-bold tracking-wide w-[25%] text-center">
+                                  Picture
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-200 bg-white">
+                              {list.map((alumnus: AlumniItem, aIdx: number) => (
+                                <tr
+                                  key={alumnus.id || aIdx}
+                                  className="hover:bg-slate-50/70 transition-colors"
+                                >
+                                  {/* Name */}
+                                  <td className="py-3.5 px-5 text-xs sm:text-[13.5px] font-medium text-slate-900 border-r border-slate-200 align-middle">
+                                    {alumnus.name}
+                                  </td>
+
+                                  {/* Profession */}
+                                  <td className="py-3.5 px-5 text-xs sm:text-[13px] text-slate-700 border-r border-slate-200 align-middle leading-relaxed">
+                                    {alumnus.profession}
+                                  </td>
+
+                                  {/* Picture */}
+                                  <td className="py-3 px-5 align-middle text-center">
+                                    <div className="flex justify-center items-center">
+                                      <div className="w-14 h-16 sm:w-16 sm:h-20 rounded-lg overflow-hidden border border-slate-200 shadow-2xs bg-slate-100 flex items-center justify-center">
+                                        {alumnus.pictureUrl ? (
+                                          <img
+                                            src={alumnus.pictureUrl}
+                                            alt={alumnus.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                              (e.currentTarget as HTMLImageElement).src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+                                            }}
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center bg-slate-200 text-slate-500 font-bold text-sm">
+                                            {alumnus.name.charAt(0)}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
             </div>
           )}
 
@@ -9485,6 +9658,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                     {activeMiniModal === "hostel" && "🏢 Edit Campus Facilities & Hostels"}
                     {activeMiniModal === "campus_facilities" && "🏢 Edit Campus & Facilities Section"}
                     {activeMiniModal === "faculty" && "👨‍🏫 Edit Faculty Profiles"}
+                    {activeMiniModal === "alumni" && "🎓 Edit Notable Alumni Table"}
                     {activeMiniModal === "qa" && "❓ Edit Student Q&A FAQs"}
                     {activeMiniModal === "scholarships" && "🎁 Edit Scholarship Schemes"}
                     {activeMiniModal === "reviews" && "⭐ Edit Verified Reviews"}
@@ -18870,6 +19044,209 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                                         onChange={(e) => {
                                           if (e.target.files && e.target.files[0]) {
                                             handleImageUpload(e.target.files[0], mIdx);
+                                          }
+                                        }}
+                                      />
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+
+                
+                {/* MODAL: NOTABLE ALUMNI EDIT */}
+                {activeMiniModal === "alumni" && (
+                  <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+                    {(() => {
+                      const curAlumni = tempData.alumniArticle || getCollegeAlumniArticle(tempData);
+                      const list: AlumniItem[] = curAlumni.alumniList && curAlumni.alumniList.length > 0 ? curAlumni.alumniList : DEFAULT_ALUMNI_LIST;
+
+                      const handleImageUpload = (file: File, memberIndex: number) => {
+                        const reader = new FileReader();
+                        reader.onload = (uploadEvent) => {
+                          const result = uploadEvent.target?.result as string;
+                          if (result) {
+                            const updated = [...list];
+                            updated[memberIndex] = { ...updated[memberIndex], pictureUrl: result };
+                            setTempData({
+                              ...tempData,
+                              alumniArticle: { ...curAlumni, alumniList: updated },
+                            });
+                          }
+                        };
+                        reader.readAsDataURL(file);
+                      };
+
+                      return (
+                        <div className="space-y-4">
+                          <div className="bg-purple-50 p-3 rounded-xl border border-purple-100 text-xs text-purple-900 font-medium">
+                            Edit Notable Alumni Section Title, Subtitle, and table rows. You can paste image URLs or directly upload photos from your device.
+                          </div>
+
+                          {/* Section Title & Subtitle */}
+                          <div className="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                            <div>
+                              <label className="text-xs font-bold text-slate-700 block mb-1">Section Title</label>
+                              <input
+                                type="text"
+                                value={curAlumni.title || ""}
+                                onChange={(e) =>
+                                  setTempData({
+                                    ...tempData,
+                                    alumniArticle: { ...curAlumni, title: e.target.value },
+                                  })
+                                }
+                                placeholder="IIT Delhi Alumni"
+                                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-bold text-slate-700 block mb-1">Section Subtitle</label>
+                              <input
+                                type="text"
+                                value={curAlumni.subtitle || ""}
+                                onChange={(e) =>
+                                  setTempData({
+                                    ...tempData,
+                                    alumniArticle: { ...curAlumni, subtitle: e.target.value },
+                                  })
+                                }
+                                placeholder="The following table lists notable alumni of the..."
+                                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Alumni Rows List */}
+                          <div className="flex items-center justify-between pt-2">
+                            <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wide">
+                              Alumni Table Rows ({list.length})
+                            </h4>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newAlumnus: AlumniItem = {
+                                  id: `alm-${Date.now()}`,
+                                  name: "New Notable Alumnus",
+                                  profession: "Profession / Role / Designation",
+                                  pictureUrl: "",
+                                };
+                                setTempData({
+                                  ...tempData,
+                                  alumniArticle: { ...curAlumni, alumniList: [...list, newAlumnus] },
+                                });
+                              }}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add Alumni Row</span>
+                            </button>
+                          </div>
+
+                          <div className="space-y-3">
+                            {list.map((alumnus: AlumniItem, aIdx: number) => (
+                              <div
+                                key={alumnus.id || aIdx}
+                                className="p-4 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-3"
+                              >
+                                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                                  <div className="flex items-center gap-2.5">
+                                    <div className="w-10 h-12 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-200">
+                                      {alumnus.pictureUrl ? (
+                                        <img src={alumnus.pictureUrl} alt={alumnus.name} className="w-full h-full object-cover" />
+                                      ) : (
+                                        <span className="text-xs font-bold text-slate-500">{aIdx + 1}</span>
+                                      )}
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-900">{alumnus.name || `Alumnus #${aIdx + 1}`}</span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = list.filter((_, i) => i !== aIdx);
+                                      setTempData({
+                                        ...tempData,
+                                        alumniArticle: { ...curAlumni, alumniList: updated },
+                                      });
+                                    }}
+                                    className="text-red-500 hover:text-red-700 font-bold text-xs hover:underline cursor-pointer flex items-center gap-1"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <span>Delete</span>
+                                  </button>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="text-[11px] font-bold text-slate-600 block mb-1">Alumnus Name</label>
+                                    <input
+                                      type="text"
+                                      value={alumnus.name}
+                                      onChange={(e) => {
+                                        const updated = [...list];
+                                        updated[aIdx] = { ...updated[aIdx], name: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          alumniArticle: { ...curAlumni, alumniList: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-[11px] font-bold text-slate-600 block mb-1">Profession / Accomplishment</label>
+                                    <input
+                                      type="text"
+                                      value={alumnus.profession}
+                                      onChange={(e) => {
+                                        const updated = [...list];
+                                        updated[aIdx] = { ...updated[aIdx], profession: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          alumniArticle: { ...curAlumni, alumniList: updated },
+                                        });
+                                      }}
+                                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Picture URL and Direct File Upload */}
+                                <div className="space-y-1.5 pt-1 border-t border-slate-100">
+                                  <label className="text-[11px] font-bold text-slate-600 block">Alumnus Picture</label>
+                                  <div className="flex flex-col sm:flex-row items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={alumnus.pictureUrl || ""}
+                                      onChange={(e) => {
+                                        const updated = [...list];
+                                        updated[aIdx] = { ...updated[aIdx], pictureUrl: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          alumniArticle: { ...curAlumni, alumniList: updated },
+                                        });
+                                      }}
+                                      placeholder="https://... or upload photo from device"
+                                      className="w-full sm:flex-1 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
+                                    />
+                                    <label className="w-full sm:w-auto px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold cursor-pointer transition-colors text-center shrink-0 flex items-center justify-center gap-1.5">
+                                      <Upload className="w-3.5 h-3.5" />
+                                      <span>Upload Photo</span>
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          if (e.target.files && e.target.files[0]) {
+                                            handleImageUpload(e.target.files[0], aIdx);
                                           }
                                         }}
                                       />
