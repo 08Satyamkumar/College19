@@ -266,6 +266,45 @@ interface RankingFaqItem {
   upvotes?: number;
 }
 
+interface CampusHighlightBullet {
+  text: string;
+}
+
+interface HostelFeeRow {
+  component: string;
+  amount: string;
+  frequency: string;
+  remark: string;
+}
+
+interface CampusFacilitiesArticleData {
+  title?: string;
+  introText?: string;
+  campusArea?: string;
+  highlightsHeading?: string;
+  highlightsBullets?: CampusHighlightBullet[];
+  hostelHeading?: string;
+  hostelIntroText?: string;
+  hostelGuideCallout?: {
+    text: string;
+    linkText: string;
+    downloadUrl: string;
+  };
+  hostelFeeIntroText?: string;
+  hostelFeeTable?: {
+    headers: string[];
+    rows: HostelFeeRow[];
+  };
+  hostelReviewerNote?: string;
+  hostelCompulsoryQA?: {
+    question: string;
+    answer: string;
+  };
+  additionalFacilitiesHeading?: string;
+  additionalFacilitiesIntro?: string;
+  additionalFacilitiesBullets?: string[];
+}
+
 interface CourseRankingBoxItem {
   title: string;
   yearsHeader?: string[];
@@ -343,6 +382,82 @@ interface StudentMediaReviewsData {
 
 
 
+
+const DEFAULT_CAMPUS_FACILITIES_DATA: CampusFacilitiesArticleData = {
+  title: "IIT Delhi Campus & Facilities 2026",
+  introText: "IIT Delhi offers modern infrastructure and amenities supporting academic, research, student life, and sports. IIT Delhi campus area in acres is 320 acres. The IIT Delhi India has a 24/7 central library, advanced laboratories, sports complexes, hostels, recreation centres, and robust IT infrastructure in IIT Delhi hostel & campus.",
+  highlightsHeading: "IIT Delhi Campus Highlights",
+  highlightsBullets: [
+    { text: "Fully air-conditioned lecture theatres with LCD projectors" },
+    { text: "24/7 Central Library with over 3 lakh resources" },
+    { text: "High-speed campus-wide Wi-Fi and LAN connectivity" },
+    { text: "Olympic-size swimming pool and multi-sport facilities" },
+    { text: "Department-specific advanced laboratories" },
+    { text: "On-campus hospital and healthcare services" },
+    { text: "Banking, guest house, and convenience store facilities" },
+  ],
+  hostelHeading: "How are IIT Delhi Hostels?",
+  hostelIntroText: "IIT Delhi hostel accommodation has been reviewed as “decent” and “well-maintained” by Shiksha Reviewers. The institute provides hostel facilities for male and female students separately. There are 5 hostels for girls and 12 hostels for boys at IIT Delhi India. For first-year BTech students, 3-seater rooms are typically available. Meanwhile, 2-seater rooms are also available due to the varied infrastructure across the 17 hostels.",
+  hostelGuideCallout: {
+    text: "Can Parents Visit IIT Delhi Hostels? What's the Curfew Time? Get the official IIT Delhi Hostel Rule Book covering room allocation, visitors, silence hours, hostel fees and stay permissions.",
+    linkText: "Download IIT Delhi Hostel Guide",
+    downloadUrl: "#",
+  },
+  hostelFeeIntroText: "IIT Delhi's total hostel fee consists of one-time charges, recurring semester-wise charges, and centralized A/C charges (for new hostel residents only):",
+  hostelFeeTable: {
+    headers: ["Fee Component", "Amount (INR)", "Frequency", "Remark"],
+    rows: [
+      {
+        component: "Seat Allotment",
+        amount: "7,000",
+        frequency: "One Time",
+        remark: "Payable at the time of Hostel Allotment",
+      },
+      {
+        component: "Security Deposit",
+        amount: "15,000",
+        frequency: "One Time",
+        remark: "Refundable",
+      },
+      {
+        component: "Recurring Hostel Charges",
+        amount: "36,000",
+        frequency: "One Time",
+        remark: "Includes mess charges, utilities, and other facilities for both old and new hostels",
+      },
+      {
+        component: "Centralised A/C Charges (Single Occupancy)",
+        amount: "15,000",
+        frequency: "Per Semester",
+        remark: "Applicable only to Residents of New Hostel",
+      },
+      {
+        component: "Centralised A/C Charges (Double Occupancy)",
+        amount: "7,500",
+        frequency: "Per Semester",
+        remark: "Applicable only to Residents of New Hostel",
+      },
+    ],
+  },
+  hostelReviewerNote: "Talking about the food and facilities at IIT Delhi, another Shiksha Reviewer mentioned that the rooms might feel a bit cramped up and as IIT Delhi was established in the 1960s, the infrastructure is also not really high-tech. However, he has mentioned that IIT Delhi hostel food is tasty as compared to other college hostels.",
+  hostelCompulsoryQA: {
+    question: "Wondering if Hostel Compulsory in IIT Delhi?",
+    answer: "No, staying at the IIT Delhi hostel is not compulsory. Students staying within a 15km radius of the institute are not offered hostel accommodation.",
+  },
+  additionalFacilitiesHeading: "Additional Campus Facilities",
+  additionalFacilitiesIntro: "Students at IIT Delhi also benefit from:",
+  additionalFacilitiesBullets: [
+    "Gymnasium and recreation block",
+    "Swimming pool",
+    "Music room",
+    "Club building",
+    "Amphitheatre",
+    "Stationery and convenience stores",
+    "Xerox and STD/ISD/PCO facilities in hostels",
+    "On-campus bank and ATMs",
+    "Guest house and waiting rooms for visitors and parents",
+  ],
+};
 
 const DEFAULT_MORE_REVIEW_CARDS: DetailedReviewCard[] = [
   {
@@ -1033,6 +1148,7 @@ interface CollegeDetail {
   admissionArticle?: AdmissionArticleData;
   rankingsArticle?: RankingsArticleData;
   reviewsArticle?: ReviewsArticleData;
+  campusFacilitiesArticle?: CampusFacilitiesArticleData;
 }
 
 // Master Benchmark Dataset for IIT Delhi
@@ -1782,6 +1898,7 @@ type MiniModalId =
   | "reviewCards"
   | "studentMediaReviews"
   | "moreReviewCards"
+  | "campus_facilities"
   | "admissions"
   | "placements"
   | "placements_article"
@@ -2010,6 +2127,8 @@ export default function CollegeDetailPage() {
   const [admissionModalTab, setAdmissionModalTab] = useState<"article" | "boxes" | "faqs">("article");
   const [isRankingsCardOpen, setIsRankingsCardOpen] = useState(true);
   const [isRankingsArticleExpanded, setIsRankingsArticleExpanded] = useState(false);
+  const [isCampusCardOpen, setIsCampusCardOpen] = useState(true);
+  const [isCampusExpanded, setIsCampusExpanded] = useState(false);
   const [openCourseRankingBoxes, setOpenCourseRankingBoxes] = useState<Record<number, boolean>>({});
   const [openRankingsFaqIdx, setOpenRankingsFaqIdx] = useState<number | null>(null);
   const [reviewsModalTab, setReviewsModalTab] = useState<"overall" | "parameters">("overall");
@@ -2103,6 +2222,7 @@ export default function CollegeDetailPage() {
             admissionArticle: parsedData.admissionArticle || IIT_DELHI_MASTER_DATA.admissionArticle,
             rankingsArticle: parsedData.rankingsArticle || IIT_DELHI_MASTER_DATA.rankingsArticle,
             reviewsArticle: parsedData.reviewsArticle || (slug === "iit-delhi" ? IIT_DELHI_MASTER_DATA.reviewsArticle : undefined),
+            campusFacilitiesArticle: parsedData.campusFacilitiesArticle || (slug === "iit-delhi" ? DEFAULT_CAMPUS_FACILITIES_DATA : undefined),
           };
 
           setCollegeData(baseDetail);
@@ -3423,6 +3543,127 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
     };
   };
 
+    const getCollegeCampusFacilitiesArticle = (college: CollegeDetail): CampusFacilitiesArticleData => {
+    const shortName = college.name ? college.name.split(" - ")[0].split("(")[0].trim() : "College";
+    const area = college.campusArea || "320 acres";
+
+    const defaultBullets: CampusHighlightBullet[] = [
+      { text: "Fully air-conditioned lecture theatres with LCD projectors" },
+      { text: "24/7 Central Library with over 3 lakh resources" },
+      { text: "High-speed campus-wide Wi-Fi and LAN connectivity" },
+      { text: "Olympic-size swimming pool and multi-sport facilities" },
+      { text: "Department-specific advanced laboratories" },
+      { text: "On-campus hospital and healthcare services" },
+      { text: "Banking, guest house, and convenience store facilities" },
+    ];
+
+    const defaultFeeTable = {
+      headers: ["Fee Component", "Amount (INR)", "Frequency", "Remark"],
+      rows: [
+        {
+          component: "Seat Allotment",
+          amount: "7,000",
+          frequency: "One Time",
+          remark: "Payable at the time of Hostel Allotment",
+        },
+        {
+          component: "Security Deposit",
+          amount: "15,000",
+          frequency: "One Time",
+          remark: "Refundable",
+        },
+        {
+          component: "Recurring Hostel Charges",
+          amount: "36,000",
+          frequency: "One Time",
+          remark: "Includes mess charges, utilities, and other facilities for both old and new hostels",
+        },
+        {
+          component: "Centralised A/C Charges (Single Occupancy)",
+          amount: "15,000",
+          frequency: "Per Semester",
+          remark: "Applicable only to Residents of New Hostel",
+        },
+        {
+          component: "Centralised A/C Charges (Double Occupancy)",
+          amount: "7,500",
+          frequency: "Per Semester",
+          remark: "Applicable only to Residents of New Hostel",
+        },
+      ],
+    };
+
+    const defaultAdditional: string[] = [
+      "Gymnasium and recreation block",
+      "Swimming pool",
+      "Music room",
+      "Club building",
+      "Amphitheatre",
+      "Stationery and convenience stores",
+      "Xerox and STD/ISD/PCO facilities in hostels",
+      "On-campus bank and ATMs",
+      "Guest house and waiting rooms for visitors and parents",
+    ];
+
+    if (college.campusFacilitiesArticle) {
+      return {
+        title: college.campusFacilitiesArticle.title || `${shortName} Campus & Facilities 2026`,
+        introText: college.campusFacilitiesArticle.introText || `${shortName} offers modern infrastructure and amenities supporting academic, research, student life, and sports. ${shortName} campus area in acres is ${area}. The ${shortName} India has a 24/7 central library, advanced laboratories, sports complexes, hostels, recreation centres, and robust IT infrastructure in ${shortName} hostel & campus.`,
+        campusArea: college.campusFacilitiesArticle.campusArea || area,
+        highlightsHeading: college.campusFacilitiesArticle.highlightsHeading || `${shortName} Campus Highlights`,
+        highlightsBullets:
+          college.campusFacilitiesArticle.highlightsBullets && college.campusFacilitiesArticle.highlightsBullets.length > 0
+            ? college.campusFacilitiesArticle.highlightsBullets
+            : defaultBullets,
+        hostelHeading: college.campusFacilitiesArticle.hostelHeading || `How are ${shortName} Hostels?`,
+        hostelIntroText: college.campusFacilitiesArticle.hostelIntroText || `${shortName} hostel accommodation has been reviewed as “decent” and “well-maintained” by Shiksha Reviewers. The institute provides hostel facilities for male and female students separately. There are 5 hostels for girls and 12 hostels for boys at ${shortName} India. For first-year BTech students, 3-seater rooms are typically available. Meanwhile, 2-seater rooms are also available due to the varied infrastructure across the 17 hostels.`,
+        hostelGuideCallout: college.campusFacilitiesArticle.hostelGuideCallout || {
+          text: `Can Parents Visit ${shortName} Hostels? What's the Curfew Time? Get the official ${shortName} Hostel Rule Book covering room allocation, visitors, silence hours, hostel fees and stay permissions.`,
+          linkText: `Download ${shortName} Hostel Guide`,
+          downloadUrl: "#",
+        },
+        hostelFeeIntroText: college.campusFacilitiesArticle.hostelFeeIntroText || `${shortName}'s total hostel fee consists of one-time charges, recurring semester-wise charges, and centralized A/C charges (for new hostel residents only):`,
+        hostelFeeTable: college.campusFacilitiesArticle.hostelFeeTable || defaultFeeTable,
+        hostelReviewerNote: college.campusFacilitiesArticle.hostelReviewerNote || `Talking about the food and facilities at ${shortName}, another Shiksha Reviewer mentioned that the rooms might feel a bit cramped up and as ${shortName} was established in the 1960s, the infrastructure is also not really high-tech. However, he has mentioned that ${shortName} hostel food is tasty as compared to other college hostels.`,
+        hostelCompulsoryQA: college.campusFacilitiesArticle.hostelCompulsoryQA || {
+          question: `Wondering if Hostel Compulsory in ${shortName}?`,
+          answer: `No, staying at the ${shortName} hostel is not compulsory. Students staying within a 15km radius of the institute are not offered hostel accommodation.`,
+        },
+        additionalFacilitiesHeading: college.campusFacilitiesArticle.additionalFacilitiesHeading || "Additional Campus Facilities",
+        additionalFacilitiesIntro: college.campusFacilitiesArticle.additionalFacilitiesIntro || `Students at ${shortName} also benefit from:`,
+        additionalFacilitiesBullets:
+          college.campusFacilitiesArticle.additionalFacilitiesBullets && college.campusFacilitiesArticle.additionalFacilitiesBullets.length > 0
+            ? college.campusFacilitiesArticle.additionalFacilitiesBullets
+            : defaultAdditional,
+      };
+    }
+
+    return {
+      title: `${shortName} Campus & Facilities 2026`,
+      introText: `${shortName} offers modern infrastructure and amenities supporting academic, research, student life, and sports. ${shortName} campus area in acres is ${area}. The ${shortName} India has a 24/7 central library, advanced laboratories, sports complexes, hostels, recreation centres, and robust IT infrastructure in ${shortName} hostel & campus.`,
+      campusArea: area,
+      highlightsHeading: `${shortName} Campus Highlights`,
+      highlightsBullets: defaultBullets,
+      hostelHeading: `How are ${shortName} Hostels?`,
+      hostelIntroText: `${shortName} hostel accommodation has been reviewed as “decent” and “well-maintained” by Shiksha Reviewers. The institute provides hostel facilities for male and female students separately. There are 5 hostels for girls and 12 hostels for boys at ${shortName} India. For first-year BTech students, 3-seater rooms are typically available. Meanwhile, 2-seater rooms are also available due to the varied infrastructure across the 17 hostels.`,
+      hostelGuideCallout: {
+        text: `Can Parents Visit ${shortName} Hostels? What's the Curfew Time? Get the official ${shortName} Hostel Rule Book covering room allocation, visitors, silence hours, hostel fees and stay permissions.`,
+        linkText: `Download ${shortName} Hostel Guide`,
+        downloadUrl: "#",
+      },
+      hostelFeeIntroText: `${shortName}'s total hostel fee consists of one-time charges, recurring semester-wise charges, and centralized A/C charges (for new hostel residents only):`,
+      hostelFeeTable: defaultFeeTable,
+      hostelReviewerNote: `Talking about the food and facilities at ${shortName}, another Shiksha Reviewer mentioned that the rooms might feel a bit cramped up and as ${shortName} was established in the 1960s, the infrastructure is also not really high-tech. However, he has mentioned that ${shortName} hostel food is tasty as compared to other college hostels.`,
+      hostelCompulsoryQA: {
+        question: `Wondering if Hostel Compulsory in ${shortName}?`,
+        answer: `No, staying at the ${shortName} hostel is not compulsory. Students staying within a 15km radius of the institute are not offered hostel accommodation.`,
+      },
+      additionalFacilitiesHeading: "Additional Campus Facilities",
+      additionalFacilitiesIntro: `Students at ${shortName} also benefit from:`,
+      additionalFacilitiesBullets: defaultAdditional,
+    };
+  };
+
   const getCollegeTocList = (college: CollegeDetail): TableOfContentItem[] => {
     if (college.tableOfContents && college.tableOfContents.length > 0) {
       return college.tableOfContents.map((item) => ({
@@ -3463,6 +3704,8 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
       setIsCutoffCardOpen(true);
     } else if (item.targetId === "admissions-section") {
       setIsAdmissionCardOpen(true);
+    } else if (item.targetId === "campus-section") {
+      setIsCampusCardOpen(true);
     }
 
     // 3. Smoothly scroll directly to the box with sticky header offset
@@ -7766,6 +8009,246 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                   </div>
                 );
               })()}
+
+              {/* 9. CAMPUS & FACILITIES 2026 CARD (EXACT USER REFERENCE TEMPLATE) */}
+              {(() => {
+                const campusData = getCollegeCampusFacilitiesArticle(collegeData);
+                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const highlightsBullets = campusData.highlightsBullets || [];
+                const firstTwoHighlights = highlightsBullets.slice(0, 2);
+                const feeTable = campusData.hostelFeeTable || { headers: [], rows: [] };
+                const additionalBullets = campusData.additionalFacilitiesBullets || [];
+
+                return (
+                  <div
+                    id="campus-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-24"
+                  >
+                    {/* Header Row */}
+                    <div className="flex items-center justify-between gap-3">
+                      <h2 className="text-lg sm:text-xl font-bold font-outfit text-slate-900 tracking-tight">
+                        {campusData.title || `${collegeShortName} Campus & Facilities 2026`}
+                      </h2>
+
+                      <div className="flex items-center gap-2">
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("campus_facilities")}
+                            className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Campus & Facilities</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setIsCampusCardOpen(!isCampusCardOpen)}
+                          aria-label={isCampusCardOpen ? "Collapse Campus Section" : "Expand Campus Section"}
+                          className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 flex items-center justify-center text-slate-600 hover:text-slate-950 transition-all cursor-pointer shadow-2xs active:scale-90"
+                        >
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                              isCampusCardOpen ? "rotate-180 text-blue-600" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Collapsible Body */}
+                    <AnimatePresence initial={false}>
+                      {isCampusCardOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pt-4 space-y-4 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
+                            {/* Intro paragraph (Image 1) */}
+                            <p className="leading-relaxed">
+                              <strong className="text-slate-900 font-bold">{collegeShortName}</strong> offers modern infrastructure and amenities supporting academic, research, student life, and sports. {collegeShortName} campus area in acres is <strong className="text-slate-900 font-bold">{campusData.campusArea || collegeData.campusArea || "320 acres"}</strong>. The <strong className="text-slate-900 font-bold">{collegeShortName} India</strong> has a 24/7 central library, advanced laboratories, sports complexes, hostels, recreation centres, and robust IT infrastructure in <span className="text-blue-600 hover:underline cursor-pointer">{collegeShortName} hostel & campus</span>.
+                            </p>
+
+                            {/* Subheading: Campus Highlights */}
+                            <div className="space-y-2">
+                              <h3 className="font-outfit font-bold text-base sm:text-[17px] text-slate-900">
+                                {campusData.highlightsHeading || `${collegeShortName} Campus Highlights`}
+                              </h3>
+
+                              {/* Highlights Bullets: Collapsed vs Expanded */}
+                              {!isCampusExpanded ? (
+                                <div className="space-y-2">
+                                  <ul className="space-y-1.5 pl-1">
+                                    {firstTwoHighlights.map((b: CampusHighlightBullet, bIdx: number) => (
+                                      <li
+                                        key={bIdx}
+                                        className={`flex items-start gap-2.5 text-slate-700 ${
+                                          bIdx === 1 ? "opacity-40" : ""
+                                        }`}
+                                      >
+                                        <span className="text-slate-800 font-black mt-0.5">•</span>
+                                        <span className="leading-relaxed">{b.text}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+
+                                  {/* Read More button at bottom right (Image 1) */}
+                                  <div className="flex justify-end pt-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => setIsCampusExpanded(true)}
+                                      className="text-blue-600 hover:text-blue-700 font-medium text-xs sm:text-[13px] hover:underline cursor-pointer transition-colors"
+                                    >
+                                      Read more
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="space-y-5 animate-in fade-in duration-300">
+                                  {/* Full Campus Highlights list (Image 2) */}
+                                  <ul className="space-y-1.5 pl-1">
+                                    {highlightsBullets.map((b: CampusHighlightBullet, bIdx: number) => (
+                                      <li key={bIdx} className="flex items-start gap-2.5 text-slate-700">
+                                        <span className="text-slate-800 font-black mt-0.5">•</span>
+                                        <span className="leading-relaxed">{b.text}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+
+                                  {/* How are Hostels? Subheading & Details (Image 3) */}
+                                  <div className="space-y-3 pt-2">
+                                    <h3 className="font-outfit font-bold text-base sm:text-[17px] text-slate-900">
+                                      {campusData.hostelHeading || `How are ${collegeShortName} Hostels?`}
+                                    </h3>
+
+                                    <p className="leading-relaxed">
+                                      <strong className="text-slate-900 font-bold">{collegeShortName}</strong> hostel accommodation has been reviewed as “decent” and “well-maintained” by Shiksha Reviewers. The institute provides <strong className="text-slate-900 font-bold">hostel facilities for male and female students separately</strong>. There are 5 hostels for girls and 12 hostels for boys at {collegeShortName} India. For first-year BTech students, 3-seater rooms are typically available. Meanwhile, 2-seater rooms are also available due to the varied infrastructure across the 17 hostels.
+                                    </p>
+
+                                    {/* Download Hostel Rule Book Guide Callout Box (Image 3) */}
+                                    <div className="p-3.5 bg-slate-50/90 border border-slate-200/80 rounded-xl space-y-2">
+                                      <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed">
+                                        {campusData.hostelGuideCallout?.text || `Can Parents Visit ${collegeShortName} Hostels? What's the Curfew Time? Get the official ${collegeShortName} Hostel Rule Book covering room allocation, visitors, silence hours, hostel fees and stay permissions.`}
+                                      </p>
+                                      <div>
+                                        <a
+                                          href={campusData.hostelGuideCallout?.downloadUrl || "#"}
+                                          onClick={(e) => {
+                                            if (!campusData.hostelGuideCallout?.downloadUrl || campusData.hostelGuideCallout?.downloadUrl === "#") {
+                                              e.preventDefault();
+                                              alert(`Official ${collegeShortName} Hostel Guide PDF download starting...`);
+                                            }
+                                          }}
+                                          className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                        >
+                                          <span className="px-1 py-0.2 bg-red-100 text-red-600 border border-red-200 rounded text-[9px] font-black uppercase tracking-tight">PDF</span>
+                                          <span>{campusData.hostelGuideCallout?.linkText || `Download ${collegeShortName} Hostel Guide`}</span>
+                                        </a>
+                                      </div>
+                                    </div>
+
+                                    {/* Hostel Fee Intro Paragraph */}
+                                    <p className="leading-relaxed">
+                                      {campusData.hostelFeeIntroText || `${collegeShortName}'s total hostel fee consists of one-time charges, recurring semester-wise charges, and centralized A/C charges (for new hostel residents only):`}
+                                    </p>
+
+                                    {/* Hostel Fee Structure Table (Image 4) */}
+                                    <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-2xs">
+                                      <table className="w-full text-left text-xs sm:text-[13px] border-collapse">
+                                        <thead>
+                                          <tr className="bg-[#f8fafd] border-b border-slate-200 text-slate-900 font-bold">
+                                            {feeTable.headers.map((h: string, hIdx: number) => (
+                                              <th key={hIdx} className="py-2.5 px-3.5 sm:px-4 font-bold">
+                                                {h}
+                                              </th>
+                                            ))}
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100 bg-white">
+                                          {feeTable.rows.map((row: HostelFeeRow, rIdx: number) => (
+                                            <tr key={rIdx} className="hover:bg-slate-50/60 transition-colors">
+                                              <td className="py-2.5 px-3.5 sm:px-4 font-semibold text-slate-800">
+                                                {row.component}
+                                              </td>
+                                              <td className="py-2.5 px-3.5 sm:px-4 font-mono font-medium text-slate-700">
+                                                {row.amount}
+                                              </td>
+                                              <td className="py-2.5 px-3.5 sm:px-4 text-slate-700">
+                                                {row.frequency}
+                                              </td>
+                                              <td className="py-2.5 px-3.5 sm:px-4 text-slate-600 text-xs leading-snug">
+                                                {row.remark}
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+
+                                    {/* Reviewer Note (Image 4) */}
+                                    <p className="leading-relaxed text-slate-600 text-xs sm:text-[13px]">
+                                      {campusData.hostelReviewerNote || `Talking about the food and facilities at ${collegeShortName}, another Shiksha Reviewer mentioned that the rooms might feel a bit cramped up and as ${collegeShortName} was established in the 1960s, the infrastructure is also not really high-tech. However, he has mentioned that ${collegeShortName} hostel food is tasty as compared to other college hostels.`}
+                                    </p>
+
+                                    {/* Hostel Compulsory Q&A (Image 5) */}
+                                    <p className="leading-relaxed text-slate-700">
+                                      <em className="text-slate-800 font-medium">
+                                        {campusData.hostelCompulsoryQA?.question || `Wondering if Hostel Compulsory in ${collegeShortName}?`}
+                                      </em>{" "}
+                                      {campusData.hostelCompulsoryQA?.answer || `No, staying at the ${collegeShortName} hostel is not compulsory. Students staying within a 15km radius of the institute are not offered hostel accommodation.`}
+                                    </p>
+
+                                    {/* Additional Campus Facilities (Image 5) */}
+                                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                                      <h3 className="font-outfit font-bold text-base sm:text-[17px] text-slate-900">
+                                        {campusData.additionalFacilitiesHeading || "Additional Campus Facilities"}
+                                      </h3>
+                                      <p className="text-xs sm:text-[13px] text-slate-600">
+                                        {campusData.additionalFacilitiesIntro || `Students at ${collegeShortName} also benefit from:`}
+                                      </p>
+                                      <ul className="space-y-1 pl-1">
+                                        {additionalBullets.map((item: string, iIdx: number) => (
+                                          <li key={iIdx} className="flex items-start gap-2.5 text-slate-700">
+                                            <span className="text-slate-800 font-black mt-0.5">•</span>
+                                            <span className="leading-relaxed">{item}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+
+                                    {/* Read Less button at bottom right (Image 5) */}
+                                    <div className="flex justify-end pt-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setIsCampusExpanded(false);
+                                          const el = document.getElementById("campus-section");
+                                          if (el) {
+                                            const yOffset = -90;
+                                            const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                            window.scrollTo({ top: y, behavior: "smooth" });
+                                          }
+                                        }}
+                                        className="text-blue-600 hover:text-blue-700 font-medium text-xs sm:text-[13px] hover:underline cursor-pointer transition-colors"
+                                      >
+                                        Read less
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })()}
+
             </div>
           )}
 
@@ -7948,6 +8431,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
                     {activeMiniModal === "rankings_faqs" && "❓ Edit Ranking FAQs"}
                     {activeMiniModal === "gallery" && "📸 Edit Photo Gallery"}
                     {activeMiniModal === "hostel" && "🏢 Edit Campus Facilities & Hostels"}
+                    {activeMiniModal === "campus_facilities" && "🏢 Edit Campus & Facilities Section"}
                     {activeMiniModal === "faculty" && "👨‍🏫 Edit Faculty Profiles"}
                     {activeMiniModal === "qa" && "❓ Edit Student Q&A FAQs"}
                     {activeMiniModal === "scholarships" && "🎁 Edit Scholarship Schemes"}
