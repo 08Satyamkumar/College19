@@ -11610,7 +11610,423 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           )}
 
 
-          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && (
+          
+          {/* TAB: ADMISSIONS (Directly render full Admission & Application Process 2026 Section Template) */}
+          {activeTab === "admissions" && (
+            <div className="space-y-6">
+              {/* 5. ADMISSION & APPLICATION PROCESS 2026 SUB-BOX */}
+              {(() => {
+                const admData = getCollegeAdmissionArticle(collegeData);
+                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+
+                return (
+                  <div
+                    id="admissions-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20"
+                  >
+                    {/* Top Header Row */}
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                        {admData.title || `${collegeShortName} Admission & Application Process 2026`}
+                      </h3>
+
+                      <div className="flex items-center gap-2">
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("admission")}
+                            className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Admission</span>
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => setIsAdmissionCardOpen(!isAdmissionCardOpen)}
+                          aria-label={isAdmissionCardOpen ? "Collapse Admission Card" : "Expand Admission Card"}
+                          className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 flex items-center justify-center text-slate-600 hover:text-slate-950 transition-all cursor-pointer shadow-2xs active:scale-90"
+                        >
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                              isAdmissionCardOpen ? "rotate-180 text-blue-600" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Collapsible Card Body */}
+                    <AnimatePresence initial={false}>
+                      {isAdmissionCardOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pt-3.5 space-y-3.5 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
+                            {!isAdmissionArticleExpanded ? (
+                              /* Collapsed / Preview State (Image 1) */
+                              <div className="space-y-3 relative pt-0.5">
+                                {admData.introParagraph1 && (
+                                  <p className="leading-relaxed">
+                                    {renderFormattedText(admData.introParagraph1)}
+                                  </p>
+                                )}
+                                {admData.introParagraph2 && (
+                                  <p className="leading-relaxed">
+                                    {renderFormattedText(admData.introParagraph2)}
+                                  </p>
+                                )}
+
+                                {/* Bullet preview with frosted gradient fade */}
+                                {admData.bullets && admData.bullets.length > 0 && (
+                                  <div className="relative max-h-[32px] overflow-hidden [mask-image:linear-gradient(to_bottom,black_15%,rgba(0,0,0,0.3)_55%,transparent_100%)]">
+                                    <ul className="list-disc pl-5 space-y-1.5 text-slate-700">
+                                      <li>
+                                        {renderFormattedText(admData.bullets[0].text)}
+                                      </li>
+                                    </ul>
+                                  </div>
+                                )}
+
+                                {/* Read more overlay */}
+                                <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white via-white/80 to-transparent flex items-end justify-end pointer-events-auto pr-0.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsAdmissionArticleExpanded(true)}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] text-xs sm:text-[13.5px] font-bold hover:underline cursor-pointer transition-colors"
+                                  >
+                                    Read more
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              /* Fully Expanded State (Images 2 & 3) */
+                              <div className="space-y-3.5 relative pt-0.5">
+                                {admData.introParagraph1 && (
+                                  <p className="leading-relaxed">
+                                    {renderFormattedText(admData.introParagraph1)}
+                                  </p>
+                                )}
+                                {admData.introParagraph2 && (
+                                  <p className="leading-relaxed">
+                                    {renderFormattedText(admData.introParagraph2)}
+                                  </p>
+                                )}
+
+                                {/* Bullet Points List */}
+                                {admData.bullets && admData.bullets.length > 0 && (
+                                  <ul className="list-disc pl-5 space-y-2.5 text-slate-700">
+                                    {admData.bullets.map((b, bIdx) => (
+                                      <li key={bIdx} className="leading-relaxed pl-1">
+                                        {renderFormattedText(b.text)}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+
+                                {admData.afterBulletsParagraph1 && (
+                                  <p className="leading-relaxed">
+                                    {renderFormattedText(admData.afterBulletsParagraph1)}
+                                  </p>
+                                )}
+
+                                {admData.afterBulletsParagraph2 && (
+                                  <p className="leading-relaxed">
+                                    {renderFormattedText(admData.afterBulletsParagraph2)}
+                                  </p>
+                                )}
+
+                                {admData.footerNote && (
+                                  <p className="leading-relaxed font-normal text-slate-800 pt-1">
+                                    {renderFormattedText(admData.footerNote)}
+                                  </p>
+                                )}
+
+                                {/* Read less button */}
+                                <div className="flex justify-end pt-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsAdmissionArticleExpanded(false)}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] text-xs sm:text-[13.5px] font-bold hover:underline cursor-pointer transition-colors"
+                                  >
+                                    Read less
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* COURSE ADMISSION ACCORDION BOXES LIST */}
+                            {admData.courseAdmissionBoxes && admData.courseAdmissionBoxes.length > 0 && (
+                              <div className="pt-3 space-y-3">
+                                {admData.courseAdmissionBoxes.map((box, bIdx) => {
+                                  const isBoxOpen = openAdmissionBoxes[bIdx] ?? false;
+
+                                  return (
+                                    <div
+                                      key={bIdx}
+                                      className="rounded-2xl border border-slate-200/90 bg-white overflow-hidden shadow-[0_1px_4px_rgba(0,0,0,0.02)] transition-all"
+                                    >
+                                      {/* Box Header */}
+                                      <div
+                                        onClick={() => {
+                                          setOpenAdmissionBoxes((prev) => ({
+                                            ...prev,
+                                            [bIdx]: !prev[bIdx],
+                                          }));
+                                        }}
+                                        className="w-full p-4 sm:p-5 flex items-center justify-between text-left cursor-pointer hover:bg-slate-50/60 transition-colors select-none group/boxhdr"
+                                      >
+                                        <div>
+                                          <h4 className="font-outfit font-extrabold text-base sm:text-lg text-slate-900 group-hover/boxhdr:text-blue-600 transition-colors leading-tight">
+                                            {box.courseTitle}
+                                          </h4>
+                                          {box.courseMeta && (
+                                            <p className="text-xs text-slate-500 font-medium mt-1">
+                                              {box.courseMeta}
+                                            </p>
+                                          )}
+                                        </div>
+
+                                        <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 group-hover/boxhdr:text-slate-900 border border-slate-200/60 transition-all shrink-0">
+                                          <ChevronDown
+                                            className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                                              isBoxOpen ? "rotate-180 text-blue-600" : ""
+                                            }`}
+                                          />
+                                        </div>
+                                      </div>
+
+                                      {/* Collapsible Box Body */}
+                                      <AnimatePresence initial={false}>
+                                        {isBoxOpen && (
+                                          <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "auto" }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                                            className="overflow-hidden border-t border-slate-100"
+                                          >
+                                            <div className="p-4 sm:p-5 pt-3 space-y-4">
+                                              {/* Eligibility Section */}
+                                              {box.eligibilityBullets && box.eligibilityBullets.length > 0 && (
+                                                <div className="space-y-2">
+                                                  <div className="flex items-center gap-2 font-outfit font-bold text-sm sm:text-[14.5px] text-slate-900">
+                                                    <CheckCircle2 className="w-4 h-4 text-slate-700 shrink-0" />
+                                                    <span>Eligibility</span>
+                                                  </div>
+                                                  <ul className="list-disc pl-5 space-y-1.5 text-xs sm:text-[13px] text-slate-700 leading-relaxed">
+                                                    {box.eligibilityBullets.map((el, elIdx) => (
+                                                      <li key={elIdx} className="pl-1">
+                                                        {renderFormattedText(el)}
+                                                      </li>
+                                                    ))}
+                                                  </ul>
+                                                </div>
+                                              )}
+
+                                              {/* Important Dates Section */}
+                                              <div className="space-y-3 pt-1">
+                                                <div className="flex items-center justify-between gap-3">
+                                                  <div className="flex items-center gap-2 font-outfit font-bold text-sm sm:text-[14.5px] text-slate-900">
+                                                    <Calendar className="w-4 h-4 text-slate-700 shrink-0" />
+                                                    <span>{box.datesHeading || "Important dates"}</span>
+                                                  </div>
+
+                                                  {/* Green 'Keep Me Notified' Button */}
+                                                  <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      alert("Notification alert enabled for " + box.courseTitle + "! You will receive date updates.");
+                                                    }}
+                                                    className="px-4 py-1.5 rounded-full bg-[#00a859] hover:bg-[#00964e] text-white text-xs sm:text-[12.5px] font-bold flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer select-none"
+                                                  >
+                                                    <Bell className="w-3.5 h-3.5 fill-white" />
+                                                    <span>Keep Me Notified</span>
+                                                  </button>
+                                                </div>
+
+                                                {/* Dates & Events Table */}
+                                                {box.datesTable && box.datesTable.length > 0 && (
+                                                  <div className="overflow-x-auto rounded-xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
+                                                    <table className="w-full text-left border-collapse text-xs sm:text-[13px]">
+                                                      <thead>
+                                                        <tr className="bg-[#f0f4f9] text-slate-800 font-bold font-outfit text-xs border-b border-slate-200/80">
+                                                          <th className="py-2.5 px-4 font-bold font-outfit text-slate-900 w-1/3 border-r border-slate-200/80">
+                                                            Dates
+                                                          </th>
+                                                          <th className="py-2.5 px-4 font-bold font-outfit text-slate-900 w-2/3">
+                                                            Events
+                                                          </th>
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody className="divide-y divide-slate-100">
+                                                        {box.datesTable.map((dRow, dIdx) => (
+                                                          <tr key={dIdx} className="hover:bg-slate-50/70 transition-colors">
+                                                            <td className="py-3 px-4 font-semibold text-slate-900 whitespace-nowrap align-middle border-r border-slate-100">
+                                                              {dRow.dates}
+                                                            </td>
+                                                            <td className="py-3 px-4 text-slate-700 align-middle">
+                                                              <div className="flex flex-wrap items-center gap-2">
+                                                                <span>{dRow.event}</span>
+                                                                {dRow.isTentative && (
+                                                                  <span className="px-2 py-0.5 rounded-md bg-[#5c94e8] text-white text-[10px] font-bold shadow-2xs">
+                                                                    Tentative
+                                                                  </span>
+                                                                )}
+                                                              </div>
+                                                            </td>
+                                                          </tr>
+                                                        ))}
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                )}
+
+                                                {/* Centered 'Download dates' Outline Button */}
+                                                <div className="flex justify-center pt-3 pb-0.5">
+                                                  <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      alert("Dates schedule downloaded for " + box.courseTitle);
+                                                    }}
+                                                    className="px-5 py-2 rounded-full border border-slate-700/80 hover:border-slate-950 text-slate-800 hover:text-slate-950 font-bold text-xs sm:text-[13px] transition-all duration-200 active:scale-95 flex items-center gap-1.5 shadow-2xs hover:bg-slate-50 cursor-pointer select-none"
+                                                  >
+                                                    <span>Download dates</span>
+                                                    <Download className="w-3.5 h-3.5" />
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </motion.div>
+                                        )}
+                                      </AnimatePresence>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* Separator line & COMMONLY ASKED QUESTIONS ON ADMISSIONS ACCORDION */}
+                            {admData.faqs && admData.faqs.length > 0 && (
+                              <div className="pt-5 mt-4 border-t border-slate-200/80 space-y-3.5">
+                                {/* Header Row with Yellow/Amber Q&A Badge */}
+                                <div className="flex items-center justify-between gap-3">
+                                  <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-amber-100/90 text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
+                                      <HelpCircle className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                      <h4 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
+                                        {admData.faqsHeading || "Commonly asked questions"}
+                                      </h4>
+                                      <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
+                                        {admData.faqsSubtitle || "On Admissions"}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {isAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openMiniModal("admission_faqs")}
+                                      className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-bold border border-amber-200/80 shadow-2xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                                    >
+                                      <Edit className="w-3 h-3" />
+                                      <span>Edit Admission FAQs</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Accordion Questions List */}
+                                <div className="divide-y divide-slate-100/90 pt-1">
+                                  {admData.faqs.map((faq, fIdx) => {
+                                    const isOpen = openAdmissionFaqIdx === fIdx;
+                                    const rawQ = faq.question.trim();
+                                    const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
+                                    const rawA = faq.answer.trim();
+                                    const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
+
+                                    return (
+                                      <div key={fIdx} className="py-2.5 first:pt-1 last:pb-0">
+                                        <button
+                                          type="button"
+                                          onClick={() => setOpenAdmissionFaqIdx(isOpen ? null : fIdx)}
+                                          className="w-full flex items-center justify-between gap-3 text-left py-1 text-slate-800 hover:text-blue-600 transition-colors cursor-pointer group/q"
+                                        >
+                                          <span className="font-outfit font-bold text-[13px] sm:text-[13.5px] leading-snug group-hover/q:text-blue-600 transition-colors">
+                                            {formattedQ}
+                                          </span>
+                                          <div className="flex items-center gap-2 shrink-0">
+                                            {faq.upvotes && faq.upvotes > 0 ? (
+                                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/70 text-[11px] font-bold">
+                                                {faq.upvotes} 👍
+                                              </span>
+                                            ) : null}
+                                            <ChevronDown
+                                              className={`w-4 h-4 text-slate-500 group-hover/q:text-blue-600 transition-transform duration-200 ${
+                                                isOpen ? "rotate-180 text-blue-600" : ""
+                                              }`}
+                                            />
+                                          </div>
+                                        </button>
+
+                                        <AnimatePresence initial={false}>
+                                          {isOpen && (
+                                            <motion.div
+                                              initial={{ opacity: 0, height: 0 }}
+                                              animate={{ opacity: 1, height: "auto" }}
+                                              exit={{ opacity: 0, height: 0 }}
+                                              transition={{ duration: 0.22, ease: "easeInOut" }}
+                                              className="overflow-hidden"
+                                            >
+                                              <div className="pt-2 pb-2 pl-0.5 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                                                <p className="leading-relaxed">
+                                                  {formattedA}
+                                                </p>
+                                              </div>
+                                            </motion.div>
+                                          )}
+                                        </AnimatePresence>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+
+                                {/* Centered 'Admission Details for all courses ->' Outline Pill Button */}
+                                <div className="flex justify-center pt-3 pb-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveTab("admissions");
+                                      document.getElementById("college-nav-tabs-bar")?.scrollIntoView({ behavior: "smooth" });
+                                    }}
+                                    className="px-6 py-2.5 rounded-full border border-[#2d114d] hover:border-[#1a0830] text-[#2d114d] hover:text-[#1a0830] hover:bg-purple-50/50 font-bold text-xs sm:text-[13.5px] transition-all duration-200 active:scale-95 flex items-center gap-2 shadow-2xs cursor-pointer select-none"
+                                  >
+                                    <span>{admData.faqsButtonText || "Admission Details for all courses"}</span>
+                                    <ArrowRight className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+
+          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && activeTab !== "admissions" && (
             <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-500">
                 <Sparkles className="w-6 h-6" />
