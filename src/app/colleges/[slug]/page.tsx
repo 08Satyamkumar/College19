@@ -10361,7 +10361,558 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           )}
 
 
-          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && (
+          
+          {/* TAB: COURSES & FEES (Directly render full Courses & Fees 2026 Section Template) */}
+          {activeTab === "courses" && (
+            <div className="space-y-6">
+              {/* 4. COURSES & FEES 2026 CARD (STEP 3 IN MASTER TEMPLATE) */}
+              {(() => {
+                const cfData = getCollegeCoursesFeesArticle(collegeData);
+                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+
+                return (
+                  <div
+                    id="courses-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-24"
+                  >
+                    {/* Header Row */}
+                    <div className="flex items-center justify-between gap-3">
+                      <h2 className="text-lg sm:text-xl font-bold font-outfit text-slate-900 tracking-tight">
+                        {cfData.title || `${collegeShortName} Courses & Fees 2026`}
+                      </h2>
+
+                      <div className="flex items-center gap-2">
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("courses")}
+                            className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Courses & Fees</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setIsCoursesCardOpen(!isCoursesCardOpen)}
+                          aria-label={isCoursesCardOpen ? "Collapse Courses Card" : "Expand Courses Card"}
+                          className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 flex items-center justify-center text-slate-600 hover:text-slate-950 transition-all cursor-pointer shadow-2xs active:scale-90"
+                        >
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                              isCoursesCardOpen ? "rotate-180 text-blue-600" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Collapsible Card Body */}
+                    <AnimatePresence initial={false}>
+                      {isCoursesCardOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pt-4 space-y-4 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
+                            {/* Paragraph 1 */}
+                            {cfData.introParagraph1 && (
+                              <p className="leading-relaxed">
+                                {renderFormattedText(cfData.introParagraph1)}
+                              </p>
+                            )}
+
+                            {/* Collapsed Preview vs Expanded Full Content */}
+                            {!isCoursesArticleExpanded ? (
+                              <div className="relative pt-0.5">
+                                {cfData.introParagraph2 && (
+                                  <div className="relative max-h-[46px] overflow-hidden [mask-image:linear-gradient(to_bottom,black_30%,rgba(0,0,0,0.3)_65%,transparent_100%)]">
+                                    <p className="leading-relaxed">
+                                      {renderFormattedText(cfData.introParagraph2)}
+                                    </p>
+                                  </div>
+                                )}
+                                {/* Frosted Fade Overlay with Read more */}
+                                <div className="absolute inset-x-0 bottom-0 h-11 bg-gradient-to-t from-white via-white/85 to-transparent flex items-end justify-end pointer-events-auto pr-0.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsCoursesArticleExpanded(true)}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] text-xs sm:text-[13.5px] font-bold hover:underline cursor-pointer transition-colors"
+                                  >
+                                    Read more
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-4 pt-0.5">
+                                {/* Paragraph 2 */}
+                                {cfData.introParagraph2 && (
+                                  <p className="leading-relaxed">
+                                    {renderFormattedText(cfData.introParagraph2)}
+                                  </p>
+                                )}
+
+                                {/* Table 1: Course Categories & Specialisations (Image 2) */}
+                                {cfData.specialisations && cfData.specialisations.length > 0 && (
+                                  <div className="overflow-x-auto rounded-2xl border border-slate-300 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
+                                    <table className="w-full text-left border-collapse text-xs sm:text-[13.5px]">
+                                      <tbody className="divide-y divide-slate-300">
+                                        {cfData.specialisations.map((spec, sIdx) => (
+                                          <tr key={sIdx} className="hover:bg-slate-50/70 transition-colors">
+                                            <td className="py-3.5 px-4 sm:px-5 font-semibold text-slate-900 align-top w-1/4 sm:w-1/5 border-r border-slate-300">
+                                              {spec.category}
+                                            </td>
+                                            <td className="py-3.5 px-4 sm:px-5 text-slate-600 font-normal leading-relaxed align-top">
+                                              {spec.list}
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                )}
+
+                                {/* Callout / Promo text with PDF Download link (Image 2) */}
+                                <div className="space-y-2 pt-1">
+                                  {cfData.calloutPromoText && (
+                                    <p className="italic text-slate-800 text-[13px] sm:text-[13.5px] leading-relaxed">
+                                      {cfData.calloutPromoText}
+                                    </p>
+                                  )}
+                                  <div className="pt-0.5">
+                                    <a
+                                      href={cfData.calloutPdfUrl || "#"}
+                                      onClick={(e) => {
+                                        if (!cfData.calloutPdfUrl || cfData.calloutPdfUrl === "#") {
+                                          e.preventDefault();
+                                          alert(`Downloading official courses & fee booklet for ${collegeShortName}...`);
+                                        }
+                                      }}
+                                      className="inline-flex items-center gap-1.5 text-[#1a73e8] hover:text-[#0b57d0] text-xs sm:text-[13px] font-semibold hover:underline transition-colors"
+                                    >
+                                      <span className="text-red-500 font-bold">📕</span>
+                                      <span>Download Free PDF</span>
+                                    </a>
+                                  </div>
+                                </div>
+
+                                {/* Popular Courses Introductory Line (Image 3) */}
+                                {cfData.popularCoursesHeading && (
+                                  <p className="leading-relaxed pt-2 text-slate-800 font-medium">
+                                    {renderFormattedText(cfData.popularCoursesHeading)}
+                                  </p>
+                                )}
+
+                                {/* Table 2: Popular Courses & Total Tuition Fees Table (Image 3) */}
+                                {cfData.popularCourses && cfData.popularCourses.length > 0 && (
+                                  <div className="overflow-x-auto custom-scrollbar rounded-2xl border border-slate-300 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
+                                    <table className="w-full text-left border-collapse text-xs sm:text-[13px] min-w-[500px]">
+                                      <thead>
+                                        <tr className="bg-[#f0f4f9] text-slate-800 font-bold font-outfit text-xs sm:text-[13.5px] border-b border-slate-300">
+                                          <th className="py-3 px-4 sm:px-5 font-bold font-outfit text-slate-900 border-r border-slate-300">
+                                            Course
+                                          </th>
+                                          <th className="py-3 px-4 sm:px-5 font-bold font-outfit text-slate-900 border-r border-slate-300">
+                                            Total Tuition Fees
+                                          </th>
+                                          <th className="py-3 px-4 sm:px-5 font-bold font-outfit text-slate-900">
+                                            Total Fees
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="font-normal divide-y divide-slate-300">
+                                        {cfData.popularCourses.map((cRow, cIdx) => (
+                                          <tr key={cIdx} className="hover:bg-slate-50/70 transition-colors">
+                                            <td className="py-3 px-4 sm:px-5 font-medium border-r border-slate-300">
+                                              <span className="text-[#1a73e8] hover:text-[#0b57d0] hover:underline cursor-pointer font-medium">
+                                                {cRow.courseName}
+                                              </span>
+                                              {cRow.coursesCount && (
+                                                <span className="text-slate-500 font-normal ml-1 text-xs">
+                                                  ({cRow.coursesCount})
+                                                </span>
+                                              )}
+                                            </td>
+                                            <td className="py-3 px-4 sm:px-5 text-slate-700 whitespace-nowrap border-r border-slate-300">
+                                              {cRow.tuitionFees}
+                                            </td>
+                                            <td className="py-3 px-4 sm:px-5 text-slate-700 whitespace-nowrap">
+                                              {cRow.totalFees}
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                )}
+
+                                {/* Estimated Note & Other Charges Heading (Image 4) */}
+                                <div className="space-y-1.5 pt-2">
+                                  {cfData.otherChargesNote && (
+                                    <p className="text-xs text-slate-500 font-normal">
+                                      {cfData.otherChargesNote}
+                                    </p>
+                                  )}
+                                  {cfData.otherChargesHeading && (
+                                    <p className="font-semibold text-slate-900 text-[13px] sm:text-[13.5px]">
+                                      {renderFormattedText(cfData.otherChargesHeading)}
+                                    </p>
+                                  )}
+                                </div>
+
+                                {/* Table 3: Other Charges Breakdown Table (Image 4) */}
+                                {cfData.otherCharges && cfData.otherCharges.length > 0 && (
+                                  <div className="overflow-x-auto custom-scrollbar rounded-2xl border border-slate-300 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
+                                    <table className="w-full text-left border-collapse text-xs sm:text-[13px] min-w-[450px]">
+                                      <thead>
+                                        <tr className="bg-[#f0f4f9] text-slate-800 font-bold font-outfit text-xs sm:text-[13.5px] border-b border-slate-300">
+                                          <th className="py-3 px-4 sm:px-5 font-bold font-outfit text-slate-900 w-1/2 border-r border-slate-300">
+                                            Components
+                                          </th>
+                                          <th className="py-3 px-4 sm:px-5 font-bold font-outfit text-slate-900 w-1/2">
+                                            Amount
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="font-normal divide-y divide-slate-300">
+                                        {cfData.otherCharges.map((oRow, oIdx) => (
+                                          <tr key={oIdx} className="hover:bg-slate-50/70 transition-colors">
+                                            <td className="py-3 px-4 sm:px-5 border-r border-slate-300 align-top">
+                                              <p className="font-medium text-slate-900">{oRow.component}</p>
+                                              {oRow.subtext && (
+                                                <p className="text-[11.5px] sm:text-xs text-slate-500 italic mt-0.5 leading-relaxed">
+                                                  {oRow.subtext}
+                                                </p>
+                                              )}
+                                            </td>
+                                            <td className="py-3 px-4 sm:px-5 text-slate-800 font-medium whitespace-nowrap align-top">
+                                              {oRow.amount}
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                )}
+
+                                {/* Footer note & Read less toggle (Image 4) */}
+                                <div className="flex items-center justify-between gap-3 pt-3">
+                                  <p className="text-slate-800 text-xs sm:text-[13px] font-medium">
+                                    {renderFormattedText(cfData.footerNote || `Check more about ${collegeShortName} courses below:`)}
+                                  </p>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setIsCoursesArticleExpanded(false);
+                                      const el = document.getElementById("courses-section");
+                                      if (el) {
+                                        el.scrollIntoView({ behavior: "smooth", block: "start" });
+                                      }
+                                    }}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] text-xs sm:text-[13.5px] font-bold hover:underline cursor-pointer shrink-0 transition-colors"
+                                  >
+                                    Read less
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* SUB-BOX ACCORDION(S): UG / PG Courses Highlights Sub-Box (Exact User Reference Pattern) */}
+                            {cfData.courseSummaryGroups && cfData.courseSummaryGroups.length > 0 && (
+                              <div className="space-y-3.5 pt-2">
+                                {cfData.courseSummaryGroups.map((group, gIdx) => {
+                                  const isOpen = !!openCourseGroupIndices[gIdx];
+                                  return (
+                                    <div
+                                      key={gIdx}
+                                      className="bg-white/95 border border-slate-200/90 hover:border-slate-300/90 rounded-2xl overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] transition-all"
+                                    >
+                                      {/* Accordion Toggle Header */}
+                                      <div
+                                        onClick={() => toggleCourseGroup(gIdx)}
+                                        className="w-full p-4 sm:p-4.5 flex items-center justify-between text-left hover:bg-slate-50/70 transition-colors cursor-pointer group/hdr select-none"
+                                      >
+                                        <h3 className="text-sm sm:text-[15px] font-bold font-outfit text-slate-900 tracking-tight group-hover/hdr:text-blue-600 transition-colors">
+                                          {group.groupTitle}
+                                        </h3>
+
+                                        <div className="flex items-center gap-2">
+                                          {isAdmin && (
+                                            <button
+                                              type="button"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                openMiniModal("course_summary_box");
+                                              }}
+                                              className="px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1 cursor-pointer active:scale-95 shrink-0"
+                                            >
+                                              <Edit className="w-3.5 h-3.5" />
+                                              <span>Edit Table</span>
+                                            </button>
+                                          )}
+                                          <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-500 group-hover/hdr:text-slate-900 border border-slate-200/60 transition-all shrink-0">
+                                            <ChevronDown
+                                              className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                                                isOpen ? "rotate-180 text-blue-600" : ""
+                                              }`}
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      {/* Collapsible Accordion Body */}
+                                      <AnimatePresence initial={false}>
+                                        {isOpen && (
+                                          <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "auto" }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                                            className="overflow-hidden"
+                                          >
+                                            <div className="px-4 sm:px-5 pb-5 pt-1">
+                                              {/* Exact Shiksha Sub-Box Table Card matching reference image */}
+                                              <div className="rounded-xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.02)] overflow-hidden bg-white">
+                                                {/* Light Soft Blue Banner Header */}
+                                                <div className="bg-[#f0f5ff] text-[#1e293b] px-4 sm:px-5 py-2.5 sm:py-3 border-b border-slate-200/80 flex items-center justify-between">
+                                                  <h4 className="font-outfit font-bold text-xs sm:text-sm tracking-wide text-slate-900">
+                                                    {group.groupTitle}
+                                                  </h4>
+                                                </div>
+
+                                                {/* Table Body with Course Columns */}
+                                                <div className="overflow-x-auto custom-scrollbar">
+                                                  <div
+                                                    className="grid"
+                                                    style={{
+                                                      gridTemplateColumns: `repeat(${Math.max(1, group.courses.length)}, minmax(280px, 1fr))`,
+                                                      width: "max-content",
+                                                      minWidth: "100%",
+                                                    }}
+                                                  >
+                                                    {/* Course Titles Row */}
+                                                    {group.courses.map((course, cIdx) => (
+                                                      <div
+                                                        key={`hdr-${cIdx}`}
+                                                        className="px-4 sm:px-5 py-2.5 sm:py-3 bg-white border-b border-r border-slate-200/80 last:border-r-0 flex items-center"
+                                                      >
+                                                        <h5 className="font-outfit font-bold text-slate-900 text-xs sm:text-[14px]">
+                                                          {course.courseName}
+                                                        </h5>
+                                                      </div>
+                                                    ))}
+
+                                                    {/* Course Specs Rows */}
+                                                    {group.courses.map((course, cIdx) => (
+                                                      <div
+                                                        key={`body-${cIdx}`}
+                                                        className="p-4 sm:p-5 bg-white border-r border-slate-200/80 last:border-r-0 space-y-2.5 text-xs sm:text-[13px] text-slate-700 font-normal leading-relaxed"
+                                                      >
+                                                        {course.firstYearFees && (
+                                                          <div className="flex items-baseline gap-1.5 flex-wrap">
+                                                            <span className="text-slate-800 font-medium shrink-0">1st Year Fees:</span>
+                                                            <span className="font-semibold text-slate-950">{course.firstYearFees}</span>
+                                                          </div>
+                                                        )}
+                                                        {course.eligibility && (
+                                                          <div className="flex items-baseline gap-1.5 flex-wrap">
+                                                            <span className="text-slate-800 font-medium shrink-0">Eligibility:</span>
+                                                            <span className="font-semibold text-slate-950">{course.eligibility}</span>
+                                                          </div>
+                                                        )}
+                                                        {course.duration && (
+                                                          <div className="flex items-baseline gap-1.5 flex-wrap">
+                                                            <span className="text-slate-800 font-medium shrink-0">Duration:</span>
+                                                            <span className="font-semibold text-slate-950">{course.duration}</span>
+                                                          </div>
+                                                        )}
+                                                        {course.selection && (
+                                                          <div className="flex items-baseline gap-1.5 flex-wrap">
+                                                            <span className="text-slate-800 font-medium shrink-0">Selection:</span>
+                                                            <span className="font-semibold text-slate-950">{course.selection}</span>
+                                                          </div>
+                                                        )}
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </motion.div>
+                                        )}
+                                      </AnimatePresence>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* Shining Light Green Oval Pill Action Button: View All Courses (Image 2) */}
+                            <div className="pt-4 pb-1 flex justify-center">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setActiveTab("courses");
+                                  const navEl = document.getElementById("college-nav-tabs-bar");
+                                  if (navEl) {
+                                    navEl.scrollIntoView({ behavior: "smooth", block: "start" });
+                                  } else {
+                                    window.scrollTo({ top: 380, behavior: "smooth" });
+                                  }
+                                }}
+                                className="relative group overflow-hidden bg-gradient-to-r from-[#00b05b] via-[#10b981] to-[#00a859] hover:from-[#00c96b] hover:via-[#34d399] hover:to-[#00a859] text-white font-bold py-2.5 px-8 rounded-full text-xs sm:text-[13.5px] flex items-center justify-center gap-2 cursor-pointer transition-all duration-300 shadow-[0_4px_16px_rgba(0,180,95,0.38)] hover:shadow-[0_6px_24px_rgba(0,180,95,0.55)] active:scale-95 select-none"
+                              >
+                                {/* Shining sweep effect */}
+                                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none" />
+                                <span className="tracking-tight">{cfData.viewAllBtnText || "View All Courses & Fees"}</span>
+                                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1.5" />
+                              </button>
+                            </div>
+
+                            {/* COMMONLY ASKED QUESTIONS ON POPULAR PROGRAMS ACCORDION (Image 3) */}
+                            {cfData.faqs && cfData.faqs.length > 0 && (
+                              <div className="pt-6 mt-6 border-t border-slate-200/80 space-y-4">
+                                {/* Header Row with Yellow/Amber Q&A Badge */}
+                                <div className="flex items-center justify-between gap-3">
+                                  <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-amber-100/90 text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
+                                      <HelpCircle className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                      <h3 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
+                                        Commonly asked questions
+                                      </h3>
+                                      <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
+                                        On Popular Programs
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {isAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openMiniModal("courses")}
+                                      className="px-3 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                                    >
+                                      <Edit className="w-3.5 h-3.5" />
+                                      <span>Edit FAQs</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Accordion Questions List */}
+                                <div className="divide-y divide-slate-100/90 pt-1">
+                                  {cfData.faqs.map((faq, fIdx) => {
+                                    const isOpen = openCoursesFaqIdx === fIdx;
+                                    const rawQ = faq.question.trim();
+                                    const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
+                                    const rawA = faq.answer.trim();
+                                    const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
+
+                                    return (
+                                      <div key={fIdx} className="py-2.5 first:pt-1 last:pb-0">
+                                        <button
+                                          type="button"
+                                          onClick={() => setOpenCoursesFaqIdx(isOpen ? null : fIdx)}
+                                          className="w-full flex items-center justify-between gap-3 text-left py-1 text-slate-800 hover:text-blue-600 transition-colors cursor-pointer group/q"
+                                        >
+                                          <span className="font-outfit font-bold text-[13px] sm:text-[13.5px] leading-snug group-hover/q:text-blue-600 transition-colors">
+                                            {formattedQ}
+                                          </span>
+                                          <ChevronDown
+                                            className={`w-4 h-4 text-slate-500 group-hover/q:text-blue-600 shrink-0 transition-transform duration-200 ${
+                                              isOpen ? "rotate-180 text-blue-600" : ""
+                                            }`}
+                                          />
+                                        </button>
+
+                                        <AnimatePresence initial={false}>
+                                          {isOpen && (
+                                            <motion.div
+                                              initial={{ opacity: 0, height: 0 }}
+                                              animate={{ opacity: 1, height: "auto" }}
+                                              exit={{ opacity: 0, height: 0 }}
+                                              transition={{ duration: 0.2, ease: "easeInOut" }}
+                                              className="overflow-hidden"
+                                            >
+                                              <div className="pt-2 pb-3 space-y-3 pl-0.5 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                                                {/* Multi-paragraph answer text */}
+                                                <div className="space-y-2">
+                                                  {formattedA.split("\n\n").map((para, pIdx) => (
+                                                    <p key={pIdx} className="leading-relaxed">
+                                                      {para}
+                                                    </p>
+                                                  ))}
+                                                </div>
+
+                                                {/* Admissions Guidance Counselor Callout Box */}
+                                                <div className="mt-3 p-3 sm:p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between gap-3">
+                                                  <div className="flex items-center gap-3">
+                                                    <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-200/80">
+                                                      <img
+                                                        src="/images/counselor_avatar.png"
+                                                        alt="Expert Counselor"
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                          (e.target as HTMLElement).style.display = "none";
+                                                        }}
+                                                      />
+                                                      <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-orange-700 font-black text-xs">
+                                                        SP
+                                                      </div>
+                                                      <span className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                                                    </div>
+                                                    <div>
+                                                      <h5 className="font-outfit font-bold text-xs sm:text-[13px] text-slate-900 leading-tight">
+                                                        Get <span className="text-emerald-600 font-black italic">free</span> admissions guidance
+                                                      </h5>
+                                                      <p className="text-[11px] text-slate-400 font-semibold flex items-center gap-1 mt-0.5">
+                                                        <span>★ 0</span>
+                                                        <span>•</span>
+                                                        <span>0 review</span>
+                                                      </p>
+                                                    </div>
+                                                  </div>
+
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                      const leadEl = document.getElementById("lead-inquiry-box");
+                                                      if (leadEl) {
+                                                        leadEl.scrollIntoView({ behavior: "smooth" });
+                                                      }
+                                                    }}
+                                                    className="px-5 py-2 rounded-full bg-[#1c142e] hover:bg-[#2b2046] text-white text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+                                                  >
+                                                    Call Us
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </motion.div>
+                                          )}
+                                        </AnimatePresence>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+
+          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && (
             <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-500">
                 <Sparkles className="w-6 h-6" />
