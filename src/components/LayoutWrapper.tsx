@@ -83,6 +83,12 @@ export default function LayoutWrapper({
     mode: "login",
   });
   const pathname = usePathname();
+  const isCollegeDetailPage = Boolean(
+    pathname &&
+    pathname.startsWith("/colleges/") &&
+    pathname !== "/colleges" &&
+    pathname !== "/colleges/ranking"
+  );
   const router = useRouter();
   // Theme is always light — useTheme kept for context but toggle not used
   useTheme();
@@ -1771,7 +1777,7 @@ export default function LayoutWrapper({
     <div className="min-h-screen bg-background text-text_primary flex flex-col font-sans transition-all duration-300">
       {/* SHIKSHA SCREENSHOT MATCHING DOUBLE-ROW HEADER */}
       <header
-        className="fixed top-0 left-0 right-0 bg-brand_header text-white z-40 shadow-md transition-colors border-b border-white/10"
+        className={`${isCollegeDetailPage ? "relative bg-brand_header text-white z-40 shadow-md transition-colors border-b border-white/10" : "fixed top-0 left-0 right-0 bg-brand_header text-white z-40 shadow-md transition-colors border-b border-white/10"}`}
         onMouseLeave={handleMenuMouseLeave}
       >
         {/* ROW 1: TOP ROW (Logo, Wide Search Bar, Login/Sign Up) */}
@@ -2944,7 +2950,8 @@ export default function LayoutWrapper({
       )}
 
       {/* MAIN VIEW CONTENT ( Triple-Row Header height is 144px, requiring pt-[152px] on all screens ) */}
-      <div className="flex-grow pt-[152px]">
+      <div className={`flex-grow ${isCollegeDetailPage ? "pt-0" : "pt-[152px]"}`}>
+        {/* On College Detail Pages, small top space */}
         <main className="w-full max-w-[1440px] mx-auto p-6 md:p-8">
           {children}
         </main>

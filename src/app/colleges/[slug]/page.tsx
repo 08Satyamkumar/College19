@@ -4323,7 +4323,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
       </section>
 
       {/* 2. GLASSMORPHIC SUB-HEADER TABS WITH SEPARATORS */}
-      <div id="college-nav-tabs-bar" className="sticky top-16 md:top-0 bg-white/85 backdrop-blur-xl z-30 border-b border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] py-1 relative scroll-mt-4">
+      <div id="college-nav-tabs-bar" className="sticky top-0 bg-white/95 backdrop-blur-xl z-40 border-b border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.06)] py-2 relative scroll-mt-4 transition-all">
         {canScrollLeft && (
           <div className="absolute left-0 inset-y-0 w-16 bg-gradient-to-r from-white via-white/90 to-transparent z-20 flex items-center pl-2 pointer-events-none">
             <button
@@ -13407,7 +13407,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
         <div className="lg:col-span-3 space-y-6">
           <div
             id="lead-inquiry-box"
-            className="sticky top-20 bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-5"
+            className="sticky top-16 bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-5"
           >
             <div className="space-y-1.5">
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 text-[9.5px] font-black uppercase tracking-wide border border-orange-200">
