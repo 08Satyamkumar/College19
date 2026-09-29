@@ -9724,7 +9724,644 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           )}
 
 
-          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && (
+          
+          {/* TAB: CUT-OFFS (Directly render full Cutoff 2026 Section Template) */}
+          {activeTab === "cutoffs" && (
+            <div className="space-y-6">
+              {/* 3. CUTOFF 2026 CARD (STEP 2 IN MASTER TEMPLATE) */}
+              {(() => {
+                const cutData = getCollegeCutoffArticle(collegeData);
+                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const paragraphs = cutData.paragraphs || [];
+                const firstTwoParas = paragraphs.slice(0, 2);
+                const thirdPara = paragraphs[2];
+
+                return (
+                  <div
+                    id="cutoffs-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-24"
+                  >
+                    {/* Header Row */}
+                    <div className="flex items-center justify-between gap-3">
+                      <h2 className="text-lg sm:text-xl font-bold font-outfit text-slate-900 tracking-tight">
+                        {cutData.title || `${collegeShortName} Cutoff 2026`}
+                      </h2>
+
+                      <div className="flex items-center gap-2">
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("cutoffs")}
+                            className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Cutoffs</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setIsCutoffCardOpen(!isCutoffCardOpen)}
+                          aria-label={isCutoffCardOpen ? "Collapse Cutoff Card" : "Expand Cutoff Card"}
+                          className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 flex items-center justify-center text-slate-600 hover:text-slate-950 transition-all cursor-pointer shadow-2xs active:scale-90"
+                        >
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                              isCutoffCardOpen ? "rotate-180 text-blue-600" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Collapsible Card Body */}
+                    <AnimatePresence initial={false}>
+                      {isCutoffCardOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pt-3.5 space-y-3.5 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
+                            {!isCutoffArticleExpanded ? (
+                              <div className="space-y-3 relative pt-0.5">
+                                {firstTwoParas.map((p, idx) => (
+                                  <p key={idx} className="leading-relaxed">
+                                    {renderFormattedText(p)}
+                                  </p>
+                                ))}
+
+                                {/* 3rd paragraph with frosted water glass mask fade */}
+                                {thirdPara && (
+                                  <div className="relative max-h-[52px] overflow-hidden [mask-image:linear-gradient(to_bottom,black_15%,rgba(0,0,0,0.35)_55%,transparent_100%)]">
+                                    <p className="leading-relaxed text-slate-700">
+                                      {renderFormattedText(thirdPara)}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {/* Ultra-Premium Water & Glass Fade Overlay with Read more */}
+                                <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white via-white/80 to-transparent flex items-end justify-end pointer-events-auto pr-0.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsCutoffArticleExpanded(true)}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] text-xs sm:text-[13.5px] font-bold hover:underline cursor-pointer transition-colors"
+                                  >
+                                    Read more
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-3.5 pt-0.5">
+                                {/* All initial paragraphs */}
+                                {paragraphs.map((p, idx) => (
+                                  <p key={idx} className="leading-relaxed">
+                                    {renderFormattedText(p)}
+                                  </p>
+                                ))}
+
+                                {/* Callout Box: Missed the Cutoff */}
+                                {cutData.calloutTitle && (
+                                  <div className="my-3 p-4 rounded-xl bg-slate-50/90 border border-slate-200/80 space-y-1.5">
+                                    <h4 className="font-outfit font-bold text-[14px] text-slate-900">
+                                      {cutData.calloutTitle}
+                                    </h4>
+                                    <p className="text-[12.5px] text-slate-600 font-normal leading-relaxed">
+                                      {cutData.calloutDesc || "Explore engineering colleges accepting low JEE Main ranks and discover alternative pathways to pursue your BTech dream."}
+                                    </p>
+                                    <div className="pt-1">
+                                      <a
+                                        href={cutData.calloutPdfUrl || "#"}
+                                        onClick={(e) => {
+                                          if (!cutData.calloutPdfUrl || cutData.calloutPdfUrl === "#") {
+                                            e.preventDefault();
+                                            const leadEl = document.getElementById("lead-inquiry-box");
+                                            if (leadEl) {
+                                              leadEl.scrollIntoView({ behavior: "smooth" });
+                                            }
+                                          }
+                                        }}
+                                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1a73e8] hover:underline cursor-pointer"
+                                      >
+                                        <FileText className="w-3.5 h-3.5 text-red-500" />
+                                        <span>Download Free PDF</span>
+                                      </a>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* After Callout Paragraphs */}
+                                {cutData.afterCalloutParagraphs?.map((p, idx) => (
+                                  <p key={idx} className="leading-relaxed">
+                                    {renderFormattedText(p)}
+                                  </p>
+                                ))}
+
+                                {/* Footer Note */}
+                                {cutData.footerNote && (
+                                  <p className="text-[13.5px] text-slate-700 font-medium">
+                                    Check <span className="text-[#1a73e8] font-bold cursor-pointer hover:underline">{collegeShortName} Cut Off 2026</span> for other programmes below:
+                                  </p>
+                                )}
+
+                                {/* Read less */}
+                                <div className="pt-1 flex justify-end">
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsCutoffArticleExpanded(false)}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] text-xs sm:text-[13px] font-bold hover:underline cursor-pointer flex items-center gap-1"
+                                  >
+                                    Read less
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* 3-YEAR CUTOFF ROUND COMPARISON ACCORDION BOX (EXACT USER REFERENCE TEMPLATE) */}
+                            {(() => {
+                              const comparisonData = getCollegeCutoffComparison(collegeData);
+                              const years = comparisonData.years || ["2024", "2025", "2026"];
+
+                              return (
+                                <div className="mt-3.5 pt-1">
+                                  <div className="bg-white/95 border border-slate-200/90 hover:border-slate-300/90 rounded-2xl overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] transition-all">
+                                    {/* Accordion Toggle Header */}
+                                    <div
+                                      onClick={() => setIsCutoffRoundOpen(!isCutoffRoundOpen)}
+                                      className="w-full p-4 sm:p-4.5 flex items-center justify-between text-left hover:bg-slate-50/70 transition-colors cursor-pointer group/hdr select-none"
+                                    >
+                                      <h3 className="text-sm sm:text-[15px] font-bold font-outfit text-slate-900 tracking-tight group-hover/hdr:text-blue-600 transition-colors">
+                                        {comparisonData.title || `Cut Off 2026 for ${collegeShortName} Latest Round`}
+                                      </h3>
+
+                                      <div className="flex items-center gap-2">
+                                        {isAdmin && (
+                                          <button
+                                            type="button"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              openMiniModal("cutoff_comparison");
+                                            }}
+                                            className="px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1 cursor-pointer active:scale-95 shrink-0"
+                                          >
+                                            <Edit className="w-3.5 h-3.5" />
+                                            <span>Edit Table</span>
+                                          </button>
+                                        )}
+                                        <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-500 group-hover/hdr:text-slate-900 border border-slate-200/60 transition-all shrink-0">
+                                          <ChevronDown
+                                            className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                                              isCutoffRoundOpen ? "rotate-180 text-blue-600" : ""
+                                            }`}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Collapsible Accordion Body */}
+                                    <AnimatePresence initial={false}>
+                                      {isCutoffRoundOpen && (
+                                        <motion.div
+                                          initial={{ opacity: 0, height: 0 }}
+                                          animate={{ opacity: 1, height: "auto" }}
+                                          exit={{ opacity: 0, height: 0 }}
+                                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                                          className="overflow-hidden"
+                                        >
+                                          <div className="px-4 sm:px-5 pb-5 pt-1 space-y-3">
+                                            {/* Subtitle */}
+                                            <h4 className="text-xs sm:text-[13.5px] font-bold font-outfit text-slate-800">
+                                              {comparisonData.subtitle || `JEE Advanced Round 5 Closing Rank (General-All India)`}
+                                            </h4>
+
+                                            {/* Comparison Table with Dotted Dividers */}
+                                            <div className="overflow-x-auto rounded-2xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
+                                              <table className="w-full text-left border-collapse text-xs">
+                                                <thead>
+                                                  <tr className="bg-[#f0f4f9] text-slate-800 font-bold font-outfit text-xs border-b border-dotted border-slate-300/80">
+                                                    <th className="py-3 px-4 text-left font-bold font-outfit text-slate-900 border-r border-dotted border-slate-200/80">
+                                                      Course
+                                                    </th>
+                                                    <th className="py-3 px-4 text-center font-bold font-outfit text-slate-900 w-24 border-r border-dotted border-slate-200/80">
+                                                      {years[0]}
+                                                    </th>
+                                                    <th className="py-3 px-4 text-center font-bold font-outfit text-slate-900 w-24 border-r border-dotted border-slate-200/80">
+                                                      {years[1]}
+                                                    </th>
+                                                    <th className="py-3 px-4 text-center font-bold font-outfit text-slate-900 w-24">
+                                                      {years[2]}
+                                                    </th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody className="font-medium text-xs sm:text-[13px]">
+                                                  {comparisonData.rows.map((row, rIdx) => (
+                                                    <tr key={rIdx} className="border-b border-dotted border-slate-300/70 last:border-b-0 hover:bg-slate-50/70 transition-colors">
+                                                      <td className="py-3 px-4 text-slate-800 font-medium text-left leading-snug border-r border-dotted border-slate-200/70">
+                                                        {row.course}
+                                                      </td>
+                                                      <td className="py-3 px-4 text-slate-600 text-center font-normal whitespace-nowrap border-r border-dotted border-slate-200/70">
+                                                        {row.year2024}
+                                                      </td>
+                                                      <td className="py-3 px-4 text-slate-600 text-center font-normal whitespace-nowrap border-r border-dotted border-slate-200/70">
+                                                        {row.year2025}
+                                                      </td>
+                                                      <td className="py-3 px-4 text-slate-600 text-center font-normal whitespace-nowrap">
+                                                        {row.year2026}
+                                                      </td>
+                                                    </tr>
+                                                  ))}
+                                                </tbody>
+                                              </table>
+                                            </div>
+                                          </div>
+                                        </motion.div>
+                                      )}
+                                    </AnimatePresence>
+                                  </div>
+                                </div>
+                              );
+                            })()}
+
+                            {/* SECONDARY CUTOFF COMPARISON ACCORDION BOX (UCEED / SPECIALIZED EXAMS - USER REFERENCE TEMPLATE) */}
+                            {(() => {
+                              const secData = getCollegeSecondaryCutoffComparison(collegeData);
+                              const secYears = secData.years || ["2024", "2025", "2026"];
+                              const displayedRows = getFilteredCutoffRows(secData, appliedCutoffFilters);
+                              const examPrefix = secData.title?.includes("UCEED") ? "UCEED" : (collegeData.stream === "Medical" ? "NEET" : "Exam");
+                              const roundLabel = appliedCutoffFilters.round === "Last Round" ? "Last Round" : `Round ${appliedCutoffFilters.round}`;
+                              const genderLabel = appliedCutoffFilters.gender === "All" ? "" : `, ${appliedCutoffFilters.gender}`;
+                              const computedSubtitle = `${examPrefix} ${roundLabel} Closing Rank (${appliedCutoffFilters.category}-${appliedCutoffFilters.quota}${genderLabel})`;
+
+                              return (
+                                <div className="mt-3.5 pt-0.5">
+                                  <div className="bg-white/95 border border-slate-200/90 hover:border-slate-300/90 rounded-2xl overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] transition-all">
+                                    {/* Accordion Toggle Header */}
+                                    <div
+                                      onClick={() => setIsSecondaryCutoffOpen(!isSecondaryCutoffOpen)}
+                                      className="w-full p-4 sm:p-4.5 flex items-center justify-between text-left hover:bg-slate-50/70 transition-colors cursor-pointer group/hdr select-none"
+                                    >
+                                      <h3 className="text-sm sm:text-[15px] font-bold font-outfit text-slate-900 tracking-tight group-hover/hdr:text-blue-600 transition-colors">
+                                        {secData.title || `Cut Off 2026 for UCEED: Year-Wise rank`}
+                                      </h3>
+
+                                      <div className="flex items-center gap-2">
+                                        {isAdmin && (
+                                          <button
+                                            type="button"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              openMiniModal("secondary_cutoff_comparison");
+                                            }}
+                                            className="px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1 cursor-pointer active:scale-95 shrink-0"
+                                          >
+                                            <Edit className="w-3.5 h-3.5" />
+                                            <span>Edit Table</span>
+                                          </button>
+                                        )}
+                                        <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-500 group-hover/hdr:text-slate-900 border border-slate-200/60 transition-all shrink-0">
+                                          <ChevronDown
+                                            className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                                              isSecondaryCutoffOpen ? "rotate-180 text-blue-600" : ""
+                                            }`}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Collapsible Accordion Body */}
+                                    <AnimatePresence initial={false}>
+                                      {isSecondaryCutoffOpen && (
+                                        <motion.div
+                                          initial={{ opacity: 0, height: 0 }}
+                                          animate={{ opacity: 1, height: "auto" }}
+                                          exit={{ opacity: 0, height: 0 }}
+                                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                                          className="overflow-hidden"
+                                        >
+                                          <div className="px-4 sm:px-5 pb-5 pt-1 space-y-3.5">
+                                            {/* Top Filter Pills Row matching reference image */}
+                                            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
+                                              {/* Filter count icon pill with radiant saffron shining animation */}
+                                              <button
+                                                type="button"
+                                                onClick={() => openCutoffFilterModal("rounds")}
+                                                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-300/90 bg-white hover:bg-amber-50/40 text-slate-700 font-semibold shadow-2xs shrink-0 select-none transition-all cursor-pointer active:scale-95 group relative"
+                                                title="Open All Filters"
+                                              >
+                                                <SlidersHorizontal className="w-3.5 h-3.5 text-slate-600 group-hover:text-amber-600 transition-colors" />
+                                                
+                                                {/* Saffron Glowing Badge */}
+                                                <div className="relative flex items-center justify-center">
+                                                  <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 opacity-80 blur-[3px] animate-pulse" />
+                                                  <span className="relative z-10 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-tr from-amber-600 via-orange-500 to-amber-400 text-white text-[10px] font-black flex items-center justify-center shadow-xs">
+                                                    4
+                                                  </span>
+                                                </div>
+                                              </button>
+
+                                              {/* Rounds Dropdown Pill */}
+                                              <div className="relative shrink-0">
+                                                <button
+                                                  type="button"
+                                                  onClick={() => openCutoffFilterModal("rounds")}
+                                                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border shadow-2xs transition-all cursor-pointer select-none active:scale-95 ${
+                                                    appliedCutoffFilters.round !== "1"
+                                                      ? "border-[#2d1a47] bg-purple-50 text-[#2d1a47] font-bold"
+                                                      : "border-slate-300/80 bg-white hover:bg-slate-50 text-slate-700 font-medium"
+                                                  }`}
+                                                >
+                                                  <span>Rounds{appliedCutoffFilters.round !== "1" ? `: ${appliedCutoffFilters.round}` : ""}</span>
+                                                  <ChevronDown className="w-3 h-3 text-slate-500" />
+                                                </button>
+                                              </div>
+
+                                              {/* Category Dropdown Pill */}
+                                              <div className="relative shrink-0">
+                                                <button
+                                                  type="button"
+                                                  onClick={() => openCutoffFilterModal("category")}
+                                                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border shadow-2xs transition-all cursor-pointer select-none active:scale-95 ${
+                                                    appliedCutoffFilters.category !== "General"
+                                                      ? "border-[#2d1a47] bg-purple-50 text-[#2d1a47] font-bold"
+                                                      : "border-slate-300/80 bg-white hover:bg-slate-50 text-slate-700 font-medium"
+                                                  }`}
+                                                >
+                                                  <span>Category{appliedCutoffFilters.category !== "General" ? `: ${appliedCutoffFilters.category}` : ""}</span>
+                                                  <ChevronDown className="w-3 h-3 text-slate-500" />
+                                                </button>
+                                              </div>
+
+                                              {/* Quota Dropdown Pill */}
+                                              <div className="relative shrink-0">
+                                                <button
+                                                  type="button"
+                                                  onClick={() => openCutoffFilterModal("quota")}
+                                                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border shadow-2xs transition-all cursor-pointer select-none active:scale-95 ${
+                                                    appliedCutoffFilters.quota !== "All India"
+                                                      ? "border-[#2d1a47] bg-purple-50 text-[#2d1a47] font-bold"
+                                                      : "border-slate-300/80 bg-white hover:bg-slate-50 text-slate-700 font-medium"
+                                                  }`}
+                                                >
+                                                  <span>Quota{appliedCutoffFilters.quota !== "All India" ? `: ${appliedCutoffFilters.quota}` : ""}</span>
+                                                  <ChevronDown className="w-3 h-3 text-slate-500" />
+                                                </button>
+                                              </div>
+
+                                              {/* Gender Dropdown Pill */}
+                                              <div className="relative shrink-0">
+                                                <button
+                                                  type="button"
+                                                  onClick={() => openCutoffFilterModal("gender")}
+                                                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border shadow-2xs transition-all cursor-pointer select-none active:scale-95 ${
+                                                    appliedCutoffFilters.gender !== "All"
+                                                      ? "border-[#2d1a47] bg-purple-50 text-[#2d1a47] font-bold"
+                                                      : "border-slate-300/80 bg-white hover:bg-slate-50 text-slate-700 font-medium"
+                                                  }`}
+                                                >
+                                                  <span>Gender{appliedCutoffFilters.gender !== "All" ? `: ${appliedCutoffFilters.gender}` : ""}</span>
+                                                  <ChevronDown className="w-3 h-3 text-slate-500" />
+                                                </button>
+                                              </div>
+                                            </div>
+
+                                            {/* Subtitle */}
+                                            <h4 className="text-xs sm:text-[13.5px] font-bold font-outfit text-slate-800">
+                                              {computedSubtitle}
+                                            </h4>
+
+                                            {/* Comparison Table with Light Dotted Dividers */}
+                                            <div className="overflow-x-auto rounded-2xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
+                                              <table className="w-full text-left border-collapse text-xs">
+                                                <thead>
+                                                  <tr className="bg-[#f0f4f9] text-slate-800 font-bold font-outfit text-xs border-b border-dotted border-slate-300/80">
+                                                    <th className="py-3 px-4 text-left font-bold font-outfit text-slate-900 border-r border-dotted border-slate-200/80">
+                                                      Course
+                                                    </th>
+                                                    <th className="py-3 px-4 text-center font-bold font-outfit text-slate-900 w-24 border-r border-dotted border-slate-200/80">
+                                                      {secYears[0]}
+                                                    </th>
+                                                    <th className="py-3 px-4 text-center font-bold font-outfit text-slate-900 w-24 border-r border-dotted border-slate-200/80">
+                                                      {secYears[1]}
+                                                    </th>
+                                                    <th className="py-3 px-4 text-center font-bold font-outfit text-slate-900 w-24">
+                                                      {secYears[2]}
+                                                    </th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody className="font-medium text-xs sm:text-[13px]">
+                                                  {displayedRows.map((row, rIdx) => (
+                                                    <tr key={rIdx} className="border-b border-dotted border-slate-300/70 last:border-b-0 hover:bg-slate-50/70 transition-colors">
+                                                      <td className="py-3 px-4 text-slate-800 font-medium text-left leading-snug border-r border-dotted border-slate-200/70">
+                                                        {row.course}
+                                                      </td>
+                                                      <td className="py-3 px-4 text-slate-600 text-center font-normal whitespace-nowrap border-r border-dotted border-slate-200/70">
+                                                        {row.year2024}
+                                                      </td>
+                                                      <td className="py-3 px-4 text-slate-600 text-center font-normal whitespace-nowrap border-r border-dotted border-slate-200/70">
+                                                        {row.year2025}
+                                                      </td>
+                                                      <td className="py-3 px-4 text-slate-600 text-center font-normal whitespace-nowrap">
+                                                        {row.year2026}
+                                                      </td>
+                                                    </tr>
+                                                  ))}
+                                                </tbody>
+                                              </table>
+                                            </div>
+
+                                             {/* Shining Emerald Green Action Button: Navigates to Header Cut-Offs Tab */}
+                                            <div className="pt-3 pb-1 flex justify-center">
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  setActiveTab("cutoffs");
+                                                  const navEl = document.getElementById("college-nav-tabs-bar");
+                                                  if (navEl) {
+                                                    navEl.scrollIntoView({ behavior: "smooth", block: "start" });
+                                                  } else {
+                                                    window.scrollTo({ top: 380, behavior: "smooth" });
+                                                  }
+                                                }}
+                                                className="relative group overflow-hidden bg-gradient-to-r from-[#00b05b] via-[#00a859] to-[#00964e] hover:from-[#009e51] hover:to-[#008243] text-white text-xs sm:text-[13.5px] font-bold py-2.5 px-7 rounded-full shadow-[0_4px_14px_rgba(0,168,89,0.35)] hover:shadow-[0_6px_20px_rgba(0,168,89,0.5)] flex items-center justify-center gap-2 cursor-pointer transition-all duration-300 active:scale-95 select-none"
+                                              >
+                                                {/* Shining sweep effect */}
+                                                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+                                                <Download className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+                                                <span className="tracking-tight">Cut-Off Details</span>
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </motion.div>
+                                      )}
+                                    </AnimatePresence>
+                                  </div>
+                                </div>
+                              );
+                            })()}
+
+                            {/* COMMONLY ASKED QUESTIONS ON CUTOFFS ACCORDION */}
+                            {cutData.faqs && cutData.faqs.length > 0 && (
+                              <div className="pt-6 mt-6 border-t border-slate-200/80 space-y-4">
+                                {/* Header Row with Yellow/Amber Q&A Badge */}
+                                <div className="flex items-center justify-between gap-3">
+                                  <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-amber-100/90 text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
+                                      <HelpCircle className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                      <h3 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
+                                        Commonly asked questions
+                                      </h3>
+                                      <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
+                                        On Cutoffs
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {isAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openMiniModal("cutoffs")}
+                                      className="px-3 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                                    >
+                                      <Edit className="w-3.5 h-3.5" />
+                                      <span>Edit Cutoff FAQs</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Accordion Questions List */}
+                                <div className="divide-y divide-slate-100/90 pt-1">
+                                  {cutData.faqs.map((faq, fIdx) => {
+                                    const isOpen = openCutoffFaqIdx === fIdx;
+                                    const rawQ = faq.question.trim();
+                                    const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
+                                    const rawA = faq.answer.trim();
+                                    const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
+
+                                    return (
+                                      <div key={fIdx} className="py-2.5 first:pt-1 last:pb-0">
+                                        <button
+                                          type="button"
+                                          onClick={() => setOpenCutoffFaqIdx(isOpen ? null : fIdx)}
+                                          className="w-full flex items-center justify-between gap-3 text-left py-1 text-slate-800 hover:text-blue-600 transition-colors cursor-pointer group/q"
+                                        >
+                                          <span className="font-outfit font-bold text-[13px] sm:text-[13.5px] leading-snug group-hover/q:text-blue-600 transition-colors">
+                                            {formattedQ}
+                                          </span>
+                                          <ChevronDown
+                                            className={`w-4 h-4 text-slate-500 group-hover/q:text-blue-600 shrink-0 transition-transform duration-200 ${
+                                              isOpen ? "rotate-180 text-blue-600" : ""
+                                            }`}
+                                          />
+                                        </button>
+
+                                        <AnimatePresence initial={false}>
+                                          {isOpen && (
+                                            <motion.div
+                                              initial={{ opacity: 0, height: 0 }}
+                                              animate={{ opacity: 1, height: "auto" }}
+                                              exit={{ opacity: 0, height: 0 }}
+                                              transition={{ duration: 0.2, ease: "easeInOut" }}
+                                              className="overflow-hidden"
+                                            >
+                                              <div className="pt-2 pb-3 space-y-3 pl-0.5 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                                                {/* Multi-paragraph answer text */}
+                                                <div className="space-y-2">
+                                                  {formattedA.split("\n\n").map((para, pIdx) => (
+                                                    <p key={pIdx} className="leading-relaxed">
+                                                      {para}
+                                                    </p>
+                                                  ))}
+                                                </div>
+
+                                                {/* Admissions Guidance Counselor Callout Box */}
+                                                <div className="mt-3 p-3 sm:p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between gap-3">
+                                                  <div className="flex items-center gap-3">
+                                                    <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-200/80">
+                                                      <img
+                                                        src="/images/counselor_avatar.png"
+                                                        alt="Expert Counselor"
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                          (e.target as HTMLElement).style.display = "none";
+                                                        }}
+                                                      />
+                                                      <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-orange-700 font-black text-xs">
+                                                        SP
+                                                      </div>
+                                                      <span className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                                                    </div>
+                                                    <div>
+                                                      <h5 className="font-outfit font-bold text-xs sm:text-[13px] text-slate-900 leading-tight">
+                                                        Get <span className="text-emerald-600 font-black italic">free</span> admissions guidance
+                                                      </h5>
+                                                      <p className="text-[11px] text-slate-400 font-semibold flex items-center gap-1 mt-0.5">
+                                                        <span>★ 0</span>
+                                                        <span>•</span>
+                                                        <span>0 review</span>
+                                                      </p>
+                                                    </div>
+                                                  </div>
+
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                      const leadEl = document.getElementById("lead-inquiry-box");
+                                                      if (leadEl) {
+                                                        leadEl.scrollIntoView({ behavior: "smooth" });
+                                                      }
+                                                    }}
+                                                    className="px-5 py-2 rounded-full bg-[#1c142e] hover:bg-[#2b2046] text-white text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+                                                  >
+                                                    Call Us
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </motion.div>
+                                          )}
+                                        </AnimatePresence>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+
+                                 {/* Shining Emerald Green Action Button: View all cut-off (Navigates to Header Cut-Offs Tab) */}
+                                <div className="pt-4 pb-1 flex justify-center">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveTab("cutoffs");
+                                      const navEl = document.getElementById("college-nav-tabs-bar");
+                                      if (navEl) {
+                                        navEl.scrollIntoView({ behavior: "smooth", block: "start" });
+                                      } else {
+                                        window.scrollTo({ top: 380, behavior: "smooth" });
+                                      }
+                                    }}
+                                    className="relative group overflow-hidden bg-gradient-to-r from-[#00b05b] via-[#00a859] to-[#00964e] hover:from-[#009e51] hover:to-[#008243] text-white text-xs sm:text-[13.5px] font-bold py-2.5 px-7 rounded-full shadow-[0_4px_14px_rgba(0,168,89,0.35)] hover:shadow-[0_6px_20px_rgba(0,168,89,0.5)] flex items-center justify-center gap-2 cursor-pointer transition-all duration-300 active:scale-95 select-none"
+                                  >
+                                    {/* Shining sweep effect */}
+                                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+                                    <span className="tracking-tight">View all cut-off</span>
+                                    <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+
+          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && (
             <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-500">
                 <Sparkles className="w-6 h-6" />
