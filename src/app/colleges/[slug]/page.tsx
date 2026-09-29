@@ -4269,7 +4269,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
   return (
     <div className="min-h-screen pb-16 space-y-4 select-none">
       {/* STICKY TOP COLLEGE HEADER UNIT (HERO BANNER + NAVIGATION TABS) */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.08)] transition-all duration-300">
+      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl -mx-6 md:-mx-8 px-6 md:px-8 border-b border-slate-200/90 shadow-[0_6px_28px_rgba(0,0,0,0.09)] transition-all duration-300">
         {/* Banner Section (Collapses smoothly into compact strip when scrolled) */}
         <div
           className={`relative overflow-hidden bg-slate-900 transition-all duration-300 ${
