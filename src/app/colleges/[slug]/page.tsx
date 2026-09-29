@@ -9640,6 +9640,104 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   );
                 })()}
 
+                {/* NOTABLE ALUMNI TABLE IN CAMPUS & FACULTY TAB */}
+                {/* 11. NOTABLE ALUMNI TABLE SECTION (EXACT USER BENCHMARK DESIGN) */}
+                {(() => {
+                  const alumniData = getCollegeAlumniArticle(collegeData);
+                  const list = alumniData.alumniList || [];
+
+                  return (
+                    <div
+                      id="alumni-section"
+                      className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-7 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-24 mt-5 space-y-4"
+                    >
+                      {/* Header Row with Title, Subtitle, and Admin Edit Button */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="font-outfit font-black text-xl sm:text-2xl text-slate-900 tracking-tight">
+                            {alumniData.title || `${collegeData.name} Alumni`}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-slate-600 font-normal mt-1 leading-relaxed">
+                            {alumniData.subtitle || `The following table lists notable alumni of the ${collegeData.fullName || collegeData.name}.`}
+                          </p>
+                        </div>
+
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("alumni")}
+                            className="px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0 active:scale-95"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Alumni</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Alumni Table (Exact Theme Color: Dark Navy Header with Soft Ice-Blue Rows) */}
+                      <div className="rounded-2xl border border-[#002b49] overflow-hidden shadow-xs">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="bg-[#002b49] text-white">
+                                <th className="py-3.5 px-5 text-xs sm:text-[13.5px] font-bold tracking-wide border-r border-[#0a385c]/80 w-[30%]">
+                                  Name
+                                </th>
+                                <th className="py-3.5 px-5 text-xs sm:text-[13.5px] font-bold tracking-wide border-r border-[#0a385c]/80 w-[45%]">
+                                  Profession
+                                </th>
+                                <th className="py-3.5 px-5 text-xs sm:text-[13.5px] font-bold tracking-wide w-[25%] text-center">
+                                  Picture
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-200/90 bg-[#f0f4fa]">
+                              {list.map((alumnus: AlumniItem, aIdx: number) => (
+                                <tr
+                                  key={alumnus.id || aIdx}
+                                  className="hover:bg-[#e4edf7] transition-colors bg-[#f0f4fa]"
+                                >
+                                  {/* Name */}
+                                  <td className="py-3.5 px-5 text-xs sm:text-[13.5px] font-medium text-slate-900 border-r border-slate-200/90 align-middle">
+                                    {alumnus.name}
+                                  </td>
+
+                                  {/* Profession */}
+                                  <td className="py-3.5 px-5 text-xs sm:text-[13px] text-slate-700 border-r border-slate-200/90 align-middle leading-relaxed">
+                                    {alumnus.profession}
+                                  </td>
+
+                                  {/* Picture */}
+                                  <td className="py-3 px-5 align-middle text-center">
+                                    <div className="flex justify-center items-center">
+                                      <div className="w-14 h-16 sm:w-16 sm:h-20 rounded-md overflow-hidden border border-slate-300 shadow-2xs bg-white flex items-center justify-center">
+                                        {alumnus.pictureUrl ? (
+                                          <img
+                                            src={alumnus.pictureUrl}
+                                            alt={alumnus.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                              (e.currentTarget as HTMLImageElement).src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+                                            }}
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center bg-slate-200 text-slate-500 font-bold text-sm">
+                                            {alumnus.name.charAt(0)}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
             </div>
           )}
 
@@ -12446,7 +12544,911 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           )}
 
 
-          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && activeTab !== "admissions" && activeTab !== "rankings" && (
+          
+          {/* TAB: REVIEWS (Directly render full Student Ratings & Reviews Section Template) */}
+          {activeTab === "reviews" && (
+            <div className="space-y-6">
+              {/* 7. STUDENTS RATINGS & REVIEWS SUB-BOX (WITH LARGER SCORE CARD & OVERLAPPING PARAMETERS) */}
+              {(() => {
+                const revData = getCollegeReviewsArticle(collegeData);
+                const totalCount = (revData.histogram || []).reduce((acc, curr) => acc + curr.count, 0) || 623;
+
+                return (
+                  <div id="reviews-section" className="group relative scroll-mt-20 bg-white border border-slate-200/90 rounded-3xl overflow-hidden shadow-xs">
+                    {/* Top Main Sky-Blue Gradient Container */}
+                    <div className="relative bg-gradient-to-b from-[#eef4ff] via-[#f3f7ff] to-[#e4edff] p-6 sm:p-7 pb-12 sm:pb-14 border-b border-blue-100/60 relative overflow-hidden">
+                      {/* Ambient Glow Aura */}
+                      <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
+                      <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none" />
+
+                      {/* Header Row (Clean, Normal font weight text) */}
+                      <div className="flex items-start justify-between gap-3 relative z-10 mb-5">
+                        <div className="flex items-center gap-3.5">
+                          {/* Blue Badge Icon */}
+                          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-[#3b82f6] via-[#4f46e5] to-[#6366f1] text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/25 border border-white/40 transform group-hover:scale-105 transition-transform duration-300">
+                            <Bookmark className="w-5 h-5 fill-white text-white drop-shadow-xs" />
+                          </div>
+                          <div>
+                            <span className="text-xs font-semibold font-outfit uppercase tracking-wider text-slate-500 block leading-tight">
+                              {revData.tagText || "College"}
+                            </span>
+                            <h3 className="font-outfit font-bold text-lg sm:text-xl text-slate-800 tracking-tight leading-tight">
+                              {revData.title || "Students Ratings & Reviews"}
+                            </h3>
+                          </div>
+                        </div>
+
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("reviews")}
+                            className="px-3 py-1.5 rounded-xl bg-white hover:bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Reviews</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Spacious Big Score & Histogram Breakdown Card */}
+                      <div className="relative z-10 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 border border-blue-100/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.05)] grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-center">
+                        {/* Left: Score Display + Verified Badge */}
+                        <div className="md:col-span-5 space-y-4 text-center md:text-left flex flex-col items-center md:items-start justify-center">
+                          <div className="flex items-baseline gap-2.5">
+                            <Star className="w-8 h-8 sm:w-10 sm:h-10 fill-amber-400 text-amber-400 shrink-0 self-center drop-shadow-[0_2px_8px_rgba(251,191,36,0.45)] animate-pulse" />
+                            <span className="text-4xl sm:text-5xl font-bold font-outfit text-slate-800 tracking-tight">
+                              {revData.overallScore ?? 4.5}
+                            </span>
+                            <span className="text-slate-400 font-bold text-xl sm:text-2xl">
+                              /5
+                            </span>
+                          </div>
+
+                          {/* Verified Reviews Pill Badge */}
+                          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-xs sm:text-[13px] font-bold shadow-2xs">
+                            <CheckCircle2 className="w-3.5 h-3.5 fill-emerald-600 text-white shrink-0" />
+                            <span>{revData.totalReviewsCount || "623 Verified Reviews"}</span>
+                            <span className="text-[10px] text-emerald-500 cursor-help ml-0.5" title="Calculated from real verified student feedback">
+                              ⓘ
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Right: Star Histogram Progress Bars */}
+                        <div className="md:col-span-7 space-y-3">
+                          {(revData.histogram || []).map((item, hIdx) => {
+                            const percent = Math.min(100, Math.round((item.count / totalCount) * 100));
+                            const isHovered = hoveredStarBarIdx === hIdx;
+
+                            return (
+                              <div
+                                key={hIdx}
+                                onMouseEnter={() => setHoveredStarBarIdx(hIdx)}
+                                onMouseLeave={() => setHoveredStarBarIdx(null)}
+                                className="group/h flex items-center gap-3.5 text-xs sm:text-[13px] font-bold cursor-pointer select-none"
+                              >
+                                {/* Star Range Label */}
+                                <div className="w-12 shrink-0 flex items-center gap-1 text-slate-700 group-hover/h:text-indigo-600 transition-colors font-outfit">
+                                  <span className="text-amber-500 font-black">★</span>
+                                  <span>{item.starsRange}</span>
+                                </div>
+
+                                {/* Interactive Progress Bar */}
+                                <div className="flex-1 h-2 sm:h-2.5 bg-slate-200/80 rounded-full overflow-hidden relative shadow-inner">
+                                  <div
+                                    className={`h-full rounded-full transition-all duration-700 ease-out ${
+                                      isHovered
+                                        ? "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 shadow-[0_0_12px_rgba(99,102,241,0.6)] scale-y-110"
+                                        : "bg-gradient-to-r from-[#1c1136] via-[#2d114d] to-[#43196f]"
+                                    }`}
+                                    style={{ width: `${percent}%` }}
+                                  />
+                                </div>
+
+                                {/* Count & Tooltip */}
+                                <div className="w-12 text-right shrink-0 text-slate-600 group-hover/h:text-slate-900 font-bold font-mono transition-colors">
+                                  {isHovered ? `${percent}%` : item.count}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bottom 5 Overlapping Parameter Cards (Overlaps the Sky-Blue & White boundary seamlessly) */}
+                    <div className="relative z-20 -mt-8 sm:-mt-10 px-3 sm:px-6">
+                      <div className="flex sm:grid sm:grid-cols-5 gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 sm:px-0 no-scrollbar snap-x snap-mandatory">
+                        {(revData.parameters || []).map((param, pIdx) => {
+                          return (
+                            <div
+                              key={pIdx}
+                              className="group/param relative bg-white hover:bg-slate-50/60 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200/90 hover:border-slate-300 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.09)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col items-center text-center justify-between cursor-pointer select-none min-w-[155px] sm:min-w-0 shrink-0 snap-center"
+                            >
+                              {/* 2.5x Bigger Icon Container Box matching Image 1 & 2 */}
+                              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-white border border-slate-100 shadow-[0_3px_12px_rgba(0,0,0,0.04)] flex items-center justify-center p-2 sm:p-2.5 mb-2 group-hover/param:scale-105 group-hover/param:border-slate-200 group-hover/param:shadow-md transition-all duration-300">
+                                {renderReviewCategoryIcon(param.label, param.iconType)}
+                              </div>
+
+                              {/* Category Name Label */}
+                              <h5 className="text-sm sm:text-[15px] font-semibold font-outfit text-slate-700 group-hover/param:text-slate-900 transition-colors leading-snug pt-2 pb-1 text-center line-clamp-1">
+                                {param.label}
+                              </h5>
+
+                              {/* Score & Star - Number first, then Star on the right as in Image 1 & 2 */}
+                              <div className="flex items-center justify-center gap-1.5 pt-0.5">
+                                <span className="font-outfit font-bold text-base sm:text-lg text-slate-800 tracking-tight">
+                                  {Number(param.rating).toFixed(1)}
+                                </span>
+                                <span className="text-amber-500 font-black text-base sm:text-lg leading-none select-none">
+                                  ★
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* What students say about {College} (Seamless White Background & Minimal Gap) */}
+                    {(() => {
+                      const feedbackData = revData.studentFeedback || {
+                        heading: "What students say about " + (collegeData.fullName || collegeData.name),
+                        categories: DEFAULT_STUDENT_FEEDBACK_CATEGORIES,
+                      };
+                      const categories = (feedbackData.categories && feedbackData.categories.length > 0)
+                        ? feedbackData.categories
+                        : DEFAULT_STUDENT_FEEDBACK_CATEGORIES;
+                      const activeItem = categories.find(
+                        (c: StudentFeedbackCategory) => c.category.toLowerCase() === activeFeedbackCategory.toLowerCase()
+                      ) || categories[0] || DEFAULT_STUDENT_FEEDBACK_CATEGORIES[0];
+
+                      return (
+                        <div className="p-6 sm:p-7 pt-2 sm:pt-3 space-y-5">
+                          {/* Heading + Individual Admin Edit Button */}
+                          <div className="flex items-start justify-between gap-3">
+                            <h4 className="font-outfit font-bold text-lg sm:text-xl text-slate-900 tracking-tight leading-snug">
+                              {feedbackData.heading || ("What students say about " + (collegeData.fullName || collegeData.name))}
+                            </h4>
+                            {isAdmin && (
+                              <button
+                                type="button"
+                                onClick={() => openMiniModal("studentFeedback")}
+                                className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit Feedback</span>
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Category Filter Pills (Placements, Infrastructure, Faculty, Other) */}
+                          <div className="flex items-center gap-2.5 overflow-x-auto pb-1 no-scrollbar">
+                            {categories.map((cat: StudentFeedbackCategory, cIdx: number) => {
+                              const isCatActive = (cat.category.toLowerCase() === (activeItem?.category || "").toLowerCase());
+                              return (
+                                <button
+                                  key={cIdx}
+                                  type="button"
+                                  onClick={() => setActiveFeedbackCategory(cat.category)}
+                                  className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-[13px] font-semibold transition-all duration-200 shrink-0 cursor-pointer ${
+                                    isCatActive
+                                      ? "border-2 border-slate-800 bg-slate-900 text-white shadow-xs scale-100"
+                                      : "border border-slate-200/90 bg-white text-slate-600 hover:border-slate-400 hover:text-slate-900 hover:bg-slate-50"
+                                  }`}
+                                >
+                                  {cat.category}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {/* Vertical Table / Stack for Likes & Dislikes */}
+                          <div className="space-y-6 pt-1">
+                            {/* 1. LIKES ROW */}
+                            <div className="space-y-2 group/like">
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2.5">
+                                  <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-xs shrink-0" />
+                                  <h5 className="font-outfit font-bold text-base sm:text-lg text-slate-900">
+                                    Likes
+                                  </h5>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setActiveTab("reviews");
+                                    document.getElementById("college-nav-tabs-bar")?.scrollIntoView({ behavior: "smooth" });
+                                  }}
+                                  className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                >
+                                  View All
+                                </button>
+                              </div>
+                              <p className="text-xs sm:text-[14px] text-slate-700 leading-relaxed pl-5 sm:pl-5.5">
+                                {activeItem?.likesText}
+                              </p>
+                              <span className="block text-[11.5px] sm:text-xs font-medium text-slate-400 pl-5 sm:pl-5.5">
+                                {activeItem?.likesCountText || "Based on Student Reviews"}
+                              </span>
+                            </div>
+
+                            {/* Subtle Divider */}
+                            <div className="border-t border-slate-100" />
+
+                            {/* 2. DISLIKES ROW */}
+                            <div className="space-y-2 group/dislike">
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2.5">
+                                  <div className="w-3 h-3 rounded-full bg-rose-500 shadow-xs shrink-0" />
+                                  <h5 className="font-outfit font-bold text-base sm:text-lg text-slate-900">
+                                    Dislikes
+                                  </h5>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setActiveTab("reviews");
+                                    document.getElementById("college-nav-tabs-bar")?.scrollIntoView({ behavior: "smooth" });
+                                  }}
+                                  className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                >
+                                  View All
+                                </button>
+                              </div>
+                              <p className="text-xs sm:text-[14px] text-slate-700 leading-relaxed pl-5 sm:pl-5.5">
+                                {activeItem?.dislikesText}
+                              </p>
+                              <span className="block text-[11.5px] sm:text-xs font-medium text-slate-400 pl-5 sm:pl-5.5">
+                                {activeItem?.dislikesCountText || "Based on Student Reviews"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* DETAILED STUDENT REVIEW CARDS (INDIVIDUAL BOXES WITH READ MORE/LESS & RATINGS) */}
+                    {(() => {
+                      const cards = (revData.reviewCards && revData.reviewCards.length > 0)
+                        ? revData.reviewCards
+                        : DEFAULT_DETAILED_REVIEW_CARDS;
+
+                      return (
+                        <div className="p-4 sm:p-7 pt-2 space-y-4 sm:space-y-5">
+                          {/* Header Row with Total Reviews & Admin Edit Button */}
+                          <div className="flex items-center justify-between gap-3 pt-2">
+                            <h4 className="font-outfit font-bold text-base sm:text-lg text-slate-900">
+                              Detailed Student Reviews ({cards.length})
+                            </h4>
+                            {isAdmin && (
+                              <button
+                                type="button"
+                                onClick={() => openMiniModal("reviewCards")}
+                                className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit Review Cards</span>
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Render Individual Review Cards */}
+                          <div className="space-y-4">
+                            {cards.map((card: DetailedReviewCard, cIdx: number) => {
+                              const isExpanded = !!expandedReviewCardIds[card.id];
+                              const userVote = reviewHelpfulVotes[card.id];
+
+                              return (
+                                <div
+                                  key={card.id || cIdx}
+                                  className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow duration-300 space-y-4"
+                                >
+                                  {/* Top Row: Avatar + Author Info + Score Badge */}
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                      {/* 2X Double Size Square Avatar Box with Photo / Letter */}
+                                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden shrink-0 border-2 border-slate-100 shadow-sm relative bg-slate-100 flex items-center justify-center">
+                                        {card.avatarUrl ? (
+                                          <img
+                                            src={card.avatarUrl}
+                                            alt={card.authorName}
+                                            className="w-full h-full object-cover object-center"
+                                            onError={(e) => {
+                                              (e.currentTarget as HTMLElement).style.display = "none";
+                                              const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                              if (fallback) fallback.style.display = "flex";
+                                            }}
+                                          />
+                                        ) : null}
+                                        <div
+                                          className={`w-full h-full flex items-center justify-center font-black text-xl sm:text-2xl font-outfit ${
+                                            card.avatarBgColor || "bg-amber-100 text-amber-800"
+                                          } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                        >
+                                          {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                        </div>
+                                      </div>
+
+                                      {/* Name & Degree */}
+                                      <div>
+                                        <div className="flex items-center gap-1.5">
+                                          <h5 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-snug">
+                                            {card.authorName}
+                                          </h5>
+                                          {card.verified && (
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500 shrink-0" />
+                                          )}
+                                        </div>
+                                        <p className="text-xs text-slate-500 font-medium leading-tight pt-0.5">
+                                          {card.courseAndBatch}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    {/* Overall Rating Badge */}
+                                    <div className="px-2.5 py-1 rounded-md bg-[#00a859] text-white font-bold text-xs sm:text-[13px] flex items-center gap-1 shrink-0 shadow-2xs select-none">
+                                      <span className="text-[11px]">★</span>
+                                      <span>{Number(card.overallRating).toFixed(1)}</span>
+                                    </div>
+                                  </div>
+
+                                  {/* Parameter Rating Badges Pill Row */}
+                                  {card.parameterRatings && card.parameterRatings.length > 0 && (
+                                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                                      {card.parameterRatings.map((p: ReviewParameterBadge, pIdx: number) => {
+                                        const isLow = p.rating < 3.0;
+                                        return (
+                                          <div
+                                            key={pIdx}
+                                            className={`px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border ${
+                                              isLow
+                                                ? "bg-rose-50/50 border-rose-200/80 text-rose-700"
+                                                : "bg-white border-slate-200/90 text-slate-700 shadow-2xs"
+                                            }`}
+                                          >
+                                            <span className={isLow ? "text-rose-500 font-black" : "text-emerald-600 font-black"}>
+                                              ★
+                                            </span>
+                                            <span className="font-bold text-slate-900">{Number(p.rating).toFixed(1)}</span>
+                                            <span className="text-slate-600">{p.label}</span>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+
+                                  {/* Review Title / Tagline */}
+                                  <h4 className="font-outfit font-bold text-sm sm:text-[15px] text-slate-900 pt-0.5 leading-snug">
+                                    {card.title}
+                                  </h4>
+
+                                  {/* Review Paragraphs (Collapsed vs Expanded) */}
+                                  <div className="space-y-2.5 text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                                    {(isExpanded
+                                      ? card.paragraphs
+                                      : (card.paragraphs || []).slice(0, 2)
+                                    ).map((para: ReviewCategoryParagraph, pIdx: number) => (
+                                      <p key={pIdx} className="leading-relaxed">
+                                        <strong className="font-bold text-slate-900 font-outfit">
+                                          {para.heading}:{" "}
+                                        </strong>
+                                        <span>{para.content}</span>
+                                      </p>
+                                    ))}
+                                  </div>
+
+                                  {/* Footer Row: Reviewed Date & Read More / Less Toggle */}
+                                  <div className="flex items-center justify-between gap-3 pt-1">
+                                    <span className="text-[11.5px] sm:text-xs font-medium text-slate-400">
+                                      {card.reviewedDate}
+                                    </span>
+
+                                    {(card.paragraphs || []).length > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setExpandedReviewCardIds((prev) => ({
+                                            ...prev,
+                                            [card.id]: !prev[card.id],
+                                          }));
+                                        }}
+                                        className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer select-none transition-colors"
+                                      >
+                                        {isExpanded ? "Read Less" : "Read More"}
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  {/* Subtle Bottom Action Bar (Thumbs Up / Down) */}
+                                  <div className="border-t border-dashed border-slate-200/80 pt-3 flex items-center gap-4 text-slate-500">
+                                    {/* Like Button */}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setReviewHelpfulVotes((prev) => ({
+                                          ...prev,
+                                          [card.id]: prev[card.id] === "up" ? null : "up",
+                                        }));
+                                      }}
+                                      className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                                        userVote === "up"
+                                          ? "text-blue-600 bg-blue-50 font-bold"
+                                          : "hover:text-slate-800 hover:bg-slate-100"
+                                      }`}
+                                    >
+                                      <ThumbsUp className="w-3.5 h-3.5" />
+                                      <span>{(card.likesCount || 10) + (userVote === "up" ? 1 : 0)}</span>
+                                    </button>
+
+                                    {/* Dislike Button */}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setReviewHelpfulVotes((prev) => ({
+                                          ...prev,
+                                          [card.id]: prev[card.id] === "down" ? null : "down",
+                                        }));
+                                      }}
+                                      className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                                        userVote === "down"
+                                          ? "text-red-600 bg-red-50 font-bold"
+                                          : "hover:text-slate-800 hover:bg-slate-100"
+                                      }`}
+                                    >
+                                      <ThumbsDown className="w-3.5 h-3.5" />
+                                      <span>{(card.dislikesCount || 0) + (userVote === "down" ? 1 : 0)}</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* STUDENT VIDEO & IMAGE REVIEWS CAROUSEL SECTION */}
+                          {(() => {
+                            const mediaData = revData.mediaReviews || {
+                              title: "Student Video Reviews",
+                              items: DEFAULT_STUDENT_MEDIA_REVIEWS,
+                            };
+                            const mediaItems: StudentMediaReviewItem[] =
+                              mediaData.items && mediaData.items.length > 0
+                                ? mediaData.items
+                                : DEFAULT_STUDENT_MEDIA_REVIEWS;
+
+                            const scrollMedia = (direction: "left" | "right") => {
+                              if (mediaReviewsScrollRef.current) {
+                                const scrollAmount = direction === "left" ? -320 : 320;
+                                mediaReviewsScrollRef.current.scrollBy({
+                                  left: scrollAmount,
+                                  behavior: "smooth",
+                                });
+                              }
+                            };
+
+                            return (
+                              <div className="pt-6 mt-4 border-t border-slate-100 space-y-4">
+                                {/* Header Row */}
+                                <div className="flex items-center justify-between gap-3">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-xl bg-purple-100 flex items-center justify-center text-purple-700">
+                                      <Film className="w-4 h-4" />
+                                    </div>
+                                    <h4 className="font-outfit font-bold text-base sm:text-lg text-slate-900">
+                                      {mediaData.title || "Student Video Reviews"}
+                                    </h4>
+                                  </div>
+
+                                  {isAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openMiniModal("studentMediaReviews")}
+                                      className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                                    >
+                                      <Edit className="w-3.5 h-3.5" />
+                                      <span>Edit Video Reviews</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Carousel Container with Floating Next/Prev Arrow */}
+                                <div className="relative group/carousel">
+                                  {/* Left Scroll Button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => scrollMedia("left")}
+                                    className="absolute -left-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/95 hover:bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/carousel:opacity-100"
+                                  >
+                                    <ChevronLeft className="w-5 h-5" />
+                                  </button>
+
+                                  {/* Horizontal Scroll Cards Row */}
+                                  <div
+                                    ref={mediaReviewsScrollRef}
+                                    className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 no-scrollbar snap-x snap-mandatory"
+                                  >
+                                    {mediaItems.map((item: StudentMediaReviewItem, mIdx: number) => {
+                                      const isVideo = item.type === "video";
+                                      const thumbUrl = getMediaThumbnailUrl(item);
+                                      return (
+                                        <div
+                                          key={item.id || mIdx}
+                                          onClick={() => setActiveMediaReviewModal(item)}
+                                          className="w-[170px] sm:w-[200px] h-[290px] sm:h-[330px] shrink-0 rounded-2xl overflow-hidden relative group/card cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 border border-slate-200/90 bg-slate-950 snap-center select-none"
+                                        >
+                                          {/* Background Thumbnail Image with Auto-fallback */}
+                                          <img
+                                            src={thumbUrl}
+                                            alt={item.title}
+                                            onError={(e) => {
+                                              const target = e.currentTarget;
+                                              const ytid = getYouTubeVideoId(item.mediaUrl);
+                                              if (ytid && !target.src.includes("mqdefault.jpg")) {
+                                                target.src = `https://img.youtube.com/vi/${ytid}/mqdefault.jpg`;
+                                              } else {
+                                                target.src = "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80";
+                                              }
+                                            }}
+                                            className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500"
+                                          />
+
+                                          {/* Top Tag Badge (Video / Image) */}
+                                          <div className="absolute top-2.5 left-2.5 z-10">
+                                            <div className="px-2 py-0.5 rounded-md bg-black/50 backdrop-blur-md border border-white/20 text-white text-[10.5px] font-bold flex items-center gap-1 shadow-2xs">
+                                              {isVideo ? (
+                                                <Video className="w-3 h-3 text-red-400" />
+                                              ) : (
+                                                <Camera className="w-3 h-3 text-cyan-400" />
+                                              )}
+                                              <span>{isVideo ? "Video" : "Photo"}</span>
+                                            </div>
+                                          </div>
+
+                                          
+
+                                          {/* Center Play Button Overlay */}
+                                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                            <div className="w-11 h-11 rounded-full bg-white/80 group-hover/card:bg-white text-slate-900 flex items-center justify-center shadow-lg group-hover/card:scale-115 transition-all duration-300 backdrop-blur-xs">
+                                              {isVideo ? (
+                                                <Play className="w-5 h-5 fill-slate-900 text-slate-900 ml-0.5" />
+                                              ) : (
+                                                <Eye className="w-5 h-5 text-slate-900" />
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          {/* Dark Gradient Overlay at Bottom for Readable Caption */}
+                                          <div className="absolute inset-x-0 bottom-0 pt-16 pb-3 px-3 bg-gradient-to-t from-black/95 via-black/60 to-transparent z-10 flex flex-col justify-end">
+                                            {/* Caption Title */}
+                                            <p className="font-outfit font-bold text-xs sm:text-[13px] text-white line-clamp-2 leading-snug drop-shadow-sm">
+                                              {item.title}
+                                            </p>
+
+                                            {/* Footer Duration / Tag */}
+                                            <div className="flex items-center justify-between text-[10.5px] text-slate-300 font-medium pt-1.5">
+                                              <span>{item.authorName || "Student Review"}</span>
+                                              <span className="font-mono font-bold bg-white/20 px-1.5 py-0.2 rounded text-[10px] text-white">
+                                                {item.duration || (isVideo ? "Video" : "Photo")}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+
+                                  {/* Right Scroll Button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => scrollMedia("right")}
+                                    className="absolute -right-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/95 hover:bg-white text-slate-800 shadow-md border border-slate-200/90 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 hidden sm:flex opacity-0 group-hover/carousel:opacity-100"
+                                  >
+                                    <ChevronRight className="w-5 h-5" />
+                                  </button>
+                                </div>
+
+                                {/* Fullscreen / Popup Media Player Modal */}
+                                {activeMediaReviewModal && (
+                                  <div
+                                    className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+                                    onClick={() => setActiveMediaReviewModal(null)}
+                                  >
+                                    <div
+                                      className="relative w-full max-w-2xl bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-white/15 flex flex-col"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      {/* Modal Header */}
+                                      <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/90">
+                                        <div className="flex items-center gap-2">
+                                          <span
+                                            className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${
+                                              activeMediaReviewModal.type === "video"
+                                                ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                                                : "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                                            }`}
+                                          >
+                                            {activeMediaReviewModal.type === "video" ? "Student Video Review" : "Student Photo Review"}
+                                          </span>
+                                          {activeMediaReviewModal.batch && (
+                                            <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+                                              • {activeMediaReviewModal.batch}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <button
+                                          type="button"
+                                          onClick={() => setActiveMediaReviewModal(null)}
+                                          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+                                        >
+                                          <X className="w-5 h-5" />
+                                        </button>
+                                      </div>
+
+                                      {/* Modal Media Body */}
+                                      <div className="relative w-full aspect-video sm:aspect-16/9 bg-black flex items-center justify-center overflow-hidden">
+                                        {activeMediaReviewModal.type === "video" ? (
+                                          getYouTubeVideoId(activeMediaReviewModal.mediaUrl) ||
+                                          activeMediaReviewModal.mediaUrl?.includes("youtube.com") ||
+                                          activeMediaReviewModal.mediaUrl?.includes("youtu.be") ||
+                                          activeMediaReviewModal.mediaUrl?.includes("embed") ? (
+                                            <iframe
+                                              src={getVideoEmbedUrl(activeMediaReviewModal.mediaUrl)}
+                                              title={activeMediaReviewModal.title}
+                                              className="w-full h-full border-0"
+                                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                              allowFullScreen
+                                            />
+                                          ) : (
+                                            <video
+                                              src={activeMediaReviewModal.mediaUrl}
+                                              controls
+                                              autoPlay
+                                              playsInline
+                                              className="w-full h-full object-contain"
+                                            />
+                                          )
+                                        ) : (
+                                          <img
+                                            src={getMediaThumbnailUrl(activeMediaReviewModal)}
+                                            alt={activeMediaReviewModal.title}
+                                            className="w-full h-full object-contain"
+                                          />
+                                        )}
+                                      </div>
+
+                                      {/* Modal Caption & Details */}
+                                      <div className="p-4 sm:p-5 bg-slate-900 border-t border-white/10 text-white space-y-1.5">
+                                        <h4 className="font-outfit font-bold text-base sm:text-lg text-white">
+                                          {activeMediaReviewModal.title}
+                                        </h4>
+                                        <div className="flex items-center justify-between text-xs text-slate-400">
+                                          <span>
+                                            By <strong className="text-slate-200">{activeMediaReviewModal.authorName || "Student"}</strong>
+                                          </span>
+                                          {activeMediaReviewModal.duration && (
+                                            <span className="font-mono bg-white/10 px-2 py-0.5 rounded text-[11px] text-slate-300">
+                                              Duration: {activeMediaReviewModal.duration}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })()}
+
+                          {/* 5 MORE DETAILED STUDENT REVIEW CARDS BELOW VIDEO REVIEWS */}
+                          {(() => {
+                            const moreCards = (revData.moreReviewCards && revData.moreReviewCards.length > 0)
+                              ? revData.moreReviewCards
+                              : DEFAULT_MORE_REVIEW_CARDS;
+
+                            return (
+                              <div className="pt-6 mt-4 border-t border-slate-100 space-y-4 sm:space-y-5">
+                                {/* Header Row with Total Reviews & Admin Edit Button */}
+                                <div className="flex items-center justify-between gap-3">
+                                  <h4 className="font-outfit font-bold text-base sm:text-lg text-slate-900">
+                                    More Student Reviews ({moreCards.length})
+                                  </h4>
+                                  {isAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openMiniModal("moreReviewCards")}
+                                      className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                                    >
+                                      <Edit className="w-3.5 h-3.5" />
+                                      <span>Edit More Reviews</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Render Individual Review Cards */}
+                                <div className="space-y-4">
+                                  {moreCards.map((card: DetailedReviewCard, cIdx: number) => {
+                                    const isExpanded = !!expandedReviewCardIds[card.id];
+                                    const userVote = reviewHelpfulVotes[card.id];
+
+                                    return (
+                                      <div
+                                        key={card.id || cIdx}
+                                        className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow duration-300 space-y-4"
+                                      >
+                                        {/* Top Row: Avatar + Author Info + Score Badge */}
+                                        <div className="flex items-start justify-between gap-3">
+                                          <div className="flex items-center gap-3">
+                                            {/* 2X Double Size Square Avatar Box with Photo / Letter */}
+                                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden shrink-0 border-2 border-slate-100 shadow-sm relative bg-slate-100 flex items-center justify-center">
+                                              {card.avatarUrl ? (
+                                                <img
+                                                  src={card.avatarUrl}
+                                                  alt={card.authorName}
+                                                  className="w-full h-full object-cover object-center"
+                                                  onError={(e) => {
+                                                    (e.currentTarget as HTMLElement).style.display = "none";
+                                                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                                    if (fallback) fallback.style.display = "flex";
+                                                  }}
+                                                />
+                                              ) : null}
+                                              <div
+                                                className={`w-full h-full flex items-center justify-center font-black text-xl sm:text-2xl font-outfit ${
+                                                  card.avatarBgColor || "bg-teal-100 text-teal-800"
+                                                } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                              >
+                                                {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                              </div>
+                                            </div>
+
+                                            {/* Name & Degree */}
+                                            <div>
+                                              <div className="flex items-center gap-1.5">
+                                                <h5 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-snug">
+                                                  {card.authorName}
+                                                </h5>
+                                                {card.verified && (
+                                                  <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500 shrink-0" />
+                                                )}
+                                              </div>
+                                              <p className="text-xs text-slate-500 font-medium leading-tight pt-0.5">
+                                                {card.courseAndBatch}
+                                              </p>
+                                            </div>
+                                          </div>
+
+                                          {/* Overall Rating Badge */}
+                                          <div className="px-2.5 py-1 rounded-md bg-[#00a859] text-white font-bold text-xs sm:text-[13px] flex items-center gap-1 shrink-0 shadow-2xs select-none">
+                                            <span className="text-[11px]">★</span>
+                                            <span>{Number(card.overallRating).toFixed(1)}</span>
+                                          </div>
+                                        </div>
+
+                                        {/* Parameter Rating Badges Pill Row */}
+                                        {card.parameterRatings && card.parameterRatings.length > 0 && (
+                                          <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                                            {card.parameterRatings.map((p: ReviewParameterBadge, pIdx: number) => {
+                                              const isLow = p.rating < 3.0;
+                                              return (
+                                                <div
+                                                  key={pIdx}
+                                                  className={`px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border ${
+                                                    isLow
+                                                      ? "bg-rose-50/50 border-rose-200/80 text-rose-700"
+                                                      : "bg-white border-slate-200/90 text-slate-700 shadow-2xs"
+                                                  }`}
+                                                >
+                                                  <span className={isLow ? "text-rose-500 font-black" : "text-emerald-600 font-black"}>
+                                                    ★
+                                                  </span>
+                                                  <span className="font-bold text-slate-900">{Number(p.rating).toFixed(1)}</span>
+                                                  <span className="text-slate-600">{p.label}</span>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        )}
+
+                                        {/* Review Title / Tagline */}
+                                        <h4 className="font-outfit font-bold text-sm sm:text-[15px] text-slate-900 pt-0.5 leading-snug">
+                                          {card.title}
+                                        </h4>
+
+                                        {/* Review Paragraphs (Collapsed vs Expanded) */}
+                                        <div className="space-y-2.5 text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                                          {(isExpanded
+                                            ? card.paragraphs
+                                            : (card.paragraphs || []).slice(0, 2)
+                                          ).map((para: ReviewCategoryParagraph, pIdx: number) => (
+                                            <p key={pIdx} className="leading-relaxed">
+                                              <strong className="font-bold text-slate-900 font-outfit">
+                                                {para.heading}:{" "}
+                                              </strong>
+                                              <span>{para.content}</span>
+                                            </p>
+                                          ))}
+                                        </div>
+
+                                        {/* Footer Row: Reviewed Date & Read More / Less Toggle */}
+                                        <div className="flex items-center justify-between gap-3 pt-1">
+                                          <span className="text-[11.5px] sm:text-xs font-medium text-slate-400">
+                                            {card.reviewedDate}
+                                          </span>
+
+                                          {(card.paragraphs || []).length > 1 && (
+                                            <button
+                                              type="button"
+                                              onClick={() => {
+                                                setExpandedReviewCardIds((prev) => ({
+                                                  ...prev,
+                                                  [card.id]: !prev[card.id],
+                                                }));
+                                              }}
+                                              className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer select-none transition-colors"
+                                            >
+                                              {isExpanded ? "Read Less" : "Read More"}
+                                            </button>
+                                          )}
+                                        </div>
+
+                                        {/* Subtle Bottom Action Bar (Thumbs Up / Down) */}
+                                        <div className="border-t border-dashed border-slate-200/80 pt-3 flex items-center gap-4 text-slate-500">
+                                          {/* Like Button */}
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              setReviewHelpfulVotes((prev) => ({
+                                                ...prev,
+                                                [card.id]: prev[card.id] === "up" ? null : "up",
+                                              }));
+                                            }}
+                                            className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                                              userVote === "up"
+                                                ? "text-blue-600 bg-blue-50 font-bold"
+                                                : "hover:text-slate-800 hover:bg-slate-100"
+                                            }`}
+                                          >
+                                            <ThumbsUp className="w-3.5 h-3.5" />
+                                            <span>{(card.likesCount || 10) + (userVote === "up" ? 1 : 0)}</span>
+                                          </button>
+
+                                          {/* Dislike Button */}
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              setReviewHelpfulVotes((prev) => ({
+                                                ...prev,
+                                                [card.id]: prev[card.id] === "down" ? null : "down",
+                                              }));
+                                            }}
+                                            className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                                              userVote === "down"
+                                                ? "text-red-600 bg-red-50 font-bold"
+                                                : "hover:text-slate-800 hover:bg-slate-100"
+                                            }`}
+                                          >
+                                            <ThumbsDown className="w-3.5 h-3.5" />
+                                            <span>{(card.dislikesCount || 0) + (userVote === "down" ? 1 : 0)}</span>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+
+          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && activeTab !== "admissions" && activeTab !== "rankings" && activeTab !== "reviews" && (
             <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-500">
                 <Sparkles className="w-6 h-6" />
