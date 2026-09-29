@@ -12026,7 +12026,427 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           )}
 
 
-          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && activeTab !== "admissions" && (
+          
+          {/* TAB: RANKINGS (Directly render full Rankings 2026 Section Template) */}
+          {activeTab === "rankings" && (
+            <div className="space-y-6">
+              {/* 6. RANKINGS 2026 SUB-BOX */}
+              {(() => {
+                const rkData = getCollegeRankingsArticle(collegeData);
+                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+
+                return (
+                  <div
+                    id="rankings-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20"
+                  >
+                    {/* Top Header Row */}
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                        {rkData.title || `${collegeShortName} Rankings 2026`}
+                      </h3>
+
+                      <div className="flex items-center gap-2">
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("rankings")}
+                            className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Rankings</span>
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => setIsRankingsCardOpen(!isRankingsCardOpen)}
+                          aria-label={isRankingsCardOpen ? "Collapse Rankings Card" : "Expand Rankings Card"}
+                          className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 flex items-center justify-center text-slate-600 hover:text-slate-950 transition-all cursor-pointer shadow-2xs active:scale-90"
+                        >
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                              isRankingsCardOpen ? "rotate-180 text-blue-600" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Collapsible Card Body */}
+                    <AnimatePresence initial={false}>
+                      {isRankingsCardOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pt-3.5 space-y-3.5 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
+                            {!isRankingsArticleExpanded ? (
+                              /* Collapsed / Preview State (Image 1) */
+                              <div className="space-y-3 relative pt-0.5">
+                                {rkData.introParagraph && (
+                                  <p className="leading-relaxed">
+                                    {renderFormattedText(rkData.introParagraph)}
+                                  </p>
+                                )}
+
+                                {/* Sub-header banner preview with mask */}
+                                <div className="relative max-h-[38px] overflow-hidden [mask-image:linear-gradient(to_bottom,black_20%,transparent_100%)]">
+                                  <div className="px-4 py-2.5 rounded-lg bg-[#f0f4f9] text-[#1e3a8a] font-outfit font-bold text-xs sm:text-[13.5px]">
+                                    {rkData.internationalHeading || `${collegeShortName} International Rankings 2025, 2026, 2027`}
+                                  </div>
+                                </div>
+
+                                {/* Read More Trigger at Bottom Right */}
+                                <div className="flex justify-end pt-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsRankingsArticleExpanded(true)}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] font-bold text-xs sm:text-[13px] hover:underline cursor-pointer transition-colors"
+                                  >
+                                    Read more
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              /* Full Expanded State (Image 2 & 3) */
+                              <div className="space-y-5 pt-0.5">
+                                {rkData.introParagraph && (
+                                  <p className="leading-relaxed">
+                                    {renderFormattedText(rkData.introParagraph)}
+                                  </p>
+                                )}
+
+                                {/* 1. International Rankings Section */}
+                                <div className="space-y-2.5">
+                                  <div className="px-4 py-2.5 rounded-lg bg-[#f0f4f9] text-[#1e3a8a] font-outfit font-bold text-xs sm:text-[13.5px]">
+                                    {rkData.internationalHeading || `${collegeShortName} International Rankings 2025, 2026, 2027`}
+                                  </div>
+
+                                  {rkData.internationalRows && rkData.internationalRows.length > 0 && (
+                                    <div className="overflow-x-auto rounded-xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
+                                      <table className="w-full text-left border-collapse text-xs sm:text-[13px]">
+                                        <thead>
+                                          <tr className="bg-[#f0f4f9] text-slate-800 font-bold font-outfit text-xs border-b border-slate-200/80">
+                                            <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-5/12 border-r border-slate-200/80">
+                                              Ranking Body
+                                            </th>
+                                            <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-4/12 border-r border-slate-200/80">
+                                              Category
+                                            </th>
+                                            <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-3/12">
+                                              Ranking
+                                            </th>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                          {rkData.internationalRows.map((row, rIdx) => (
+                                            <tr key={rIdx} className="hover:bg-slate-50/70 transition-colors">
+                                              <td className="py-3 px-4 font-semibold text-slate-900 align-middle border-r border-slate-100">
+                                                {row.body}
+                                              </td>
+                                              <td className="py-3 px-4 text-slate-700 align-middle border-r border-slate-100">
+                                                {row.category}
+                                              </td>
+                                              <td className="py-3 px-4 font-bold text-slate-900 align-middle">
+                                                {row.rank}
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* 2. National Rankings Section */}
+                                <div className="space-y-2.5">
+                                  <div className="px-4 py-2.5 rounded-lg bg-[#f0f4f9] text-[#1e3a8a] font-outfit font-bold text-xs sm:text-[13.5px]">
+                                    {rkData.nationalHeading || `${collegeShortName} National Rankings 2025, 2026`}
+                                  </div>
+
+                                  {rkData.nationalRows && rkData.nationalRows.length > 0 && (
+                                    <div className="overflow-x-auto rounded-xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
+                                      <table className="w-full text-left border-collapse text-xs sm:text-[13px]">
+                                        <thead>
+                                          <tr className="bg-[#f0f4f9] text-slate-800 font-bold font-outfit text-xs border-b border-slate-200/80">
+                                            <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-5/12 border-r border-slate-200/80">
+                                              Ranking Body
+                                            </th>
+                                            <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-4/12 border-r border-slate-200/80">
+                                              Category
+                                            </th>
+                                            <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-3/12">
+                                              Ranking
+                                            </th>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                          {rkData.nationalRows.map((row, rIdx) => (
+                                            <tr key={rIdx} className="hover:bg-slate-50/70 transition-colors">
+                                              <td className="py-3 px-4 font-semibold text-slate-900 align-middle border-r border-slate-100">
+                                                {row.body}
+                                              </td>
+                                              <td className="py-3 px-4 text-slate-700 align-middle border-r border-slate-100">
+                                                {row.category}
+                                              </td>
+                                              <td className="py-3 px-4 font-bold text-slate-900 align-middle">
+                                                {row.rank}
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Footer Note with Link & Show Less Button */}
+                                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-[13px]">
+                                  {rkData.footerNote && (
+                                    <p className="text-slate-600 font-medium leading-relaxed">
+                                      {renderFormattedText(rkData.footerNote)}
+                                    </p>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsRankingsArticleExpanded(false)}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] font-bold text-xs sm:text-[13px] hover:underline cursor-pointer transition-colors self-end shrink-0"
+                                  >
+                                    Show less
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* COURSE RANKINGS ACCORDION BOXES */}
+                            {rkData.courseRankingBoxes && rkData.courseRankingBoxes.length > 0 && (
+                              <div className="space-y-3 pt-2">
+                                {rkData.courseRankingBoxes.map((box, bIdx) => {
+                                  const isBoxOpen = !!openCourseRankingBoxes[bIdx];
+
+                                  return (
+                                    <div
+                                      key={bIdx}
+                                      className="rounded-2xl border border-slate-200/90 bg-white overflow-hidden shadow-2xs transition-all duration-200"
+                                    >
+                                      {/* Header Row */}
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          setOpenCourseRankingBoxes((prev) => ({
+                                            ...prev,
+                                            [bIdx]: !prev[bIdx],
+                                          }))
+                                        }
+                                        className="w-full flex items-center justify-between p-4 sm:p-5 text-left bg-white hover:bg-slate-50/70 transition-colors cursor-pointer select-none"
+                                      >
+                                        <h4 className="font-outfit font-extrabold text-sm sm:text-base text-[#2d114d] tracking-tight">
+                                          {box.title}
+                                        </h4>
+                                        <ChevronDown
+                                          className={`w-5 h-5 text-slate-500 transition-transform duration-300 ${
+                                            isBoxOpen ? "rotate-180 text-blue-600" : ""
+                                          }`}
+                                        />
+                                      </button>
+
+                                      {/* Expanded Body */}
+                                      <AnimatePresence initial={false}>
+                                        {isBoxOpen && (
+                                          <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "auto" }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                                            className="overflow-hidden border-t border-slate-100"
+                                          >
+                                            <div className="p-4 sm:p-5 space-y-4">
+                                              {/* Ranking Years Table */}
+                                              {box.tableRows && box.tableRows.length > 0 && (
+                                                <div className="overflow-x-auto rounded-xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
+                                                  <table className="w-full text-left border-collapse text-xs sm:text-[13px]">
+                                                    <thead>
+                                                      <tr className="bg-[#f0f4f9] text-slate-800 font-bold font-outfit text-xs border-b border-slate-200/80">
+                                                        <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-1/2 border-r border-slate-200/80">
+                                                          {box.yearsHeader?.[0] || "Publisher"}
+                                                        </th>
+                                                        <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-1/6 text-center border-r border-slate-200/80">
+                                                          {box.yearsHeader?.[1] || "2024"}
+                                                        </th>
+                                                        <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-1/6 text-center border-r border-slate-200/80">
+                                                          {box.yearsHeader?.[2] || "2025"}
+                                                        </th>
+                                                        <th className="py-3 px-4 font-bold font-outfit text-slate-900 w-1/6 text-center">
+                                                          {box.yearsHeader?.[3] || "2026"}
+                                                        </th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-slate-100">
+                                                      {box.tableRows.map((r, rIdx) => (
+                                                        <tr key={rIdx} className="hover:bg-slate-50/70 transition-colors">
+                                                          <td className="py-3 px-4 font-semibold text-slate-900 align-middle border-r border-slate-100">
+                                                            {r.publisher}
+                                                          </td>
+                                                          <td className="py-3 px-4 text-slate-700 text-center align-middle border-r border-slate-100">
+                                                            {r.rank2024}
+                                                          </td>
+                                                          <td className="py-3 px-4 text-slate-700 text-center align-middle border-r border-slate-100">
+                                                            {r.rank2025}
+                                                          </td>
+                                                          <td className="py-3 px-4 font-bold text-slate-900 text-center align-middle">
+                                                            {r.rank2026}
+                                                          </td>
+                                                        </tr>
+                                                      ))}
+                                                    </tbody>
+                                                  </table>
+                                                </div>
+                                              )}
+
+                                              {/* Highlight Note Banner (Image 2) */}
+                                              {box.highlightBadge && (
+                                                <div className="p-3 sm:p-3.5 rounded-xl bg-[#fef9ee] border border-amber-200/70 flex items-center gap-2.5 text-xs sm:text-[13px] text-amber-950 font-bold shadow-2xs">
+                                                  <div className="w-6 h-6 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0">
+                                                    <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                                                  </div>
+                                                  <span className="leading-snug">{box.highlightBadge}</span>
+                                                </div>
+                                              )}
+                                            </div>
+                                          </motion.div>
+                                        )}
+                                      </AnimatePresence>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* Separator line & COMMONLY ASKED QUESTIONS ON RANKINGS ACCORDION */}
+                            {rkData.faqs && rkData.faqs.length > 0 && (
+                              <div className="pt-5 mt-4 border-t border-slate-200/80 space-y-3.5">
+                                {/* Header Row with Yellow/Amber Q&A Badge */}
+                                <div className="flex items-center justify-between gap-3">
+                                  <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-full bg-amber-100/90 text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
+                                      <HelpCircle className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                      <h4 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-tight">
+                                        {rkData.faqsHeading || "Commonly asked questions"}
+                                      </h4>
+                                      <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
+                                        {rkData.faqsSubtitle || "On Rankings"}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {isAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openMiniModal("rankings_faqs")}
+                                      className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-bold border border-amber-200/80 shadow-2xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                                    >
+                                      <Edit className="w-3 h-3" />
+                                      <span>Edit Ranking FAQs</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Accordion Questions List */}
+                                <div className="divide-y divide-slate-100/90 pt-1">
+                                  {rkData.faqs.map((faq, fIdx) => {
+                                    const isOpen = openRankingsFaqIdx === fIdx;
+                                    const rawQ = faq.question.trim();
+                                    const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
+                                    const rawA = faq.answer.trim();
+                                    const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
+
+                                    return (
+                                      <div key={fIdx} className="py-2.5 first:pt-1 last:pb-0">
+                                        <button
+                                          type="button"
+                                          onClick={() => setOpenRankingsFaqIdx(isOpen ? null : fIdx)}
+                                          className="w-full flex items-center justify-between gap-3 text-left py-1 text-slate-800 hover:text-blue-600 transition-colors cursor-pointer group/q"
+                                        >
+                                          <span className="font-outfit font-bold text-[13px] sm:text-[13.5px] leading-snug group-hover/q:text-blue-600 transition-colors">
+                                            {formattedQ}
+                                          </span>
+                                          <ChevronDown
+                                            className={`w-4 h-4 text-slate-500 group-hover/q:text-blue-600 transition-transform duration-200 ${
+                                              isOpen ? "rotate-180 text-blue-600" : ""
+                                            }`}
+                                          />
+                                        </button>
+
+                                        <AnimatePresence initial={false}>
+                                          {isOpen && (
+                                            <motion.div
+                                              initial={{ opacity: 0, height: 0 }}
+                                              animate={{ opacity: 1, height: "auto" }}
+                                              exit={{ opacity: 0, height: 0 }}
+                                              transition={{ duration: 0.22, ease: "easeInOut" }}
+                                              className="overflow-hidden"
+                                            >
+                                              <div className="pt-2 pb-2 pl-0.5 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
+                                                <p className="leading-relaxed">
+                                                  {formattedA}
+                                                </p>
+                                              </div>
+                                            </motion.div>
+                                          )}
+                                        </AnimatePresence>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+
+                                {/* Centered Double Action Buttons (Image Match) */}
+                                <div className="flex flex-wrap items-center justify-center gap-3 pt-3 pb-1">
+                                  {/* Button 1: Outline 'View Ranking Details ->' */}
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveTab("rankings");
+                                      document.getElementById("college-nav-tabs-bar")?.scrollIntoView({ behavior: "smooth" });
+                                    }}
+                                    className="px-6 py-2.5 rounded-full border border-[#2d114d] hover:border-[#1a0830] text-[#2d114d] hover:text-[#1a0830] hover:bg-purple-50/60 font-bold text-xs sm:text-[13px] transition-all duration-200 active:scale-95 flex items-center gap-2 shadow-2xs cursor-pointer select-none"
+                                  >
+                                    <span>{rkData.faqsBtn1Text || "View Ranking Details"}</span>
+                                    <ArrowRight className="w-4 h-4" />
+                                  </button>
+
+                                  {/* Button 2: Green Filled 'Ranking Details' */}
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveTab("rankings");
+                                      document.getElementById("college-nav-tabs-bar")?.scrollIntoView({ behavior: "smooth" });
+                                    }}
+                                    className="px-6 py-2.5 rounded-full bg-[#00a859] hover:bg-[#00964e] text-white font-bold text-xs sm:text-[13px] transition-all duration-200 active:scale-95 flex items-center gap-2 shadow-sm cursor-pointer select-none"
+                                  >
+                                    <Download className="w-4 h-4" />
+                                    <span>{rkData.faqsBtn2Text || "Ranking Details"}</span>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+
+          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && activeTab !== "admissions" && activeTab !== "rankings" && (
             <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-500">
                 <Sparkles className="w-6 h-6" />
