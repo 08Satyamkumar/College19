@@ -4269,13 +4269,13 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
   return (
     <div className="min-h-screen pb-16 space-y-4 select-none">
       {/* STICKY TOP COLLEGE HEADER UNIT (HERO BANNER + NAVIGATION TABS) */}
-      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl -mx-6 md:-mx-8 px-6 md:px-8 border-b border-slate-200/90 shadow-[0_6px_28px_rgba(0,0,0,0.09)] transition-all duration-300">
-        {/* Banner Section (Collapses smoothly into compact strip when scrolled) */}
+      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-[0_6px_28px_rgba(0,0,0,0.09)] transition-all duration-300">
+        {/* Banner Section (40% Taller, 0 Gap Edge-to-Edge, Collapses cleanly when scrolled) */}
         <div
           className={`relative overflow-hidden bg-slate-900 transition-all duration-300 ${
             isBannerScrolled
-              ? "h-[60px] sm:h-[66px] px-4 sm:px-8 flex items-center justify-between shadow-xs"
-              : "h-[180px] sm:h-[220px] md:h-[250px] rounded-t-3xl sm:rounded-3xl"
+              ? "h-[58px] sm:h-[64px] px-4 sm:px-8 flex items-center justify-between shadow-xs"
+              : "h-[250px] sm:h-[300px] md:h-[350px] rounded-b-2xl sm:rounded-b-3xl"
           }`}
         >
           {/* Background Cover Image with Gradient Overlay */}
@@ -4289,15 +4289,15 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=80";
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/40 to-slate-950/70" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/30" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/40 to-slate-950/60" />
           </div>
 
-          {/* Dynamic Content: Compact Strip vs Full Hero View */}
+          {/* Dynamic Content: Compact Scrolled View vs Full 40% Bigger Cover View */}
           {isBannerScrolled ? (
             <div className="relative z-10 w-full flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-white border-2 border-white shadow-md p-1 flex items-center justify-center overflow-hidden shrink-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white shadow-md p-1 flex items-center justify-center overflow-hidden shrink-0">
                   {collegeData.logo ? (
                     <img
                       src={collegeData.logo}
@@ -4310,7 +4310,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     </div>
                   )}
                 </div>
-                <h2 className="font-outfit font-black text-sm sm:text-base md:text-lg text-white tracking-tight truncate">
+                <h2 className="font-outfit font-black text-xs sm:text-sm md:text-base text-white tracking-tight truncate">
                   {collegeData.fullName || collegeData.name}
                 </h2>
               </div>
@@ -4327,10 +4327,11 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               )}
             </div>
           ) : (
-            <div className="relative h-full px-5 sm:px-8 pb-5 z-20 flex flex-col justify-end">
+            <div className="relative h-full px-5 sm:px-8 pb-6 z-20 flex flex-col justify-end">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="flex items-center gap-4 sm:gap-5">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-4 border-white shadow-xl p-1.5 flex items-center justify-center overflow-hidden shrink-0 relative">
+                  {/* Clean Square Logo (No heavy white border) */}
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-2xl p-1.5 flex items-center justify-center overflow-hidden shrink-0 relative">
                     {collegeData.logo ? (
                       <img
                         src={collegeData.logo}
@@ -4347,8 +4348,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     )}
                   </div>
 
+                  {/* College Name: Sleek & Balanced Font Size */}
                   <div className="text-white pt-1">
-                    <h1 className="font-outfit font-black text-lg sm:text-2xl md:text-3xl text-white tracking-tight leading-tight">
+                    <h1 className="font-outfit font-black text-base sm:text-xl md:text-2xl text-white tracking-tight leading-snug drop-shadow-md">
                       {collegeData.fullName || collegeData.name}
                     </h1>
                   </div>
@@ -4359,7 +4361,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     <button
                       type="button"
                       onClick={() => openMiniModal("header")}
-                      className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm"
+                      className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-md"
                       title="Edit Banner Image, Logo & College Name"
                     >
                       <Edit className="w-3.5 h-3.5" />
