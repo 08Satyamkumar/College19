@@ -2282,6 +2282,15 @@ export default function CollegeDetailPage() {
   });
 
   const [collegeData, setCollegeData] = useState<CollegeDetail>(IIT_DELHI_MASTER_DATA);
+  const [isBannerScrolled, setIsBannerScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsBannerScrolled(window.scrollY > 80);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const [loading, setLoading] = useState(false);
   const [activePhotoIdx, setActivePhotoIdx] = useState<number | null>(null);
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(0);
@@ -4259,71 +4268,112 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
   return (
     <div className="min-h-screen pb-16 space-y-4 select-none">
-      {/* 1. CLEAN MODERN HERO BANNER (COVER IMAGE + COLLEGE LOGO + COLLEGE NAME) */}
-      <section className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-200/80 shadow-xl">
-        {/* Cover Photo with Dark Gradient Overlay */}
-        <div className="relative h-[180px] sm:h-[240px] md:h-[280px] w-full overflow-hidden bg-slate-950">
-          <img
-            src={collegeData.image || "/images/iitdelhi_real.jpg"}
-            alt={collegeData.name}
-            className="w-full h-full object-cover object-center transform scale-102 hover:scale-105 transition-transform duration-700"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=80";
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-slate-950/40" />
-        </div>
-
-        {/* Floating Logo + College Name & Admin Edit Button */}
-        <div className="relative -mt-12 sm:-mt-14 px-5 sm:px-8 pb-5 sm:pb-6 z-20 flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="flex items-center gap-4 sm:gap-5">
-            {/* Square College Logo Box */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white border-4 border-white shadow-xl p-1.5 flex items-center justify-center overflow-hidden flex-shrink-0 relative">
-              {collegeData.logo ? (
-                <img
-                  src={collegeData.logo}
-                  alt={`${collegeData.name} logo`}
-                  className="w-full h-full object-contain"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = "none";
-                  }}
-                />
-              ) : (
-                <div className="w-full h-full rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white font-black text-xs flex items-center justify-center">
-                  {collegeData.name ? collegeData.name.slice(0, 4).toUpperCase() : "IITD"}
-                </div>
-              )}
-            </div>
-
-            {/* College Name */}
-            <div className="text-white pt-2">
-              <h1 className="font-outfit font-black text-xl sm:text-2xl md:text-3xl text-white tracking-tight leading-tight">
-                {collegeData.fullName || collegeData.name}
-              </h1>
-            </div>
+      {/* STICKY TOP COLLEGE HEADER UNIT (HERO BANNER + NAVIGATION TABS) */}
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.08)] transition-all duration-300">
+        {/* Banner Section (Collapses smoothly into compact strip when scrolled) */}
+        <div
+          className={`relative overflow-hidden bg-slate-900 transition-all duration-300 ${
+            isBannerScrolled
+              ? "h-[60px] sm:h-[66px] px-4 sm:px-8 flex items-center justify-between shadow-xs"
+              : "h-[180px] sm:h-[220px] md:h-[250px] rounded-t-3xl sm:rounded-3xl"
+          }`}
+        >
+          {/* Background Cover Image with Gradient Overlay */}
+          <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-950">
+            <img
+              src={collegeData.image || "/images/iitdelhi_real.jpg"}
+              alt={collegeData.name}
+              className="w-full h-full object-cover object-center transform scale-102 transition-transform duration-700"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=80";
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/40 to-slate-950/70" />
           </div>
 
-          {/* Admin Edit Banner Button */}
-          {isAdmin && (
-            <div className="flex items-center gap-2 pt-2 md:pt-0">
-              <button
-                type="button"
-                onClick={() => openMiniModal("header")}
-                className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm"
-                title="Edit Banner Image, Logo & College Name"
-              >
-                <Edit className="w-3.5 h-3.5" />
-                <span>Edit Banner</span>
-              </button>
+          {/* Dynamic Content: Compact Strip vs Full Hero View */}
+          {isBannerScrolled ? (
+            <div className="relative z-10 w-full flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-white border-2 border-white shadow-md p-1 flex items-center justify-center overflow-hidden shrink-0">
+                  {collegeData.logo ? (
+                    <img
+                      src={collegeData.logo}
+                      alt={`${collegeData.name} logo`}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="w-full h-full rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 text-white font-black text-[10px] flex items-center justify-center">
+                      {collegeData.name ? collegeData.name.slice(0, 4).toUpperCase() : "IITD"}
+                    </div>
+                  )}
+                </div>
+                <h2 className="font-outfit font-black text-sm sm:text-base md:text-lg text-white tracking-tight truncate">
+                  {collegeData.fullName || collegeData.name}
+                </h2>
+              </div>
+
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => openMiniModal("header")}
+                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0"
+                >
+                  <Edit className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Edit Banner</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="relative h-full px-5 sm:px-8 pb-5 z-20 flex flex-col justify-end">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="flex items-center gap-4 sm:gap-5">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-4 border-white shadow-xl p-1.5 flex items-center justify-center overflow-hidden shrink-0 relative">
+                    {collegeData.logo ? (
+                      <img
+                        src={collegeData.logo}
+                        alt={`${collegeData.name} logo`}
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white font-black text-xs flex items-center justify-center">
+                        {collegeData.name ? collegeData.name.slice(0, 4).toUpperCase() : "IITD"}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="text-white pt-1">
+                    <h1 className="font-outfit font-black text-lg sm:text-2xl md:text-3xl text-white tracking-tight leading-tight">
+                      {collegeData.fullName || collegeData.name}
+                    </h1>
+                  </div>
+                </div>
+
+                {isAdmin && (
+                  <div className="flex items-center gap-2 pt-1 md:pt-0">
+                    <button
+                      type="button"
+                      onClick={() => openMiniModal("header")}
+                      className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm"
+                      title="Edit Banner Image, Logo & College Name"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                      <span>Edit Banner</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
-      </section>
 
-      {/* 2. GLASSMORPHIC SUB-HEADER TABS WITH SEPARATORS */}
-      <div id="college-nav-tabs-bar" className="sticky top-0 bg-white/95 backdrop-blur-xl z-40 border-b border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.06)] py-2 relative scroll-mt-4 transition-all">
+        {/* 2. GLASSMORPHIC SUB-HEADER TABS WITH SEPARATORS */}
+        <div id="college-nav-tabs-bar" className="relative py-1 sm:py-1.5 border-t border-slate-200/80 scroll-mt-4">
         {canScrollLeft && (
           <div className="absolute left-0 inset-y-0 w-16 bg-gradient-to-r from-white via-white/90 to-transparent z-20 flex items-center pl-2 pointer-events-none">
             <button
@@ -4385,6 +4435,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
             </button>
           </div>
         )}
+        </div>
       </div>
 
       {/* 2.5. CONTENT AUTHOR BYLINE (CLEAN MINIMAL INLINE TEXT - NO HEAVY BORDER/BOX) */}
