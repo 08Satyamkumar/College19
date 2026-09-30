@@ -110,6 +110,8 @@ interface HighlightsArticleData {
   nirfCalloutDesc?: string;
   nirfReportUrl?: string;
   faqs?: FaqItem[];
+  offeredCoursesHeading?: string;
+  offeredCourses?: OfferedCourseRow[];
 }
 
 interface CutoffArticleData {
@@ -154,6 +156,12 @@ interface OtherFeeChargeRow {
   amount: string;
 }
 
+interface OfferedCourseRow {
+  course: string;
+  duration: string;
+  eligibility: string[];
+}
+
 interface CoursesFeesArticleData {
   title?: string;
   introParagraph1?: string;
@@ -170,6 +178,8 @@ interface CoursesFeesArticleData {
   footerNote?: string;
   viewAllBtnText?: string;
   faqs?: FaqItem[];
+  offeredCoursesHeading?: string;
+  offeredCourses?: OfferedCourseRow[];
 }
 
 interface PlacementSubSection {
@@ -1489,6 +1499,55 @@ interface CollegeDetail {
   shortName?: string;
 }
 
+const DEFAULT_OFFERED_COURSES: OfferedCourseRow[] = [
+  {
+    course: "B.Tech",
+    duration: "4 Years",
+    eligibility: [
+      "Candidates must have passed the 10 + 2 exam with a minimum of 75% marks.",
+      "Candidates must have a valid score in the JEE Advanced exam.",
+    ],
+  },
+  {
+    course: "M.Tech",
+    duration: "2 Years",
+    eligibility: [
+      "Candidates must have a Post Graduation Degree in a relevant discipline with a minimum of 60% marks.",
+    ],
+  },
+  {
+    course: "M.Sc",
+    duration: "2 Years",
+    eligibility: [
+      "Candidates must have a Graduation Degree in the relevant discipline.",
+      "Candidates must have a valid score in the IIT JAM exam.",
+    ],
+  },
+  {
+    course: "MBA",
+    duration: "2 Years",
+    eligibility: [
+      "Candidates must have a Graduation Degree in a relevant discipline with a minimum of 60% marks",
+      "Candidates must have a valid score in the GATE exam.",
+    ],
+  },
+  {
+    course: "Integrated B.Tech + M.Tech",
+    duration: "5 Years",
+    eligibility: [
+      "Candidates must have passed the 10 + 2 exam with a minimum of 75% marks.",
+      "Candidates must have a valid score in the JEE Advanced exam.",
+    ],
+  },
+  {
+    course: "M.Des",
+    duration: "2 Years",
+    eligibility: [
+      "Candidates must have passed the 10 + 2 exam.",
+    ],
+  },
+];
+
 // Master Benchmark Dataset for IIT Delhi
 const IIT_DELHI_MASTER_DATA: CollegeDetail = {
   name: "IIT Delhi - Indian Institute of Technology",
@@ -1783,6 +1842,8 @@ const IIT_DELHI_MASTER_DATA: CollegeDetail = {
     ],
     footerNote: "Check more about IIT Delhi courses below:",
     viewAllBtnText: "View All Courses & Fees",
+    offeredCoursesHeading: "Courses Offered",
+    offeredCourses: DEFAULT_OFFERED_COURSES,
     faqs: [
       {
         question: "What is the career scope after MSc from IIT Delhi?",
@@ -2960,6 +3021,11 @@ export default function CollegeDetailPage() {
         ],
         footerNote: college.coursesFeesArticle.footerNote || `Check more about ${shortName} courses below:`,
         viewAllBtnText: college.coursesFeesArticle.viewAllBtnText || "View All Courses & Fees",
+        offeredCoursesHeading: college.coursesFeesArticle.offeredCoursesHeading || "Courses Offered",
+        offeredCourses:
+          college.coursesFeesArticle.offeredCourses && college.coursesFeesArticle.offeredCourses.length > 0
+            ? college.coursesFeesArticle.offeredCourses
+            : DEFAULT_OFFERED_COURSES,
         faqs:
           college.coursesFeesArticle.faqs && college.coursesFeesArticle.faqs.length > 0
             ? college.coursesFeesArticle.faqs
@@ -3085,6 +3151,8 @@ export default function CollegeDetailPage() {
       ],
       footerNote: `Check more about ${shortName} courses below:`,
       viewAllBtnText: "View All Courses & Fees",
+      offeredCoursesHeading: "Courses Offered",
+      offeredCourses: DEFAULT_OFFERED_COURSES,
       faqs: defaultCoursesFaqs,
     };
   };
@@ -11061,6 +11129,82 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 </div>
                               </div>
                             )}
+
+{/* THIN SEPARATOR LINE & COURSES OFFERED MASTER TABLE (IMAGE 1 & 2 - HEADER TAB ONLY) */}
+                            {cfData.offeredCourses && cfData.offeredCourses.length > 0 && (
+                              <div className="pt-6 mt-6 border-t border-slate-200/90 space-y-4">
+                                <div className="flex items-center justify-between gap-3">
+                                  <h3 className="font-outfit font-black text-base sm:text-lg text-slate-900 tracking-tight">
+                                    {cfData.offeredCoursesHeading || "Courses Offered"}
+                                  </h3>
+                                  {isAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openMiniModal("courses")}
+                                      className="px-3 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                                    >
+                                      <Edit className="w-3.5 h-3.5" />
+                                      <span>Edit Offered Table</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Authentic High-Precision Table matching Image 1 & 2 */}
+                                <div className="w-full overflow-hidden border border-[#3b82f6] shadow-2xs rounded-xs">
+                                  <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse min-w-[620px]">
+                                      <thead>
+                                        <tr className="bg-[#3b82f6] text-white">
+                                          <th className="w-[24%] py-3.5 px-4 text-center font-bold text-xs sm:text-sm tracking-wide border-r border-blue-400/40 uppercase sm:normal-case">
+                                            Course
+                                          </th>
+                                          <th className="w-[18%] py-3.5 px-4 text-center font-bold text-xs sm:text-sm tracking-wide border-r border-blue-400/40 uppercase sm:normal-case">
+                                            Duration
+                                          </th>
+                                          <th className="w-[58%] py-3.5 px-5 text-left font-bold text-xs sm:text-sm tracking-wide uppercase sm:normal-case">
+                                            Eligibility
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-300 bg-white">
+                                        {cfData.offeredCourses.map((row, rIdx) => (
+                                          <tr
+                                            key={rIdx}
+                                            className="hover:bg-blue-50/20 transition-colors border-b border-slate-300 last:border-b-0"
+                                          >
+                                            {/* Column 1: Course (Bold, Centered) */}
+                                            <td className="py-4 px-4 text-center font-bold text-slate-900 text-xs sm:text-[13.5px] align-middle border-r border-slate-300 bg-white">
+                                              {row.course}
+                                            </td>
+
+                                            {/* Column 2: Duration (Bold, Centered) */}
+                                            <td className="py-4 px-4 text-center font-bold text-slate-900 text-xs sm:text-[13.5px] align-middle border-r border-slate-300 bg-white">
+                                              {row.duration}
+                                            </td>
+
+                                            {/* Column 3: Eligibility (Bullet list with Coral Checkmark Icons) */}
+                                            <td className="py-4 px-5 align-middle text-left bg-white">
+                                              <div className="space-y-2">
+                                                {row.eligibility.map((point, pIdx) => (
+                                                  <div key={pIdx} className="flex items-start gap-2.5">
+                                                    <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-[#e0564c] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                                                      <Check className="w-2.5 h-2.5 stroke-[3.5]" />
+                                                    </div>
+                                                    <span className="text-xs sm:text-[13px] text-slate-800 leading-relaxed font-normal">
+                                                      {point}
+                                                    </span>
+                                                  </div>
+                                                ))}
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </motion.div>
                       )}
@@ -15210,7 +15354,152 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           </div>
                         ))}
                       </div>
-                    </div>
+                    
+
+                    {/* Part 7: Courses Offered Master Table Editor (Image 1 & 2) */}
+                    <div className="p-4 bg-gradient-to-br from-blue-50/80 via-white to-slate-50 border border-blue-200/80 rounded-2xl space-y-3.5 shadow-xs">
+                      <div className="flex items-center justify-between pb-2 border-b border-blue-100/80">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="inline-block w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                            <span className="text-xs font-black uppercase tracking-wider text-blue-950">
+                              Courses Offered Master Table (Header Tab Only)
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 font-medium mt-0.5 pl-4">
+                            Configure Courses, Duration, and Eligibility Bullet points
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                            const updated = [
+                              ...(cur.offeredCourses || []),
+                              {
+                                course: "New Course",
+                                duration: "2 Years",
+                                eligibility: ["Enter eligibility criteria for this course..."],
+                              },
+                            ];
+                            setTempData({
+                              ...tempData,
+                              coursesFeesArticle: { ...cur, offeredCourses: updated },
+                            });
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-[11px] font-bold flex items-center gap-1.5 shadow-xs hover:shadow transition-all cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Course</span>
+                        </button>
+                      </div>
+
+                      {/* Heading Input */}
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-700 block mb-1">
+                          Table Section Heading
+                        </label>
+                        <input
+                          type="text"
+                          value={tempData.coursesFeesArticle?.offeredCoursesHeading || getCollegeCoursesFeesArticle(tempData).offeredCoursesHeading || "Courses Offered"}
+                          onChange={(e) => {
+                            const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                            setTempData({
+                              ...tempData,
+                              coursesFeesArticle: { ...cur, offeredCoursesHeading: e.target.value },
+                            });
+                          }}
+                          className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900"
+                        />
+                      </div>
+
+                      {/* Courses Rows List */}
+                      <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
+                        {(tempData.coursesFeesArticle?.offeredCourses || getCollegeCoursesFeesArticle(tempData).offeredCourses || []).map((row, rIdx) => (
+                          <div key={rIdx} className="p-3 bg-white border border-blue-200/80 rounded-xl space-y-2.5 relative shadow-2xs">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                                const updated = (cur.offeredCourses || []).filter((_, i) => i !== rIdx);
+                                setTempData({
+                                  ...tempData,
+                                  coursesFeesArticle: { ...cur, offeredCourses: updated },
+                                });
+                              }}
+                              className="absolute top-2.5 right-2.5 p-1 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
+                              title="Delete Course"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pr-8">
+                              <div>
+                                <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Course Name *</label>
+                                <input
+                                  type="text"
+                                  value={row.course}
+                                  onChange={(e) => {
+                                    const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                                    const updated = [...(cur.offeredCourses || [])];
+                                    updated[rIdx] = { ...updated[rIdx], course: e.target.value };
+                                    setTempData({
+                                      ...tempData,
+                                      coursesFeesArticle: { ...cur, offeredCourses: updated },
+                                    });
+                                  }}
+                                  placeholder="e.g. B.Tech"
+                                  className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Duration *</label>
+                                <input
+                                  type="text"
+                                  value={row.duration}
+                                  onChange={(e) => {
+                                    const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                                    const updated = [...(cur.offeredCourses || [])];
+                                    updated[rIdx] = { ...updated[rIdx], duration: e.target.value };
+                                    setTempData({
+                                      ...tempData,
+                                      coursesFeesArticle: { ...cur, offeredCourses: updated },
+                                    });
+                                  }}
+                                  placeholder="e.g. 4 Years"
+                                  className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                                Eligibility Points (Enter each bullet point on a new line)
+                              </label>
+                              <textarea
+                                rows={3}
+                                value={row.eligibility.join('\n')}
+                                onChange={(e) => {
+                                  const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                                  const updated = [...(cur.offeredCourses || [])];
+                                  updated[rIdx] = {
+                                    ...updated[rIdx],
+                                    eligibility: e.target.value.split('\n').filter((line) => line.trim().length > 0),
+                                  };
+                                  setTempData({
+                                    ...tempData,
+                                    coursesFeesArticle: { ...cur, offeredCourses: updated },
+                                  });
+                                }}
+                                placeholder="Candidates must have passed 10+2...&#10;Candidates must have valid JEE score..."
+                                className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 resize-none"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div></div>
                   </div>
                 )}
 
