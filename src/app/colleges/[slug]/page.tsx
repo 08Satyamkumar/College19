@@ -4362,19 +4362,19 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
     <div className="min-h-screen pb-16 space-y-4 select-none">
       {/* STICKY TOP COLLEGE HEADER UNIT (WORLD-CLASS ZERO-GAP EDGE-TO-EDGE HERO BANNER + NAVIGATION TABS) */}
       <div className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-[0_6px_28px_rgba(0,0,0,0.09)] transition-all duration-300">
-        {/* Banner Section (100% Full-Width Edge-to-Edge, World-Class Top Border Sheen, 0 Gap) */}
+        {/* Banner Section (100% Full-Width Edge-to-Edge, Crystal-Clear World-Class Display & Interactive Controls) */}
         <div
-          className={`relative w-full overflow-hidden bg-slate-950 border-t-2 border-orange-500/50 transition-all duration-300 ${
+          className={`group/banner relative w-full overflow-hidden bg-slate-900 border-t-2 border-orange-500/50 transition-all duration-500 ${
             isBannerScrolled
               ? "h-[58px] sm:h-[64px] px-4 sm:px-8 flex items-center justify-between shadow-xs"
-              : "h-[250px] sm:h-[300px] md:h-[350px]"
+              : "h-[260px] sm:h-[320px] md:h-[380px]"
           }`}
         >
-          {/* Ambient Lighting & Top Glow Border Sheen */}
-          <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/80 to-transparent z-30 pointer-events-none" />
-          <div className="absolute top-0 inset-x-0 h-8 bg-gradient-to-b from-orange-500/10 to-transparent z-20 pointer-events-none" />
+          {/* Top Ambient Glow Sheen */}
+          <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/90 to-transparent z-30 pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-10 bg-gradient-to-b from-black/40 to-transparent z-20 pointer-events-none" />
 
-          {/* Background Cover Image Carousel with 5-Second Smooth Transition & Cinematic Vignette */}
+          {/* Background Cover Image Carousel with Crystal-Clear Clarity & Smooth Cinematic Animation */}
           {(() => {
             const activeImages =
               collegeData.coverImages && collegeData.coverImages.length > 0
@@ -4385,42 +4385,78 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
             return (
               <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-950">
                 <AnimatePresence mode="wait">
-                  <motion.img
+                  <motion.div
                     key={currentImg + currentCoverIdx}
-                    src={currentImg}
-                    alt={collegeData.name}
-                    initial={{ opacity: 0, scale: 1.04 }}
+                    initial={{ opacity: 0, scale: 1.06 }}
                     animate={{ opacity: 1, scale: 1.01 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.9, ease: "easeInOut" }}
-                    className="w-full h-full object-cover object-center"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&auto=format&fit=crop&q=85";
-                    }}
-                  />
+                    exit={{ opacity: 0, scale: 0.99 }}
+                    transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="w-full h-full transform-gpu"
+                  >
+                    <img
+                      src={currentImg}
+                      alt={collegeData.name}
+                      className="w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover/banner:scale-105"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&auto=format&fit=crop&q=85";
+                      }}
+                    />
+                  </motion.div>
                 </AnimatePresence>
 
-                {/* Multi-stage crystal-clear cinematic overlays */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/20" />
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/30 to-slate-950/60" />
+                {/* Ultra-Clean Bottom Scrim Gradient (No Side Black Gradients for 100% Brightness & Clarity) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-transparent pointer-events-none" />
 
-                {/* Subtle Carousel Progress Dots (when more than 1 image) */}
+                {/* Interactive Glassmorphism Navigation Controls (Prev / Next Buttons on Hover) */}
                 {activeImages.length > 1 && !isBannerScrolled && (
-                  <div className="absolute top-4 right-5 z-30 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                    {activeImages.map((_, dotIdx) => (
-                      <button
-                        key={dotIdx}
-                        type="button"
-                        onClick={() => setCurrentCoverIdx(dotIdx)}
-                        className={`h-1.5 rounded-full transition-all duration-300 ${
-                          (currentCoverIdx % activeImages.length) === dotIdx
-                            ? "w-6 bg-orange-500 shadow-xs"
-                            : "w-1.5 bg-white/50 hover:bg-white/80"
-                        }`}
-                        aria-label={`Go to slide ${dotIdx + 1}`}
-                      />
-                    ))}
+                  <>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCurrentCoverIdx(
+                          (prev) => (prev - 1 + activeImages.length) % activeImages.length
+                        )
+                      }
+                      aria-label="Previous Slide"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/banner:opacity-100 transition-all duration-300 shadow-lg hover:scale-110 active:scale-95 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCurrentCoverIdx((prev) => (prev + 1) % activeImages.length)
+                      }
+                      aria-label="Next Slide"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/banner:opacity-100 transition-all duration-300 shadow-lg hover:scale-110 active:scale-95 cursor-pointer"
+                    >
+                      <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+                    </button>
+                  </>
+                )}
+
+                {/* Modern Slide Progress Dots (Interactive Glassmorphism Pill) */}
+                {activeImages.length > 1 && !isBannerScrolled && (
+                  <div className="absolute top-4 right-5 z-30 flex items-center gap-1.5 bg-black/50 hover:bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-lg transition-colors">
+                    {activeImages.map((_, dotIdx) => {
+                      const isActive = (currentCoverIdx % activeImages.length) === dotIdx;
+                      return (
+                        <button
+                          key={dotIdx}
+                          type="button"
+                          onClick={() => setCurrentCoverIdx(dotIdx)}
+                          className={`h-1.5 rounded-full transition-all duration-400 cursor-pointer ${
+                            isActive
+                              ? "w-6 bg-gradient-to-r from-orange-500 to-amber-400 shadow-xs ring-1 ring-white/50"
+                              : "w-1.5 bg-white/50 hover:bg-white/90"
+                          }`}
+                          aria-label={`Go to slide ${dotIdx + 1}`}
+                        />
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -4444,7 +4480,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     </div>
                   )}
                 </div>
-                <h2 className="font-outfit font-black text-xs sm:text-sm md:text-base text-white tracking-tight truncate">
+                <h2 className="font-outfit font-black text-xs sm:text-sm md:text-base text-white tracking-tight truncate drop-shadow-md">
                   {collegeData.fullName || collegeData.name}
                 </h2>
               </div>
@@ -4464,8 +4500,8 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
             <div className="relative h-full w-full max-w-[1440px] mx-auto px-4 sm:px-8 pb-6 z-20 flex flex-col justify-end">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="flex items-center gap-4 sm:gap-5">
-                  {/* Clean Square Logo (No white border, modern rounded shadow) */}
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-2xl p-1.5 flex items-center justify-center overflow-hidden shrink-0 relative">
+                  {/* Clean Square Logo with Glassmorphic Border and Elevation */}
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-[0_12px_32px_rgba(0,0,0,0.35)] ring-2 ring-white/40 p-1.5 flex items-center justify-center overflow-hidden shrink-0 relative transition-transform duration-500 group-hover/banner:scale-105">
                     {collegeData.logo ? (
                       <img
                         src={collegeData.logo}
@@ -4482,9 +4518,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     )}
                   </div>
 
-                  {/* College Name: Sleek & Balanced Font Size */}
+                  {/* College Name: Sleek, Ultra-Crisp Legibility */}
                   <div className="text-white pt-1">
-                    <h1 className="font-outfit font-black text-base sm:text-xl md:text-2xl text-white tracking-tight leading-snug drop-shadow-md">
+                    <h1 className="font-outfit font-black text-base sm:text-xl md:text-2xl text-white tracking-tight leading-snug drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]">
                       {collegeData.fullName || collegeData.name}
                     </h1>
                   </div>
@@ -4495,7 +4531,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     <button
                       type="button"
                       onClick={() => openMiniModal("header")}
-                      className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-md"
+                      className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-[0_4px_16px_rgba(147,51,234,0.4)] hover:shadow-[0_6px_20px_rgba(147,51,234,0.6)]"
                       title="Edit Banner Image, Logo & College Name"
                     >
                       <Edit className="w-3.5 h-3.5" />
