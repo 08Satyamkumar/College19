@@ -1455,6 +1455,7 @@ interface CollegeDetail {
   medianPackage?: string;
   totalFees: string;
   image?: string;
+  coverImages?: string[];
   logo?: string;
   description: string;
   campusArea?: string;
@@ -1506,6 +1507,12 @@ const IIT_DELHI_MASTER_DATA: CollegeDetail = {
   medianPackage: "₹20.50 Lakhs PA",
   totalFees: "₹2.38 Lakhs / Year (₹9.52 Lakhs Total B.Tech)",
   image: "/images/iitdelhi_real.jpg",
+  coverImages: [
+    "/images/iitdelhi_real.jpg",
+    "https://images.unsplash.com/photo-1562774053-701939374585?w=1600&auto=format&fit=crop&q=85",
+    "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&auto=format&fit=crop&q=85",
+    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600&auto=format&fit=crop&q=85",
+  ],
   logo: "/images/iitdelhi.png",
   author: {
     name: "Shreeya Panda",
@@ -2283,6 +2290,23 @@ export default function CollegeDetailPage() {
 
   const [collegeData, setCollegeData] = useState<CollegeDetail>(IIT_DELHI_MASTER_DATA);
   const [isBannerScrolled, setIsBannerScrolled] = useState(false);
+  const [currentCoverIdx, setCurrentCoverIdx] = useState(0);
+
+  // Auto-scroll cover image every 5 seconds
+  useEffect(() => {
+    const images =
+      collegeData.coverImages && collegeData.coverImages.length > 0
+        ? collegeData.coverImages
+        : [collegeData.image || "/images/iitdelhi_real.jpg"];
+
+    if (images.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentCoverIdx((prev) => (prev + 1) % images.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [collegeData.coverImages, collegeData.image]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -4282,22 +4306,58 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/80 to-transparent z-30 pointer-events-none" />
           <div className="absolute top-0 inset-x-0 h-8 bg-gradient-to-b from-orange-500/10 to-transparent z-20 pointer-events-none" />
 
-          {/* Background Cover Image with Multi-Stage Cinematic Vignette */}
-          <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-950">
-            <img
-              src={collegeData.image || "/images/iitdelhi_real.jpg"}
-              alt={collegeData.name}
-              className="w-full h-full object-cover object-center transform scale-101 hover:scale-103 transition-transform duration-700"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=80";
-              }}
-            />
-            {/* Dark contrast gradient from bottom to top for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/20" />
-            {/* Side vignettes */}
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/30 to-slate-950/60" />
-          </div>
+          {/* Background Cover Image Carousel with 5-Second Smooth Transition & Cinematic Vignette */}
+          {(() => {
+            const activeImages =
+              collegeData.coverImages && collegeData.coverImages.length > 0
+                ? collegeData.coverImages
+                : [collegeData.image || "/images/iitdelhi_real.jpg"];
+            const currentImg = activeImages[currentCoverIdx % activeImages.length] || activeImages[0];
+
+            return (
+              <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-950">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentImg + currentCoverIdx}
+                    src={currentImg}
+                    alt={collegeData.name}
+                    initial={{ opacity: 0, scale: 1.04 }}
+                    animate={{ opacity: 1, scale: 1.01 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.9, ease: "easeInOut" }}
+                    className="w-full h-full object-cover object-center"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&auto=format&fit=crop&q=85";
+                    }}
+                  />
+                </AnimatePresence>
+
+                {/* Multi-stage crystal-clear cinematic overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/20" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/30 to-slate-950/60" />
+
+                {/* Subtle Carousel Progress Dots (when more than 1 image) */}
+                {activeImages.length > 1 && !isBannerScrolled && (
+                  <div className="absolute top-4 right-5 z-30 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                    {activeImages.map((_, dotIdx) => (
+                      <button
+                        key={dotIdx}
+                        type="button"
+                        onClick={() => setCurrentCoverIdx(dotIdx)}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          (currentCoverIdx % activeImages.length) === dotIdx
+                            ? "w-6 bg-orange-500 shadow-xs"
+                            : "w-1.5 bg-white/50 hover:bg-white/80"
+                        }`}
+                        aria-label={`Go to slide ${dotIdx + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Dynamic Content: Compact Scrolled View vs Full World-Class Cover View */}
           {isBannerScrolled ? (
@@ -13713,57 +13773,160 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                 {/* MODAL 2: HEADER & BANNER */}
                 {activeMiniModal === "header" && (
                   <div className="space-y-4">
-                    {/* College Name Input */}
-                    <div>
-                      <label className="text-[10.5px] font-bold text-slate-700 block mb-1">College Name / Full Title *</label>
-                      <input
-                        type="text"
-                        value={tempData.fullName || tempData.name}
-                        onChange={(e) => setTempData({ ...tempData, name: e.target.value, fullName: e.target.value })}
-                        placeholder="e.g. Indian Institute of Technology Delhi (IIT Delhi)"
-                        className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-purple-500"
-                      />
-                    </div>
+                    {(() => {
+                      const coverList: string[] =
+                        tempData.coverImages && tempData.coverImages.length > 0
+                          ? tempData.coverImages
+                          : [tempData.image || "/images/iitdelhi_real.jpg"];
 
-                    {/* College Logo URL Input with Live Preview */}
-                    <div>
-                      <label className="text-[10.5px] font-bold text-slate-700 block mb-1">College Logo Image URL</label>
-                      <input
-                        type="text"
-                        value={tempData.logo || ""}
-                        onChange={(e) => setTempData({ ...tempData, logo: e.target.value })}
-                        placeholder="https://... or /images/logo.png"
-                        className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-purple-500"
-                      />
-                      {tempData.logo && (
-                        <div className="mt-2 flex items-center gap-2.5 p-2 bg-slate-50 rounded-xl border border-slate-200">
-                          <span className="text-[10.5px] font-bold text-slate-500">Logo Preview:</span>
-                          <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 p-1 flex items-center justify-center overflow-hidden">
-                            <img src={tempData.logo} alt="Preview" className="w-full h-full object-contain" />
+                      return (
+                        <>
+                          {/* College Name Input */}
+                          <div>
+                            <label className="text-[10.5px] font-bold text-slate-700 block mb-1">
+                              College Name / Full Title *
+                            </label>
+                            <input
+                              type="text"
+                              value={tempData.fullName || tempData.name}
+                              onChange={(e) =>
+                                setTempData({
+                                  ...tempData,
+                                  name: e.target.value,
+                                  fullName: e.target.value,
+                                })
+                              }
+                              placeholder="e.g. Indian Institute of Technology Delhi (IIT Delhi)"
+                              className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-purple-500"
+                            />
                           </div>
-                        </div>
-                      )}
-                    </div>
 
-                    {/* Cover Banner Image URL Input with Live Preview */}
-                    <div>
-                      <label className="text-[10.5px] font-bold text-slate-700 block mb-1">Cover Banner Image URL</label>
-                      <input
-                        type="text"
-                        value={tempData.image || ""}
-                        onChange={(e) => setTempData({ ...tempData, image: e.target.value })}
-                        placeholder="https://... or /images/banner.jpg"
-                        className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-purple-500"
-                      />
-                      {tempData.image && (
-                        <div className="mt-2 p-2 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                          <span className="text-[10.5px] font-bold text-slate-500">Banner Preview:</span>
-                          <div className="w-full h-24 rounded-lg overflow-hidden border border-slate-200 bg-slate-900">
-                            <img src={tempData.image} alt="Banner Preview" className="w-full h-full object-cover" />
+                          {/* College Logo URL Input with Live Preview */}
+                          <div>
+                            <label className="text-[10.5px] font-bold text-slate-700 block mb-1">
+                              College Logo Image URL
+                            </label>
+                            <input
+                              type="text"
+                              value={tempData.logo || ""}
+                              onChange={(e) =>
+                                setTempData({ ...tempData, logo: e.target.value })
+                              }
+                              placeholder="https://... or /images/logo.png"
+                              className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-purple-500"
+                            />
+                            {tempData.logo && (
+                              <div className="mt-2 flex items-center gap-2.5 p-2 bg-slate-50 rounded-xl border border-slate-200">
+                                <span className="text-[10.5px] font-bold text-slate-500">Logo Preview:</span>
+                                <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 p-1 flex items-center justify-center overflow-hidden">
+                                  <img
+                                    src={tempData.logo}
+                                    alt="Preview"
+                                    className="w-full h-full object-contain"
+                                  />
+                                </div>
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      )}
-                    </div>
+
+                          {/* Cover Banner Images Carousel Manager (Multiple Images, Auto-scroll 5s) */}
+                          <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-800 block">
+                                  Cover Banner Images Carousel ({coverList.length} images)
+                                </label>
+                                <span className="text-[10px] text-slate-500 font-medium">
+                                  Auto-scrolls every 5 seconds on the live page
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updatedList = [
+                                    ...coverList,
+                                    "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&auto=format&fit=crop&q=85",
+                                  ];
+                                  setTempData({
+                                    ...tempData,
+                                    image: updatedList[0],
+                                    coverImages: updatedList,
+                                  });
+                                }}
+                                className="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold rounded-lg border border-purple-200/80 flex items-center gap-1 cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add Cover Image</span>
+                              </button>
+                            </div>
+
+                            {/* List of Cover Images */}
+                            <div className="max-h-64 overflow-y-auto space-y-3 pr-1">
+                              {coverList.map((imgUrl, imgIdx) => (
+                                <div
+                                  key={imgIdx}
+                                  className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2 relative"
+                                >
+                                  <div className="flex items-center justify-between pr-8">
+                                    <span className="text-xs font-bold text-slate-700">
+                                      Cover Photo #{imgIdx + 1}
+                                    </span>
+                                  </div>
+
+                                  {coverList.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updatedList = coverList.filter((_, i) => i !== imgIdx);
+                                        setTempData({
+                                          ...tempData,
+                                          image: updatedList[0] || "",
+                                          coverImages: updatedList,
+                                        });
+                                      }}
+                                      className="absolute top-2.5 right-2.5 p-1 text-red-500 hover:bg-red-100 rounded-lg cursor-pointer"
+                                      title="Delete Image"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+
+                                  <input
+                                    type="text"
+                                    value={imgUrl}
+                                    onChange={(e) => {
+                                      const updatedList = [...coverList];
+                                      updatedList[imgIdx] = e.target.value;
+                                      setTempData({
+                                        ...tempData,
+                                        image: updatedList[0] || "",
+                                        coverImages: updatedList,
+                                      });
+                                    }}
+                                    placeholder="Enter image URL (https://... or /images/...)"
+                                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-800"
+                                  />
+
+                                  {/* Live Thumbnail Preview */}
+                                  {imgUrl && (
+                                    <div className="w-full h-20 rounded-lg overflow-hidden border border-slate-200 bg-slate-900 shadow-2xs">
+                                      <img
+                                        src={imgUrl}
+                                        alt={`Cover Preview ${imgIdx + 1}`}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          (e.target as HTMLElement).style.display = "none";
+                                        }}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
 
