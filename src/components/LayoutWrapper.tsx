@@ -2952,7 +2952,8 @@ export default function LayoutWrapper({
       {/* MAIN VIEW CONTENT ( Triple-Row Header height is 144px, requiring pt-[152px] on all screens ) */}
       <div className={`flex-grow ${isCollegeDetailPage ? "pt-0" : "pt-[152px]"}`}>
         {/* On College Detail Pages, small top space */}
-        <main className={`w-full max-w-[1440px] mx-auto ${isCollegeDetailPage ? "p-0 px-3 sm:px-6 md:px-8" : "p-6 md:p-8"}`}>
+        <main className={`w-full ${isCollegeDetailPage ? "p-0 m-0 max-w-none" : "max-w-[1440px] mx-auto p-6 md:p-8"}`}>
+          {/* Full-width container */}
           {children}
         </main>
       </div>

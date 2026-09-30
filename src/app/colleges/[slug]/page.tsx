@@ -4268,34 +4268,40 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
   return (
     <div className="min-h-screen pb-16 space-y-4 select-none">
-      {/* STICKY TOP COLLEGE HEADER UNIT (HERO BANNER + NAVIGATION TABS) */}
-      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-[0_6px_28px_rgba(0,0,0,0.09)] transition-all duration-300">
-        {/* Banner Section (40% Taller, 0 Gap Edge-to-Edge, Collapses cleanly when scrolled) */}
+      {/* STICKY TOP COLLEGE HEADER UNIT (WORLD-CLASS ZERO-GAP EDGE-TO-EDGE HERO BANNER + NAVIGATION TABS) */}
+      <div className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-[0_6px_28px_rgba(0,0,0,0.09)] transition-all duration-300">
+        {/* Banner Section (100% Full-Width Edge-to-Edge, World-Class Top Border Sheen, 0 Gap) */}
         <div
-          className={`relative overflow-hidden bg-slate-900 transition-all duration-300 ${
+          className={`relative w-full overflow-hidden bg-slate-950 border-t-2 border-orange-500/50 transition-all duration-300 ${
             isBannerScrolled
               ? "h-[58px] sm:h-[64px] px-4 sm:px-8 flex items-center justify-between shadow-xs"
-              : "h-[250px] sm:h-[300px] md:h-[350px] rounded-b-2xl sm:rounded-b-3xl"
+              : "h-[250px] sm:h-[300px] md:h-[350px]"
           }`}
         >
-          {/* Background Cover Image with Gradient Overlay */}
+          {/* Ambient Lighting & Top Glow Border Sheen */}
+          <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/80 to-transparent z-30 pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-8 bg-gradient-to-b from-orange-500/10 to-transparent z-20 pointer-events-none" />
+
+          {/* Background Cover Image with Multi-Stage Cinematic Vignette */}
           <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-950">
             <img
               src={collegeData.image || "/images/iitdelhi_real.jpg"}
               alt={collegeData.name}
-              className="w-full h-full object-cover object-center transform scale-102 transition-transform duration-700"
+              className="w-full h-full object-cover object-center transform scale-101 hover:scale-103 transition-transform duration-700"
               onError={(e) => {
                 (e.target as HTMLImageElement).src =
                   "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=80";
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/30" />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/40 to-slate-950/60" />
+            {/* Dark contrast gradient from bottom to top for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/20" />
+            {/* Side vignettes */}
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/30 to-slate-950/60" />
           </div>
 
-          {/* Dynamic Content: Compact Scrolled View vs Full 40% Bigger Cover View */}
+          {/* Dynamic Content: Compact Scrolled View vs Full World-Class Cover View */}
           {isBannerScrolled ? (
-            <div className="relative z-10 w-full flex items-center justify-between gap-3">
+            <div className="relative z-10 w-full max-w-[1440px] mx-auto flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white shadow-md p-1 flex items-center justify-center overflow-hidden shrink-0">
                   {collegeData.logo ? (
@@ -4327,10 +4333,10 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               )}
             </div>
           ) : (
-            <div className="relative h-full px-5 sm:px-8 pb-6 z-20 flex flex-col justify-end">
+            <div className="relative h-full w-full max-w-[1440px] mx-auto px-4 sm:px-8 pb-6 z-20 flex flex-col justify-end">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="flex items-center gap-4 sm:gap-5">
-                  {/* Clean Square Logo (No heavy white border) */}
+                  {/* Clean Square Logo (No white border, modern rounded shadow) */}
                   <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-2xl p-1.5 flex items-center justify-center overflow-hidden shrink-0 relative">
                     {collegeData.logo ? (
                       <img
@@ -4375,7 +4381,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
         </div>
 
         {/* 2. GLASSMORPHIC SUB-HEADER TABS WITH SEPARATORS */}
-        <div id="college-nav-tabs-bar" className="relative py-1 sm:py-1.5 border-t border-slate-200/80 scroll-mt-4">
+        <div id="college-nav-tabs-bar" className="relative py-1 sm:py-1.5 border-t border-slate-200/80 scroll-mt-4 max-w-[1440px] mx-auto w-full">
         {canScrollLeft && (
           <div className="absolute left-0 inset-y-0 w-16 bg-gradient-to-r from-white via-white/90 to-transparent z-20 flex items-center pl-2 pointer-events-none">
             <button
@@ -4439,6 +4445,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
         )}
         </div>
       </div>
+
+      {/* BODY CONTENT CONTAINER (Centered 1440px Grid) */}
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 space-y-4 pt-2">
 
       {/* 2.5. CONTENT AUTHOR BYLINE (CLEAN MINIMAL INLINE TEXT - NO HEAVY BORDER/BOX) */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-1 sm:px-2 pt-0.5 pb-0.5">
@@ -13577,6 +13586,8 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           </div>
         )}
       </AnimatePresence>
+
+      </div>
 
       {/* INDEPENDENT MINI-MODALS SYSTEM FOR EACH SECTION */}
       <AnimatePresence>
