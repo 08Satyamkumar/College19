@@ -158,11 +158,18 @@ interface OtherFeeChargeRow {
   amount: string;
 }
 
+interface CourseDetailTable {
+  courseTitle: string;
+  headers: string[];
+  rows: string[][];
+}
+
 interface FeesEligibilityRow {
   course: string;
   fees: string;
   checkDetailsText?: string;
   actionText?: string;
+  detailTable?: CourseDetailTable;
 }
 
 interface OfferedCourseRow {
@@ -1510,23 +1517,204 @@ interface CollegeDetail {
   shortName?: string;
 }
 
+const DEFAULT_DETAIL_TABLES: Record<string, CourseDetailTable> = {
+  "M.Sc": {
+    courseTitle: "M.Sc",
+    headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Economics", "₹59,800", "₹59,800"],
+      ["Biological Sciences", "₹59,800", "₹59,800"],
+      ["Chemistry", "₹59,800", "₹59,800"],
+      ["Mathematics", "₹59,800", "₹59,800"],
+      ["Physics", "₹59,800", "₹59,800"],
+      ["Information Technology", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Cognitive Sciences", "₹59,800", "₹59,800"],
+      ["Automotive Research and Tribology", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Sensors, Instrumentation and Cyber-Physical Systems Engineering", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Biological Science", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Machine Intelligence & Data Science", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["VLSI Design Tools & Technology", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+    ],
+  },
+  "M.Phil/Ph.D in Arts": {
+    courseTitle: "M.Phil/Ph.D in Arts",
+    headers: ["Specialization / Department", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Humanities & Social Sciences", "₹59,800", "₹59,800"],
+      ["Economics & Policy Studies", "₹59,800", "₹59,800"],
+      ["Linguistics & Literature", "₹59,800", "₹59,800"],
+      ["Philosophy & Cognitive Studies", "₹59,800", "₹59,800"],
+    ],
+  },
+  "MBA": {
+    courseTitle: "MBA",
+    headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["General Management", "₹6.62 Lakhs", "₹6.62 Lakhs"],
+      ["Telecommunication Systems Management", "₹6.62 Lakhs", "₹6.62 Lakhs"],
+      ["Finance & Financial Engineering", "₹6.62 Lakhs", "₹6.62 Lakhs"],
+      ["Marketing & Consumer Behaviour", "₹6.62 Lakhs", "₹6.62 Lakhs"],
+      ["Operations & Supply Chain Management", "₹6.62 Lakhs", "₹6.62 Lakhs"],
+      ["Human Resource Management", "₹6.62 Lakhs", "₹6.62 Lakhs"],
+    ],
+  },
+  "M.Phil/Ph.D in Management": {
+    courseTitle: "M.Phil/Ph.D in Management",
+    headers: ["Specialization / Area", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Strategic Management", "₹59,800", "₹59,800"],
+      ["Financial Management", "₹59,800", "₹59,800"],
+      ["Information Systems", "₹59,800", "₹59,800"],
+      ["Operations & Analytics", "₹59,800", "₹59,800"],
+    ],
+  },
+  "BE/B.Tech": {
+    courseTitle: "BE/B.Tech",
+    headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Computer Science and Engineering", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Artificial Intelligence & Data Engineering", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Electrical Engineering", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Mechanical Engineering", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Civil Engineering", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Chemical Engineering", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Mathematics and Computing", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Biochemical Engineering & Biotechnology", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Production & Industrial Engineering", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Textile Technology", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Engineering Physics", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Materials Engineering", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+    ],
+  },
+  "M.Tech": {
+    courseTitle: "M.Tech",
+    headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Computer Science & Engineering", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["VLSI Design Tools & Technology", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Machine Intelligence & Data Science", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Telecommunication Technology & Management", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Control & Automation", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Thermal Engineering", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Structural Engineering", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Robotics & Autonomous Systems", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Cyber Security & Information Assurance", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+      ["Energy Studies", "₹1.90 Lakhs", "₹1.90 Lakhs"],
+    ],
+  },
+  "M.Phil/Ph.D in Engineering": {
+    courseTitle: "M.Phil/Ph.D in Engineering",
+    headers: ["Specialization / Department", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Computer Science and Engineering", "₹59,800", "₹59,800"],
+      ["Electrical & Electronics Engineering", "₹59,800", "₹59,800"],
+      ["Mechanical & Aerospace Engineering", "₹59,800", "₹59,800"],
+      ["Civil & Environmental Engineering", "₹59,800", "₹59,800"],
+      ["Chemical & Biochemical Engineering", "₹59,800", "₹59,800"],
+      ["Materials Science & Engineering", "₹59,800", "₹59,800"],
+    ],
+  },
+  "M.Phil/Ph.D in Science": {
+    courseTitle: "M.Phil/Ph.D in Science",
+    headers: ["Specialization / Department", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Physics & Condensed Matter", "₹59,800", "₹59,800"],
+      ["Chemistry & Chemical Biology", "₹59,800", "₹59,800"],
+      ["Mathematics & Computational Science", "₹59,800", "₹59,800"],
+      ["Atmospheric & Oceanic Sciences", "₹59,800", "₹59,800"],
+    ],
+  },
+  "M.Phil/Ph.D in Design": {
+    courseTitle: "M.Phil/Ph.D in Design",
+    headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Industrial Design & Ergonomics", "₹59,800", "₹59,800"],
+      ["Interaction & UX Design", "₹59,800", "₹59,800"],
+      ["Visual Communication Design", "₹59,800", "₹59,800"],
+    ],
+  },
+  "B.Des": {
+    courseTitle: "B.Des",
+    headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Industrial Design", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Interaction Design & HCI", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+      ["Communication Design", "₹2.29 Lakhs", "₹2.29 Lakhs"],
+    ],
+  },
+  "M.Des": {
+    courseTitle: "M.Des",
+    headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Industrial Design", "₹79,800", "₹79,800"],
+      ["Interaction Design", "₹79,800", "₹79,800"],
+      ["Design Engineering & Innovation", "₹79,800", "₹79,800"],
+    ],
+  },
+  "MA": {
+    courseTitle: "MA",
+    headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Economics", "₹59,800", "₹59,800"],
+      ["Culture, Society & Thought", "₹59,800", "₹59,800"],
+      ["Public Policy & Global Affairs", "₹59,800", "₹59,800"],
+    ],
+  },
+  "M.Phil/Ph.D in Medicine": {
+    courseTitle: "M.Phil/Ph.D in Medicine",
+    headers: ["Specialization / Domain", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Biomedical Engineering", "₹59,800", "₹59,800"],
+      ["Medical Devices & Instrumentation", "₹59,800", "₹59,800"],
+      ["Computational Biology & Healthcare AI", "₹59,800", "₹59,800"],
+    ],
+  },
+  "Executive MBA": {
+    courseTitle: "Executive MBA",
+    headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+    rows: [
+      ["Technology Management", "₹9.00 Lakhs", "₹9.00 Lakhs"],
+      ["Strategic Leadership & Analytics", "₹9.00 Lakhs", "₹9.00 Lakhs"],
+      ["Global Innovation & Entrepreneurship", "₹9.00 Lakhs", "₹9.00 Lakhs"],
+    ],
+  },
+  "PG Diploma in Engineering": {
+    courseTitle: "PG Diploma in Engineering",
+    headers: ["Specialization", "Duration", "Total Fees"],
+    rows: [
+      ["Metro Rail Transport Technology", "1 Year", "₹2.05 Lakhs"],
+      ["Smart Grid & Renewable Energy", "1 Year", "₹2.05 Lakhs"],
+      ["Advanced Computational Mechanics", "1 Year", "₹2.05 Lakhs"],
+    ],
+  },
+  "Graduate Certificate in Management": {
+    courseTitle: "Graduate Certificate in Management",
+    headers: ["Specialization / Track", "Duration", "Total Fees"],
+    rows: [
+      ["Business Analytics & Intelligence", "6 Months", "₹1.37 Lakhs"],
+      ["Digital Product Management", "6 Months", "₹1.37 Lakhs"],
+      ["Supply Chain Analytics", "6 Months", "₹1.37 Lakhs"],
+    ],
+  },
+};
+
 const DEFAULT_FEES_ELIGIBILITY_ROWS: FeesEligibilityRow[] = [
-  { course: "M.Sc", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "M.Phil/Ph.D in Arts", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "MBA", fees: "₹6.62 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "M.Phil/Ph.D in Management", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "BE/B.Tech", fees: "₹2.29 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "M.Tech", fees: "₹1.90 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "M.Phil/Ph.D in Engineering", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "M.Phil/Ph.D in Science", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "M.Phil/Ph.D in Design", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "B.Des", fees: "₹2.29 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "M.Des", fees: "₹79,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "MA", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "M.Phil/Ph.D in Medicine", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "Executive MBA", fees: "₹9.00 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "PG Diploma in Engineering", fees: "₹2.05 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
-  { course: "Graduate Certificate in Management", fees: "₹1.37 Lakhs Total fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "M.Sc", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["M.Sc"] },
+  { course: "M.Phil/Ph.D in Arts", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["M.Phil/Ph.D in Arts"] },
+  { course: "MBA", fees: "₹6.62 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["MBA"] },
+  { course: "M.Phil/Ph.D in Management", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["M.Phil/Ph.D in Management"] },
+  { course: "BE/B.Tech", fees: "₹2.29 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["BE/B.Tech"] },
+  { course: "M.Tech", fees: "₹1.90 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["M.Tech"] },
+  { course: "M.Phil/Ph.D in Engineering", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["M.Phil/Ph.D in Engineering"] },
+  { course: "M.Phil/Ph.D in Science", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["M.Phil/Ph.D in Science"] },
+  { course: "M.Phil/Ph.D in Design", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["M.Phil/Ph.D in Design"] },
+  { course: "B.Des", fees: "₹2.29 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["B.Des"] },
+  { course: "M.Des", fees: "₹79,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["M.Des"] },
+  { course: "MA", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["MA"] },
+  { course: "M.Phil/Ph.D in Medicine", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["M.Phil/Ph.D in Medicine"] },
+  { course: "Executive MBA", fees: "₹9.00 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["Executive MBA"] },
+  { course: "PG Diploma in Engineering", fees: "₹2.05 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["PG Diploma in Engineering"] },
+  { course: "Graduate Certificate in Management", fees: "₹1.37 Lakhs Total fees", checkDetailsText: "Check Details >", actionText: "Apply Now", detailTable: DEFAULT_DETAIL_TABLES["Graduate Certificate in Management"] },
 ];
 
 const DEFAULT_OFFERED_COURSES: OfferedCourseRow[] = [
@@ -2387,6 +2575,17 @@ export default function CollegeDetailPage() {
   const [isBannerScrolled, setIsBannerScrolled] = useState(false);
   // Apply Now Course Lead Modal
   const [applyCourseModal, setApplyCourseModal] = useState<{ isOpen: boolean; course: string } | null>(null);
+  const [selectedCourseDetail, setSelectedCourseDetail] = useState<{
+    rowIndex: number;
+    course: string;
+    table: CourseDetailTable;
+  } | null>(null);
+  const [editingCourseDetail, setEditingCourseDetail] = useState<{
+    rowIndex: number;
+    course: string;
+    table: CourseDetailTable;
+  } | null>(null);
+  const [isSavingCourseDetail, setIsSavingCourseDetail] = useState(false);
   const [applyForm, setApplyForm] = useState({ name: "", phone: "", email: "" });
   const [isSubmittingApply, setIsSubmittingApply] = useState(false);
   const [applySuccess, setApplySuccess] = useState(false);
@@ -11393,9 +11592,19 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                 <button
                                                   type="button"
                                                   onClick={() => {
-                                                    setApplyCourseModal({
-                                                      isOpen: true,
-                                                      course: `${row.course} at ${collegeData.name}`,
+                                                    const tableData =
+                                                      row.detailTable ||
+                                                      DEFAULT_DETAIL_TABLES[row.course] || {
+                                                        courseTitle: row.course,
+                                                        headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+                                                        rows: [
+                                                          ["Core / General Specialization", row.fees || "₹59,800", row.fees || "₹59,800"],
+                                                        ],
+                                                      };
+                                                    setSelectedCourseDetail({
+                                                      rowIndex: rIdx,
+                                                      course: row.course,
+                                                      table: JSON.parse(JSON.stringify(tableData)),
                                                     });
                                                   }}
                                                   className="text-[11.5px] font-bold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
@@ -15872,6 +16081,252 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                 )}
 
                 {/* MODAL 5.5: DEDICATED COURSE SUMMARY SUB-BOXES EDITOR */}
+                {/* MODAL 5.5: DEDICATED FEES & ELIGIBILITY MASTER TABLE EDITOR */}
+                {activeMiniModal === "fees_eligibility_table" && (
+                  <div className="space-y-4">
+                    <div className="p-4 sm:p-5 bg-gradient-to-br from-sky-50/90 via-white to-slate-50 border border-sky-200/90 rounded-2xl space-y-4 shadow-xs">
+                      <div className="flex items-center justify-between pb-3 border-b border-sky-100/90">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="inline-block w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
+                            <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900">
+                              Fees & Eligibility Master Table
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 font-medium mt-0.5 pl-4">
+                            Manage Course Rows, Fees, Action buttons, and Individual Specialization Breakdown Tables
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const cur =
+                              tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                            const updated = [
+                              ...(cur.feesEligibilityRows || DEFAULT_FEES_ELIGIBILITY_ROWS),
+                              {
+                                course: "New Degree Course",
+                                fees: "₹1.50 Lakhs 1st year fees",
+                                checkDetailsText: "Check Details >",
+                                actionText: "Apply Now",
+                                detailTable: {
+                                  courseTitle: "New Degree Course",
+                                  headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+                                  rows: [["Specialization 1", "₹1.50 Lakhs", "₹1.50 Lakhs"]],
+                                },
+                              },
+                            ];
+                            setTempData({
+                              ...tempData,
+                              coursesFeesArticle: { ...cur, feesEligibilityRows: updated },
+                            });
+                          }}
+                          className="px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm hover:shadow transition-all cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Course Row</span>
+                        </button>
+                      </div>
+
+                      {/* Section Heading */}
+                      <div>
+                        <label className="text-[10.5px] font-bold text-slate-700 block mb-1">
+                          Table Section Heading *
+                        </label>
+                        <input
+                          type="text"
+                          value={
+                            tempData.coursesFeesArticle?.feesEligibilityHeading ||
+                            getCollegeCoursesFeesArticle(tempData).feesEligibilityHeading ||
+                            "Fees & Eligibility"
+                          }
+                          onChange={(e) => {
+                            const cur =
+                              tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                            setTempData({
+                              ...tempData,
+                              coursesFeesArticle: {
+                                ...cur,
+                                feesEligibilityHeading: e.target.value,
+                              },
+                            });
+                          }}
+                          placeholder="e.g. IIT Delhi [IITD] Fees & Eligibility"
+                          className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-sky-500"
+                        />
+                      </div>
+
+                      {/* Rows List */}
+                      <div className="space-y-3.5 max-h-[60vh] overflow-y-auto pr-1">
+                        {(
+                          tempData.coursesFeesArticle?.feesEligibilityRows ||
+                          getCollegeCoursesFeesArticle(tempData).feesEligibilityRows ||
+                          DEFAULT_FEES_ELIGIBILITY_ROWS
+                        ).map((row, rIdx) => (
+                          <div
+                            key={rIdx}
+                            className="p-3.5 sm:p-4 bg-white border border-sky-200/80 rounded-2xl space-y-3 relative shadow-2xs hover:border-sky-300 transition-colors"
+                          >
+                            {/* Delete Row Button */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const cur =
+                                  tempData.coursesFeesArticle ||
+                                  getCollegeCoursesFeesArticle(tempData);
+                                const updated = (
+                                  cur.feesEligibilityRows || DEFAULT_FEES_ELIGIBILITY_ROWS
+                                ).filter((_, i) => i !== rIdx);
+                                setTempData({
+                                  ...tempData,
+                                  coursesFeesArticle: { ...cur, feesEligibilityRows: updated },
+                                });
+                              }}
+                              className="absolute top-3 right-3 p-1.5 text-red-500 hover:bg-red-50 rounded-xl cursor-pointer transition-colors"
+                              title="Delete Course Row"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pr-8">
+                              {/* Course Name */}
+                              <div className="sm:col-span-4">
+                                <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                                  Course Name *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={row.course}
+                                  onChange={(e) => {
+                                    const cur =
+                                      tempData.coursesFeesArticle ||
+                                      getCollegeCoursesFeesArticle(tempData);
+                                    const updated = [
+                                      ...(cur.feesEligibilityRows || DEFAULT_FEES_ELIGIBILITY_ROWS),
+                                    ];
+                                    updated[rIdx] = {
+                                      ...updated[rIdx],
+                                      course: e.target.value,
+                                    };
+                                    setTempData({
+                                      ...tempData,
+                                      coursesFeesArticle: {
+                                        ...cur,
+                                        feesEligibilityRows: updated,
+                                      },
+                                    });
+                                  }}
+                                  placeholder="e.g. M.Sc"
+                                  className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500"
+                                />
+                              </div>
+
+                              {/* Fees Text */}
+                              <div className="sm:col-span-5">
+                                <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                                  Fees Text *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={row.fees}
+                                  onChange={(e) => {
+                                    const cur =
+                                      tempData.coursesFeesArticle ||
+                                      getCollegeCoursesFeesArticle(tempData);
+                                    const updated = [
+                                      ...(cur.feesEligibilityRows || DEFAULT_FEES_ELIGIBILITY_ROWS),
+                                    ];
+                                    updated[rIdx] = {
+                                      ...updated[rIdx],
+                                      fees: e.target.value,
+                                    };
+                                    setTempData({
+                                      ...tempData,
+                                      coursesFeesArticle: {
+                                        ...cur,
+                                        feesEligibilityRows: updated,
+                                      },
+                                    });
+                                  }}
+                                  placeholder="e.g. ₹59,800 1st year fees"
+                                  className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500"
+                                />
+                              </div>
+
+                              {/* Action Text */}
+                              <div className="sm:col-span-3">
+                                <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                                  Action Text
+                                </label>
+                                <input
+                                  type="text"
+                                  value={row.actionText || "Apply Now"}
+                                  onChange={(e) => {
+                                    const cur =
+                                      tempData.coursesFeesArticle ||
+                                      getCollegeCoursesFeesArticle(tempData);
+                                    const updated = [
+                                      ...(cur.feesEligibilityRows || DEFAULT_FEES_ELIGIBILITY_ROWS),
+                                    ];
+                                    updated[rIdx] = {
+                                      ...updated[rIdx],
+                                      actionText: e.target.value,
+                                    };
+                                    setTempData({
+                                      ...tempData,
+                                      coursesFeesArticle: {
+                                        ...cur,
+                                        feesEligibilityRows: updated,
+                                      },
+                                    });
+                                  }}
+                                  placeholder="Apply Now"
+                                  className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Check Details Breakdown Quick Config Bar */}
+                            <div className="pt-2 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-bold text-slate-600">
+                                  Check Details Breakdown Table:
+                                </span>
+                                <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 text-[10.5px] font-bold border border-blue-200/60">
+                                  {(row.detailTable || DEFAULT_DETAIL_TABLES[row.course])?.rows?.length || 0} Specialization Rows
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const tableData =
+                                    row.detailTable ||
+                                    DEFAULT_DETAIL_TABLES[row.course] || {
+                                      courseTitle: row.course,
+                                      headers: ["Specialization", "Year 1 Fees", "Year 2 Fees"],
+                                      rows: [
+                                        ["Specialization 1", row.fees || "₹59,800", row.fees || "₹59,800"],
+                                      ],
+                                    };
+                                  setEditingCourseDetail({
+                                    rowIndex: rIdx,
+                                    course: row.course,
+                                    table: JSON.parse(JSON.stringify(tableData)),
+                                  });
+                                }}
+                                className="px-3 py-1 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-[11px] font-bold flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
+                              >
+                                <Edit className="w-3 h-3" />
+                                <span>Edit Course Details Table</span>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {activeMiniModal === "course_summary_box" && (
                   <div className="space-y-4">
                     <div className="p-4 bg-gradient-to-br from-indigo-50/70 via-white to-slate-50 border border-indigo-100/80 rounded-2xl space-y-3.5 shadow-xs">
@@ -24479,6 +24934,541 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
       </AnimatePresence>
 
       
+      {/* COURSE SPECIALIZATION & FEES DETAIL POPUP MODAL (CHECK DETAILS VIEW) */}
+      <AnimatePresence>
+        {selectedCourseDetail && !editingCourseDetail && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-sm overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto flex flex-col max-h-[90vh]"
+            >
+              {/* Modal Top Bar */}
+              <div className="px-6 py-4 bg-white border-b border-slate-200 flex items-center justify-between gap-4 shrink-0">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-black uppercase tracking-wider">
+                      Fee Breakdown & Specializations
+                    </span>
+                    <span className="text-xs text-slate-400 font-medium">|</span>
+                    <span className="text-xs text-slate-500 font-bold">{collegeData.name}</span>
+                  </div>
+                  <h3 className="font-outfit font-black text-xl sm:text-2xl text-slate-900 mt-0.5 tracking-tight">
+                    {selectedCourseDetail.table.courseTitle || selectedCourseDetail.course}
+                  </h3>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* Edit Button for Admin/Writer or Quick Config */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingCourseDetail({
+                        rowIndex: selectedCourseDetail.rowIndex,
+                        course: selectedCourseDetail.course,
+                        table: JSON.parse(JSON.stringify(selectedCourseDetail.table)),
+                      });
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                    title="Edit Columns & Rows for this Course"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Edit Details Table</span>
+                    <span className="sm:hidden">Edit</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const courseName = selectedCourseDetail.table.courseTitle || selectedCourseDetail.course;
+                      setSelectedCourseDetail(null);
+                      setApplyCourseModal({
+                        isOpen: true,
+                        course: `${courseName} at ${collegeData.name}`,
+                      });
+                    }}
+                    className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                  >
+                    <ArrowRight className="w-3.5 h-3.5" />
+                    <span>Apply Now</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCourseDetail(null)}
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                    title="Close"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Body: Precision Specialization Breakdown Table */}
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-50/50 space-y-4">
+                <div className="w-full overflow-hidden border border-slate-300/90 shadow-sm rounded-xl bg-white">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[580px]">
+                      <thead>
+                        <tr className="bg-[#0b2545] text-white">
+                          <th className="w-[8%] py-3.5 px-3 text-center font-bold text-xs sm:text-[13px] tracking-wide border-r border-[#173860]">
+                            #
+                          </th>
+                          {(selectedCourseDetail.table.headers && selectedCourseDetail.table.headers.length > 0
+                            ? selectedCourseDetail.table.headers
+                            : ["Specialization", "Year 1 Fees", "Year 2 Fees"]
+                          ).map((hdr, hIdx) => (
+                            <th
+                              key={hIdx}
+                              className={`py-3.5 px-4 font-bold text-xs sm:text-[13px] tracking-wide border-r border-[#173860] last:border-r-0 ${
+                                hIdx === 0 ? "text-left w-[45%]" : "text-left"
+                              }`}
+                            >
+                              {hdr}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 bg-white">
+                        {(selectedCourseDetail.table.rows && selectedCourseDetail.table.rows.length > 0
+                          ? selectedCourseDetail.table.rows
+                          : []
+                        ).map((rCells, rIdx) => (
+                          <tr
+                            key={rIdx}
+                            className="hover:bg-blue-50/40 transition-colors border-b border-slate-200 last:border-b-0"
+                          >
+                            <td className="py-3.5 px-3 text-center font-semibold text-slate-500 text-xs sm:text-[13px] align-middle border-r border-slate-200 bg-slate-50/40">
+                              {rIdx + 1}
+                            </td>
+                            {rCells.map((cellVal, cIdx) => (
+                              <td
+                                key={cIdx}
+                                className={`py-3.5 px-4 align-middle border-r border-slate-200 last:border-r-0 text-xs sm:text-[13px] ${
+                                  cIdx === 0
+                                    ? "font-bold text-slate-900"
+                                    : "font-semibold text-slate-700"
+                                }`}
+                              >
+                                {cellVal}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Bottom Admission Prompt Card */}
+                <div className="p-4 bg-gradient-to-r from-sky-50 via-blue-50 to-indigo-50 rounded-2xl border border-sky-100 flex items-center justify-between gap-4 flex-wrap">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-outfit font-bold text-sm text-slate-900">
+                        Need Fee Waiver or Scholarship for {selectedCourseDetail.table.courseTitle || selectedCourseDetail.course}?
+                      </h4>
+                      <p className="text-xs text-slate-600 font-medium">
+                        Connect with admission desk for category-wise quotas, instalment plans, and direct counselling.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const courseName = selectedCourseDetail.table.courseTitle || selectedCourseDetail.course;
+                      setSelectedCourseDetail(null);
+                      setApplyCourseModal({
+                        isOpen: true,
+                        course: `${courseName} at ${collegeData.name}`,
+                      });
+                    }}
+                    className="px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+                  >
+                    <span>Talk to Counsellor</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* DEDICATED INDIVIDUAL COURSE DETAIL TABLE EDITOR MODAL (COLUMNS & ROWS MANAGER) */}
+      <AnimatePresence>
+        {editingCourseDetail && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-sm overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto flex flex-col max-h-[92vh]"
+            >
+              {/* Editor Header */}
+              <div className="px-6 py-4 bg-gradient-to-r from-purple-700 via-indigo-700 to-blue-700 text-white flex items-center justify-between gap-4 shrink-0">
+                <div>
+                  <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black uppercase tracking-wider">
+                    Individual Course Table Editor
+                  </span>
+                  <h3 className="font-outfit font-black text-lg sm:text-xl text-white mt-1">
+                    Edit Breakdown: {editingCourseDetail.course}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditingCourseDetail(null)}
+                  className="p-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Editor Body */}
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-5 bg-slate-50/60">
+                {/* 1. Course Title */}
+                <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+                  <label className="text-[11px] font-bold text-slate-700 block uppercase tracking-wider">
+                    Course / Degree Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={editingCourseDetail.table.courseTitle || ""}
+                    onChange={(e) => {
+                      setEditingCourseDetail({
+                        ...editingCourseDetail,
+                        table: {
+                          ...editingCourseDetail.table,
+                          courseTitle: e.target.value,
+                        },
+                      });
+                    }}
+                    placeholder="e.g. M.Sc"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-purple-500 rounded-xl text-xs font-bold text-slate-900 transition-colors"
+                  />
+                </div>
+
+                {/* 2. Columns Manager */}
+                <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <div>
+                      <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                        Table Columns ({editingCourseDetail.table.headers.length})
+                      </h4>
+                      <p className="text-[11px] text-slate-500 font-medium">
+                        Add, remove, or rename columns for this course detail breakdown
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const curHeaders = [...editingCourseDetail.table.headers];
+                        const newHeaders = [...curHeaders, `Column ${curHeaders.length + 1}`];
+                        const newRows = editingCourseDetail.table.rows.map((row) => [...row, "-"]);
+                        setEditingCourseDetail({
+                          ...editingCourseDetail,
+                          table: {
+                            ...editingCourseDetail.table,
+                            headers: newHeaders,
+                            rows: newRows,
+                          },
+                        });
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200 flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Column</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {editingCourseDetail.table.headers.map((hdr, hIdx) => (
+                      <div key={hIdx} className="flex items-center gap-1.5 p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                        <span className="w-5 h-5 rounded-md bg-purple-100 text-purple-700 text-[10px] font-bold flex items-center justify-center shrink-0">
+                          {hIdx + 1}
+                        </span>
+                        <input
+                          type="text"
+                          value={hdr}
+                          onChange={(e) => {
+                            const newHeaders = [...editingCourseDetail.table.headers];
+                            newHeaders[hIdx] = e.target.value;
+                            setEditingCourseDetail({
+                              ...editingCourseDetail,
+                              table: {
+                                ...editingCourseDetail.table,
+                                headers: newHeaders,
+                              },
+                            });
+                          }}
+                          className="flex-1 px-2 py-1 bg-white border border-slate-200 focus:border-purple-500 rounded-lg text-xs font-bold text-slate-900"
+                        />
+                        {editingCourseDetail.table.headers.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newHeaders = editingCourseDetail.table.headers.filter((_, i) => i !== hIdx);
+                              const newRows = editingCourseDetail.table.rows.map((row) =>
+                                row.filter((_, i) => i !== hIdx)
+                              );
+                              setEditingCourseDetail({
+                                ...editingCourseDetail,
+                                table: {
+                                  ...editingCourseDetail.table,
+                                  headers: newHeaders,
+                                  rows: newRows,
+                                },
+                              });
+                            }}
+                            className="p-1 text-slate-400 hover:text-red-500 rounded-md cursor-pointer"
+                            title="Delete Column"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Rows Manager */}
+                <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <div>
+                      <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                        Table Rows / Specializations ({editingCourseDetail.table.rows.length})
+                      </h4>
+                      <p className="text-[11px] text-slate-500 font-medium">
+                        Enter values for each column. Press Enter inside input to quickly add next row.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const emptyRow = editingCourseDetail.table.headers.map(() => "");
+                        setEditingCourseDetail({
+                          ...editingCourseDetail,
+                          table: {
+                            ...editingCourseDetail.table,
+                            rows: [...editingCourseDetail.table.rows, emptyRow],
+                          },
+                        });
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Row</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-2.5 max-h-[50vh] overflow-y-auto pr-1">
+                    {editingCourseDetail.table.rows.map((rowCells, rIdx) => (
+                      <div
+                        key={rIdx}
+                        className="p-3 bg-slate-50/80 hover:bg-slate-50 border border-slate-200/90 rounded-xl space-y-2 relative"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-slate-600 flex items-center gap-1.5">
+                            <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-[10px] font-black flex items-center justify-center">
+                              {rIdx + 1}
+                            </span>
+                            <span>Row #{rIdx + 1}</span>
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newRows = editingCourseDetail.table.rows.filter((_, i) => i !== rIdx);
+                              setEditingCourseDetail({
+                                ...editingCourseDetail,
+                                table: {
+                                  ...editingCourseDetail.table,
+                                  rows: newRows,
+                                },
+                              });
+                            }}
+                            className="p-1 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                            title="Delete Row"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        <div className={`grid gap-2 grid-cols-1 sm:grid-cols-${Math.min(editingCourseDetail.table.headers.length, 3)}`}>
+                          {editingCourseDetail.table.headers.map((hdr, cIdx) => (
+                            <div key={cIdx} className="space-y-1">
+                              <label className="text-[10px] font-bold text-slate-500 block truncate">
+                                {hdr}
+                              </label>
+                              <input
+                                type="text"
+                                value={rowCells[cIdx] !== undefined ? rowCells[cIdx] : ""}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    const emptyRow = editingCourseDetail.table.headers.map(() => "");
+                                    const newRows = [...editingCourseDetail.table.rows];
+                                    newRows.splice(rIdx + 1, 0, emptyRow);
+                                    setEditingCourseDetail({
+                                      ...editingCourseDetail,
+                                      table: {
+                                        ...editingCourseDetail.table,
+                                        rows: newRows,
+                                      },
+                                    });
+                                  }
+                                }}
+                                onChange={(e) => {
+                                  const newRows = editingCourseDetail.table.rows.map((r, i) => {
+                                    if (i !== rIdx) return r;
+                                    const updatedCells = [...r];
+                                    updatedCells[cIdx] = e.target.value;
+                                    return updatedCells;
+                                  });
+                                  setEditingCourseDetail({
+                                    ...editingCourseDetail,
+                                    table: {
+                                      ...editingCourseDetail.table,
+                                      rows: newRows,
+                                    },
+                                  });
+                                }}
+                                placeholder={`Enter ${hdr}...`}
+                                className="w-full px-3 py-1.5 bg-white border border-slate-200 focus:border-purple-500 rounded-lg text-xs font-semibold text-slate-900"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const emptyRow = editingCourseDetail.table.headers.map(() => "");
+                        setEditingCourseDetail({
+                          ...editingCourseDetail,
+                          table: {
+                            ...editingCourseDetail.table,
+                            rows: [...editingCourseDetail.table.rows, emptyRow],
+                          },
+                        });
+                      }}
+                      className="px-4 py-1.5 rounded-xl border border-dashed border-slate-300 hover:border-purple-500 text-slate-600 hover:text-purple-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Another Row</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Editor Footer Actions */}
+              <div className="px-6 py-4 bg-white border-t border-slate-200 flex items-center justify-end gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setEditingCourseDetail(null)}
+                  className="px-5 py-2 rounded-full border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={isSavingCourseDetail}
+                  onClick={async () => {
+                    setIsSavingCourseDetail(true);
+                    try {
+                      const cur =
+                        collegeData.coursesFeesArticle || getCollegeCoursesFeesArticle(collegeData);
+                      const updatedRows = [
+                        ...(cur.feesEligibilityRows || DEFAULT_FEES_ELIGIBILITY_ROWS),
+                      ];
+
+                      const targetIdx = editingCourseDetail.rowIndex;
+                      if (targetIdx >= 0 && targetIdx < updatedRows.length) {
+                        updatedRows[targetIdx] = {
+                          ...updatedRows[targetIdx],
+                          course:
+                            editingCourseDetail.table.courseTitle ||
+                            updatedRows[targetIdx].course,
+                          detailTable: editingCourseDetail.table,
+                        };
+                      }
+
+                      const updatedCF = {
+                        ...cur,
+                        feesEligibilityRows: updatedRows,
+                      };
+
+                      const updatedCollegeData: CollegeDetail = {
+                        ...collegeData,
+                        coursesFeesArticle: updatedCF,
+                      };
+
+                      const res = await fetch("/api/colleges/update", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          username: "Samrat1311",
+                          password: "1311161161",
+                          slug: slug,
+                          updatedFields: {
+                            description: JSON.stringify(updatedCollegeData),
+                          },
+                        }),
+                      });
+
+                      if (res.ok) {
+                        setCollegeData(updatedCollegeData);
+                        setTempData(updatedCollegeData);
+                        setSelectedCourseDetail({
+                          rowIndex: targetIdx,
+                          course:
+                            editingCourseDetail.table.courseTitle ||
+                            updatedRows[targetIdx]?.course ||
+                            "",
+                          table: editingCourseDetail.table,
+                        });
+                        setEditingCourseDetail(null);
+                        alert("✅ Course details table updated and saved live!");
+                      } else {
+                        const err = await res.json();
+                        alert(err.error || "Failed to update course details.");
+                      }
+                    } catch (e) {
+                      console.error("Error updating course details:", e);
+                      alert("Network error updating course details.");
+                    } finally {
+                      setIsSavingCourseDetail(false);
+                    }
+                  }}
+                  className="px-6 py-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+                >
+                  {isSavingCourseDetail ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Saving Changes...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Save Details Table</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* APPLY NOW COURSE LEAD APPLICATION POPUP MODAL */}
       <AnimatePresence>
         {applyCourseModal?.isOpen && (
