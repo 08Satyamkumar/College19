@@ -112,6 +112,8 @@ interface HighlightsArticleData {
   faqs?: FaqItem[];
   offeredCoursesHeading?: string;
   offeredCourses?: OfferedCourseRow[];
+  feesEligibilityHeading?: string;
+  feesEligibilityRows?: FeesEligibilityRow[];
 }
 
 interface CutoffArticleData {
@@ -156,6 +158,13 @@ interface OtherFeeChargeRow {
   amount: string;
 }
 
+interface FeesEligibilityRow {
+  course: string;
+  fees: string;
+  checkDetailsText?: string;
+  actionText?: string;
+}
+
 interface OfferedCourseRow {
   course: string;
   duration: string;
@@ -180,6 +189,8 @@ interface CoursesFeesArticleData {
   faqs?: FaqItem[];
   offeredCoursesHeading?: string;
   offeredCourses?: OfferedCourseRow[];
+  feesEligibilityHeading?: string;
+  feesEligibilityRows?: FeesEligibilityRow[];
 }
 
 interface PlacementSubSection {
@@ -1499,6 +1510,25 @@ interface CollegeDetail {
   shortName?: string;
 }
 
+const DEFAULT_FEES_ELIGIBILITY_ROWS: FeesEligibilityRow[] = [
+  { course: "M.Sc", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "M.Phil/Ph.D in Arts", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "MBA", fees: "₹6.62 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "M.Phil/Ph.D in Management", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "BE/B.Tech", fees: "₹2.29 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "M.Tech", fees: "₹1.90 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "M.Phil/Ph.D in Engineering", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "M.Phil/Ph.D in Science", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "M.Phil/Ph.D in Design", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "B.Des", fees: "₹2.29 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "M.Des", fees: "₹79,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "MA", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "M.Phil/Ph.D in Medicine", fees: "₹59,800 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "Executive MBA", fees: "₹9.00 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "PG Diploma in Engineering", fees: "₹2.05 Lakhs 1st year fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+  { course: "Graduate Certificate in Management", fees: "₹1.37 Lakhs Total fees", checkDetailsText: "Check Details >", actionText: "Apply Now" },
+];
+
 const DEFAULT_OFFERED_COURSES: OfferedCourseRow[] = [
   {
     course: "B.Tech",
@@ -1844,6 +1874,8 @@ const IIT_DELHI_MASTER_DATA: CollegeDetail = {
     viewAllBtnText: "View All Courses & Fees",
     offeredCoursesHeading: "Courses Offered",
     offeredCourses: DEFAULT_OFFERED_COURSES,
+    feesEligibilityHeading: "IIT Delhi [IITD] Fees & Eligibility",
+    feesEligibilityRows: DEFAULT_FEES_ELIGIBILITY_ROWS,
     faqs: [
       {
         question: "What is the career scope after MSc from IIT Delhi?",
@@ -2281,6 +2313,7 @@ type MiniModalId =
   | "highlights"
   | "courses"
   | "courses_offered_table"
+  | "fees_eligibility_table"
   | "course_summary_box"
   | "fees"
   | "reviews"
@@ -2352,6 +2385,50 @@ export default function CollegeDetailPage() {
 
   const [collegeData, setCollegeData] = useState<CollegeDetail>(IIT_DELHI_MASTER_DATA);
   const [isBannerScrolled, setIsBannerScrolled] = useState(false);
+  // Apply Now Course Lead Modal
+  const [applyCourseModal, setApplyCourseModal] = useState<{ isOpen: boolean; course: string } | null>(null);
+  const [applyForm, setApplyForm] = useState({ name: "", phone: "", email: "" });
+  const [isSubmittingApply, setIsSubmittingApply] = useState(false);
+  const [applySuccess, setApplySuccess] = useState(false);
+
+  const handleApplyCourseSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!applyForm.name || !applyForm.phone) {
+      alert("Please enter your name and mobile number.");
+      return;
+    }
+    setIsSubmittingApply(true);
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: applyForm.name,
+          phone: applyForm.phone,
+          email: applyForm.email || "",
+          course_interest: applyCourseModal?.course || "Courses & Fees",
+          college_interest: collegeData.name,
+        }),
+      });
+      if (res.ok) {
+        setApplySuccess(true);
+        setTimeout(() => {
+          setApplySuccess(false);
+          setApplyCourseModal(null);
+          setApplyForm({ name: "", phone: "", email: "" });
+        }, 2500);
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to submit application.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error. Please try again.");
+    } finally {
+      setIsSubmittingApply(false);
+    }
+  };
+
   const [currentCoverIdx, setCurrentCoverIdx] = useState(0);
 
   // Auto-scroll cover image every 5 seconds
@@ -2876,6 +2953,7 @@ export default function CollegeDetailPage() {
 
   const getCollegeCoursesFeesArticle = (college: CollegeDetail): CoursesFeesArticleData => {
     const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const abbr = (college as any).shortName || shortName.replace(/[^A-Z]/g, '') || "IITD";
 
     const defaultCoursesFaqs: FaqItem[] = [
       {
@@ -3027,6 +3105,12 @@ export default function CollegeDetailPage() {
           college.coursesFeesArticle.offeredCourses && college.coursesFeesArticle.offeredCourses.length > 0
             ? college.coursesFeesArticle.offeredCourses
             : DEFAULT_OFFERED_COURSES,
+        feesEligibilityHeading:
+          college.coursesFeesArticle.feesEligibilityHeading || `${shortName} [${abbr}] Fees & Eligibility`,
+        feesEligibilityRows:
+          college.coursesFeesArticle.feesEligibilityRows && college.coursesFeesArticle.feesEligibilityRows.length > 0
+            ? college.coursesFeesArticle.feesEligibilityRows
+            : DEFAULT_FEES_ELIGIBILITY_ROWS,
         faqs:
           college.coursesFeesArticle.faqs && college.coursesFeesArticle.faqs.length > 0
             ? college.coursesFeesArticle.faqs
@@ -3154,6 +3238,8 @@ export default function CollegeDetailPage() {
       viewAllBtnText: "View All Courses & Fees",
       offeredCoursesHeading: "Courses Offered",
       offeredCourses: DEFAULT_OFFERED_COURSES,
+      feesEligibilityHeading: `${shortName} [${abbr}] Fees & Eligibility`,
+      feesEligibilityRows: DEFAULT_FEES_ELIGIBILITY_ROWS,
       faqs: defaultCoursesFaqs,
     };
   };
@@ -11242,6 +11328,107 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 </div>
                               </div>
                             )}
+
+{/* THIN SEPARATOR LINE & FEES & ELIGIBILITY TABLE (IMAGE 1, 2 & 3) */}
+                            {cfData.feesEligibilityRows && cfData.feesEligibilityRows.length > 0 && (
+                              <div className="pt-6 mt-6 border-t border-slate-200/90 space-y-4">
+                                <div className="flex items-center justify-between gap-3">
+                                  <h3 className="font-outfit font-black text-base sm:text-lg text-slate-900 tracking-tight">
+                                    {cfData.feesEligibilityHeading || `${collegeShortName} Fees & Eligibility`}
+                                  </h3>
+                                  {isAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openMiniModal("fees_eligibility_table")}
+                                      className="px-3 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                                    >
+                                      <Edit className="w-3.5 h-3.5" />
+                                      <span>Edit Fees Table</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Authentic High-Precision Table with Light Sky Blue Header */}
+                                <div className="w-full overflow-hidden border border-slate-300 shadow-2xs rounded-lg bg-white">
+                                  <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse min-w-[640px]">
+                                      <thead>
+                                        <tr className="bg-[#38bdf8] text-slate-900 border-b border-sky-400">
+                                          <th className="w-[8%] py-3.5 px-3 text-center font-bold text-xs sm:text-sm tracking-wide border-r border-sky-300/80">
+                                            #
+                                          </th>
+                                          <th className="w-[38%] py-3.5 px-4 text-left font-bold text-xs sm:text-sm tracking-wide border-r border-sky-300/80">
+                                            Course
+                                          </th>
+                                          <th className="w-[36%] py-3.5 px-4 text-left font-bold text-xs sm:text-sm tracking-wide border-r border-sky-300/80">
+                                            Fees
+                                          </th>
+                                          <th className="w-[18%] py-3.5 px-4 text-center font-bold text-xs sm:text-sm tracking-wide">
+                                            Action
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-200 bg-white">
+                                        {cfData.feesEligibilityRows.map((row, rIdx) => (
+                                          <tr
+                                            key={rIdx}
+                                            className="hover:bg-sky-50/40 transition-colors border-b border-slate-200 last:border-b-0"
+                                          >
+                                            {/* Column 1: Row Index (#) */}
+                                            <td className="py-4 px-3 text-center font-medium text-slate-500 text-xs sm:text-sm align-middle border-r border-slate-200">
+                                              {rIdx + 1}
+                                            </td>
+
+                                            {/* Column 2: Course Name */}
+                                            <td className="py-4 px-4 text-left font-bold text-slate-900 text-xs sm:text-[13.5px] align-middle border-r border-slate-200">
+                                              {row.course}
+                                            </td>
+
+                                            {/* Column 3: Fees & Check Details */}
+                                            <td className="py-4 px-4 text-left align-middle border-r border-slate-200">
+                                              <div className="space-y-1">
+                                                <span className="font-semibold text-slate-800 text-xs sm:text-[13px] block">
+                                                  {row.fees}
+                                                </span>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => {
+                                                    setApplyCourseModal({
+                                                      isOpen: true,
+                                                      course: `${row.course} at ${collegeData.name}`,
+                                                    });
+                                                  }}
+                                                  className="text-[11.5px] font-bold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
+                                                >
+                                                  <span>{row.checkDetailsText || "Check Details >"}</span>
+                                                </button>
+                                              </div>
+                                            </td>
+
+                                            {/* Column 4: Apply Now Action */}
+                                            <td className="py-4 px-4 text-center align-middle">
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  setApplyCourseModal({
+                                                    isOpen: true,
+                                                    course: `${row.course} at ${collegeData.name}`,
+                                                  });
+                                                }}
+                                                className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-bold text-xs sm:text-[13px] hover:underline cursor-pointer group/apply active:scale-95 transition-all"
+                                              >
+                                                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/apply:translate-x-0.5" />
+                                                <span>{row.actionText || "Apply Now"}</span>
+                                              </button>
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </motion.div>
                       )}
@@ -13856,6 +14043,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     {activeMiniModal === "highlights" && "📊 Edit Key Highlights Table"}
                     {activeMiniModal === "courses" && "🎓 Edit Courses, Fees & Intake"}
                     {activeMiniModal === "courses_offered_table" && "📋 Edit Courses Offered Table"}
+                    {activeMiniModal === "fees_eligibility_table" && "💳 Edit Fees & Eligibility Table"}
                     {activeMiniModal === "course_summary_box" && "🎓 Edit Course Highlights Sub-Boxes (UG / PG Courses)"}
                     {activeMiniModal === "fees" && "💰 Edit Tuition & Hostel Fees"}
                     {activeMiniModal === "placements" && "💼 Placements Management Hub"}
@@ -24289,6 +24477,141 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           </div>
         )}
       </AnimatePresence>
+
+      
+      {/* APPLY NOW COURSE LEAD APPLICATION POPUP MODAL */}
+      <AnimatePresence>
+        {applyCourseModal?.isOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto"
+            >
+              {/* Modal Header */}
+              <div className="px-6 pt-6 pb-4 bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 text-white relative">
+                <button
+                  type="button"
+                  onClick={() => setApplyCourseModal(null)}
+                  className="absolute top-4 right-4 p-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10.5px] font-black uppercase tracking-wider">
+                  Direct Admission Application
+                </span>
+                <h3 className="font-outfit font-black text-lg sm:text-xl text-white mt-1.5">
+                  Apply Now
+                </h3>
+                <p className="text-xs text-sky-100 font-medium mt-0.5 truncate">
+                  {applyCourseModal.course}
+                </p>
+              </div>
+
+              {/* Modal Body / Lead Form */}
+              {applySuccess ? (
+                <div className="p-8 text-center space-y-3">
+                  <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto animate-bounce">
+                    <CheckCircle className="w-8 h-8" />
+                  </div>
+                  <h4 className="font-outfit font-black text-lg text-slate-900">
+                    Application Submitted!
+                  </h4>
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                    Thank you, <strong>{applyForm.name}</strong>. Our official admission counsellor will contact you on <strong>+91 {applyForm.phone}</strong> with fee breakdown and admission guidance.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleApplyCourseSubmit} className="p-6 space-y-4">
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={applyForm.name}
+                      onChange={(e) => setApplyForm({ ...applyForm, name: e.target.value })}
+                      placeholder="e.g. Rahul Sharma"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                      Mobile Number (10 Digits) *
+                    </label>
+                    <div className="flex items-center">
+                      <span className="px-3 py-2.5 bg-slate-100 border border-r-0 border-slate-200 rounded-l-xl text-xs font-bold text-slate-600">
+                        +91
+                      </span>
+                      <input
+                        type="tel"
+                        required
+                        maxLength={10}
+                        value={applyForm.phone}
+                        onChange={(e) => setApplyForm({ ...applyForm, phone: e.target.value.replace(/\D/g, '') })}
+                        placeholder="9876543210"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-r-xl text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                      Email Address (Optional)
+                    </label>
+                    <input
+                      type="email"
+                      value={applyForm.email}
+                      onChange={(e) => setApplyForm({ ...applyForm, email: e.target.value })}
+                      placeholder="rahul@example.com"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500 transition-colors"
+                    />
+                  </div>
+
+                  <div className="p-3 bg-sky-50 rounded-xl border border-sky-100 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-sky-600 shrink-0" />
+                    <p className="text-[10.5px] text-sky-900 font-medium">
+                      100% Privacy. Your details are secured and sent directly to the admissions team.
+                    </p>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setApplyCourseModal(null)}
+                      className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmittingApply}
+                      className="px-6 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+                    >
+                      {isSubmittingApply ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Submitting...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Submit Application</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
 
       {/* SUCCESS CONFIRMATION MODAL */}
       <AnimatePresence>
