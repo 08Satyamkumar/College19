@@ -2280,6 +2280,7 @@ type MiniModalId =
   | "info"
   | "highlights"
   | "courses"
+  | "courses_offered_table"
   | "course_summary_box"
   | "fees"
   | "reviews"
@@ -11176,7 +11177,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   {isAdmin && (
                                     <button
                                       type="button"
-                                      onClick={() => openMiniModal("courses")}
+                                      onClick={() => openMiniModal("courses_offered_table")}
                                       className="px-3 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
                                     >
                                       <Edit className="w-3.5 h-3.5" />
@@ -13854,6 +13855,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     {activeMiniModal === "info" && "📝 Edit College Overview & Latest Updates"}
                     {activeMiniModal === "highlights" && "📊 Edit Key Highlights Table"}
                     {activeMiniModal === "courses" && "🎓 Edit Courses, Fees & Intake"}
+                    {activeMiniModal === "courses_offered_table" && "📋 Edit Courses Offered Table"}
                     {activeMiniModal === "course_summary_box" && "🎓 Edit Course Highlights Sub-Boxes (UG / PG Courses)"}
                     {activeMiniModal === "fees" && "💰 Edit Tuition & Hostel Fees"}
                     {activeMiniModal === "placements" && "💼 Placements Management Hub"}
@@ -15390,32 +15392,37 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           </div>
                         ))}
                       </div>
-                    
+                    </div>
+                  </div>
+                )}
 
-                    {/* Part 7: Courses Offered Master Table Editor (Image 1 & 2) */}
-                    <div className="p-4 bg-gradient-to-br from-blue-50/80 via-white to-slate-50 border border-blue-200/80 rounded-2xl space-y-3.5 shadow-xs">
-                      <div className="flex items-center justify-between pb-2 border-b border-blue-100/80">
+                {/* MODAL 5.25: DEDICATED INDIVIDUAL COURSES OFFERED TABLE & BULLET POINTS EDITOR */}
+                {activeMiniModal === "courses_offered_table" && (
+                  <div className="space-y-4">
+                    <div className="p-4 sm:p-5 bg-gradient-to-br from-blue-50/90 via-white to-slate-50 border border-blue-200/90 rounded-2xl space-y-4 shadow-xs">
+                      <div className="flex items-center justify-between pb-3 border-b border-blue-100/90">
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="inline-block w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-                            <span className="text-xs font-black uppercase tracking-wider text-blue-950">
-                              Courses Offered Master Table (Header Tab Only)
+                            <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
+                            <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-blue-950">
+                              Courses Offered Master Table
                             </span>
                           </div>
                           <p className="text-[11px] text-slate-500 font-medium mt-0.5 pl-4">
-                            Configure Courses, Duration, and Eligibility Bullet points
+                            Manage Courses, Duration, and unlimited dynamic Eligibility bullet points
                           </p>
                         </div>
                         <button
                           type="button"
                           onClick={() => {
-                            const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                            const cur =
+                              tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
                             const updated = [
                               ...(cur.offeredCourses || []),
                               {
                                 course: "New Course",
                                 duration: "2 Years",
-                                eligibility: ["Enter eligibility criteria for this course..."],
+                                eligibility: ["Candidates must have passed relevant qualifying exam."],
                               },
                             ];
                             setTempData({
@@ -15423,60 +15430,86 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                               coursesFeesArticle: { ...cur, offeredCourses: updated },
                             });
                           }}
-                          className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-[11px] font-bold flex items-center gap-1.5 shadow-xs hover:shadow transition-all cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm hover:shadow transition-all cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Add Course</span>
                         </button>
                       </div>
 
-                      {/* Heading Input */}
+                      {/* Table Title Heading */}
                       <div>
-                        <label className="text-[10px] font-bold text-slate-700 block mb-1">
-                          Table Section Heading
+                        <label className="text-[10.5px] font-bold text-slate-700 block mb-1">
+                          Table Section Heading *
                         </label>
                         <input
                           type="text"
-                          value={tempData.coursesFeesArticle?.offeredCoursesHeading || getCollegeCoursesFeesArticle(tempData).offeredCoursesHeading || "Courses Offered"}
+                          value={
+                            tempData.coursesFeesArticle?.offeredCoursesHeading ||
+                            getCollegeCoursesFeesArticle(tempData).offeredCoursesHeading ||
+                            "Courses Offered"
+                          }
                           onChange={(e) => {
-                            const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                            const cur =
+                              tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
                             setTempData({
                               ...tempData,
-                              coursesFeesArticle: { ...cur, offeredCoursesHeading: e.target.value },
+                              coursesFeesArticle: {
+                                ...cur,
+                                offeredCoursesHeading: e.target.value,
+                              },
                             });
                           }}
-                          className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900"
+                          placeholder="e.g. Courses Offered"
+                          className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-500"
                         />
                       </div>
 
-                      {/* Courses Rows List */}
-                      <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
-                        {(tempData.coursesFeesArticle?.offeredCourses || getCollegeCoursesFeesArticle(tempData).offeredCourses || []).map((row, rIdx) => (
-                          <div key={rIdx} className="p-3 bg-white border border-blue-200/80 rounded-xl space-y-2.5 relative shadow-2xs">
+                      {/* Courses List */}
+                      <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                        {(
+                          tempData.coursesFeesArticle?.offeredCourses ||
+                          getCollegeCoursesFeesArticle(tempData).offeredCourses ||
+                          []
+                        ).map((row, rIdx) => (
+                          <div
+                            key={rIdx}
+                            className="p-3.5 sm:p-4 bg-white border border-blue-200 rounded-2xl space-y-3 relative shadow-2xs hover:border-blue-300 transition-colors"
+                          >
+                            {/* Delete Course Button */}
                             <button
                               type="button"
                               onClick={() => {
-                                const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
-                                const updated = (cur.offeredCourses || []).filter((_, i) => i !== rIdx);
+                                const cur =
+                                  tempData.coursesFeesArticle ||
+                                  getCollegeCoursesFeesArticle(tempData);
+                                const updated = (cur.offeredCourses || []).filter(
+                                  (_, i) => i !== rIdx
+                                );
                                 setTempData({
                                   ...tempData,
                                   coursesFeesArticle: { ...cur, offeredCourses: updated },
                                 });
                               }}
-                              className="absolute top-2.5 right-2.5 p-1 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
-                              title="Delete Course"
+                              className="absolute top-3 right-3 p-1.5 text-red-500 hover:bg-red-50 rounded-xl cursor-pointer transition-colors"
+                              title="Delete Course Row"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pr-8">
-                              <div>
-                                <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Course Name *</label>
+                            {/* Course & Duration Row */}
+                            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pr-8">
+                              <div className="sm:col-span-7">
+                                <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                                  Course Name *
+                                </label>
                                 <input
                                   type="text"
                                   value={row.course}
                                   onChange={(e) => {
-                                    const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                                    const cur =
+                                      tempData.coursesFeesArticle ||
+                                      getCollegeCoursesFeesArticle(tempData);
                                     const updated = [...(cur.offeredCourses || [])];
                                     updated[rIdx] = { ...updated[rIdx], course: e.target.value };
                                     setTempData({
@@ -15485,57 +15518,168 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     });
                                   }}
                                   placeholder="e.g. B.Tech"
-                                  className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                                  className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-blue-500"
                                 />
                               </div>
 
-                              <div>
-                                <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Duration *</label>
+                              <div className="sm:col-span-5">
+                                <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                                  Duration *
+                                </label>
                                 <input
                                   type="text"
                                   value={row.duration}
                                   onChange={(e) => {
-                                    const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
+                                    const cur =
+                                      tempData.coursesFeesArticle ||
+                                      getCollegeCoursesFeesArticle(tempData);
                                     const updated = [...(cur.offeredCourses || [])];
-                                    updated[rIdx] = { ...updated[rIdx], duration: e.target.value };
+                                    updated[rIdx] = {
+                                      ...updated[rIdx],
+                                      duration: e.target.value,
+                                    };
                                     setTempData({
                                       ...tempData,
                                       coursesFeesArticle: { ...cur, offeredCourses: updated },
                                     });
                                   }}
                                   placeholder="e.g. 4 Years"
-                                  className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                                  className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-blue-500"
                                 />
                               </div>
                             </div>
 
-                            <div>
-                              <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
-                                Eligibility Points (Enter each bullet point on a new line)
-                              </label>
-                              <textarea
-                                rows={3}
-                                value={row.eligibility.join('\n')}
-                                onChange={(e) => {
-                                  const cur = tempData.coursesFeesArticle || getCollegeCoursesFeesArticle(tempData);
-                                  const updated = [...(cur.offeredCourses || [])];
-                                  updated[rIdx] = {
-                                    ...updated[rIdx],
-                                    eligibility: e.target.value.split('\n').filter((line) => line.trim().length > 0),
-                                  };
-                                  setTempData({
-                                    ...tempData,
-                                    coursesFeesArticle: { ...cur, offeredCourses: updated },
-                                  });
-                                }}
-                                placeholder="Candidates must have passed 10+2...&#10;Candidates must have valid JEE score..."
-                                className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 resize-none"
-                              />
+                            {/* Individual Eligibility Bullet Points Editor */}
+                            <div className="space-y-2 pt-1 border-t border-slate-100">
+                              <div className="flex items-center justify-between">
+                                <label className="text-[10.5px] font-bold text-slate-700 flex items-center gap-1.5">
+                                  <span className="w-2 h-2 rounded-full bg-[#e0564c]" />
+                                  <span>
+                                    Eligibility Bullet Points ({row.eligibility?.length || 0})
+                                  </span>
+                                </label>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const cur =
+                                      tempData.coursesFeesArticle ||
+                                      getCollegeCoursesFeesArticle(tempData);
+                                    const updated = [...(cur.offeredCourses || [])];
+                                    const curBullets = updated[rIdx].eligibility || [];
+                                    updated[rIdx] = {
+                                      ...updated[rIdx],
+                                      eligibility: [...curBullets, ""],
+                                    };
+                                    setTempData({
+                                      ...tempData,
+                                      coursesFeesArticle: { ...cur, offeredCourses: updated },
+                                    });
+                                  }}
+                                  className="px-2.5 py-0.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] font-bold border border-emerald-200/80 flex items-center gap-1 cursor-pointer transition-all"
+                                >
+                                  <Plus className="w-3 h-3" />
+                                  <span>Add Bullet Point</span>
+                                </button>
+                              </div>
+
+                              {/* Bullet Input Rows */}
+                              <div className="space-y-1.5">
+                                {(row.eligibility && row.eligibility.length > 0
+                                  ? row.eligibility
+                                  : [""]
+                                ).map((bullet, bIdx) => (
+                                  <div key={bIdx} className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded-full bg-[#e0564c] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                                      <Check className="w-2.5 h-2.5 stroke-[3.5]" />
+                                    </div>
+                                    <input
+                                      type="text"
+                                      value={bullet}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          e.preventDefault();
+                                          const cur =
+                                            tempData.coursesFeesArticle ||
+                                            getCollegeCoursesFeesArticle(tempData);
+                                          const updated = [...(cur.offeredCourses || [])];
+                                          const curBullets = [
+                                            ...(updated[rIdx].eligibility || []),
+                                          ];
+                                          curBullets.splice(bIdx + 1, 0, "");
+                                          updated[rIdx] = {
+                                            ...updated[rIdx],
+                                            eligibility: curBullets,
+                                          };
+                                          setTempData({
+                                            ...tempData,
+                                            coursesFeesArticle: {
+                                              ...cur,
+                                              offeredCourses: updated,
+                                            },
+                                          });
+                                        }
+                                      }}
+                                      onChange={(e) => {
+                                        const cur =
+                                          tempData.coursesFeesArticle ||
+                                          getCollegeCoursesFeesArticle(tempData);
+                                        const updated = [...(cur.offeredCourses || [])];
+                                        const curBullets = [
+                                          ...(updated[rIdx].eligibility || []),
+                                        ];
+                                        curBullets[bIdx] = e.target.value;
+                                        updated[rIdx] = {
+                                          ...updated[rIdx],
+                                          eligibility: curBullets,
+                                        };
+                                        setTempData({
+                                          ...tempData,
+                                          coursesFeesArticle: {
+                                            ...cur,
+                                            offeredCourses: updated,
+                                          },
+                                        });
+                                      }}
+                                      placeholder="Enter eligibility bullet (Press Enter for next bullet)..."
+                                      className="flex-1 px-3 py-1.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-normal text-slate-800 transition-colors"
+                                    />
+                                    {row.eligibility && row.eligibility.length > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const cur =
+                                            tempData.coursesFeesArticle ||
+                                            getCollegeCoursesFeesArticle(tempData);
+                                          const updated = [...(cur.offeredCourses || [])];
+                                          const curBullets = updated[rIdx].eligibility.filter(
+                                            (_, i) => i !== bIdx
+                                          );
+                                          updated[rIdx] = {
+                                            ...updated[rIdx],
+                                            eligibility: curBullets,
+                                          };
+                                          setTempData({
+                                            ...tempData,
+                                            coursesFeesArticle: {
+                                              ...cur,
+                                              offeredCourses: updated,
+                                            },
+                                          });
+                                        }}
+                                        className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                                        title="Delete Bullet"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         ))}
                       </div>
-                    </div></div>
+                    </div>
                   </div>
                 )}
 
