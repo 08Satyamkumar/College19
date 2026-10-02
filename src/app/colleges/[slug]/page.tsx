@@ -3727,9 +3727,7 @@ export default function CollegeDetailPage() {
       ? "iitd.ac.in"
       : `${shortName.toLowerCase().replace(/[^a-z0-9]/g, "")}.ac.in`;
 
-    if (college.admissionArticle) {
-      return college.admissionArticle;
-    }
+
 
     const defaultCourseBoxes: CourseAdmissionBoxItem[] = [
       {
@@ -4507,7 +4505,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
   const getCollegeTocList = (college: CollegeDetail): TableOfContentItem[] => {
     if (college.tableOfContents && college.tableOfContents.length > 0) {
-      return college.tableOfContents.map((item) => ({
+      return (college.tableOfContents || []).map((item) => ({
         ...item,
         tabId: "info",
       }));
@@ -5229,7 +5227,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {hlData.faqs.map((faq, fIdx) => {
+                                  {(hlData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openHighlightFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -5390,7 +5388,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           <div className="pt-3.5 space-y-3.5 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
                             {!isCutoffArticleExpanded ? (
                               <div className="space-y-3 relative pt-0.5">
-                                {firstTwoParas.map((p, idx) => (
+                                {(firstTwoParas || []).map((p, idx) => (
                                   <p key={idx} className="leading-relaxed">
                                     {renderFormattedText(p)}
                                   </p>
@@ -5419,7 +5417,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             ) : (
                               <div className="space-y-3.5 pt-0.5">
                                 {/* All initial paragraphs */}
-                                {paragraphs.map((p, idx) => (
+                                {(paragraphs || []).map((p, idx) => (
                                   <p key={idx} className="leading-relaxed">
                                     {renderFormattedText(p)}
                                   </p>
@@ -5559,7 +5557,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                   </tr>
                                                 </thead>
                                                 <tbody className="font-medium text-xs sm:text-[13px]">
-                                                  {comparisonData.rows.map((row, rIdx) => (
+                                                  {(comparisonData?.rows || []).map((row, rIdx) => (
                                                     <tr key={rIdx} className="border-b border-dotted border-slate-300/70 last:border-b-0 hover:bg-slate-50/70 transition-colors">
                                                       <td className="py-3 px-4 text-slate-800 font-medium text-left leading-snug border-r border-dotted border-slate-200/70">
                                                         {row.course}
@@ -5754,7 +5752,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                   </tr>
                                                 </thead>
                                                 <tbody className="font-medium text-xs sm:text-[13px]">
-                                                  {displayedRows.map((row, rIdx) => (
+                                                  {(displayedRows || []).map((row, rIdx) => (
                                                     <tr key={rIdx} className="border-b border-dotted border-slate-300/70 last:border-b-0 hover:bg-slate-50/70 transition-colors">
                                                       <td className="py-3 px-4 text-slate-800 font-medium text-left leading-snug border-r border-dotted border-slate-200/70">
                                                         {row.course}
@@ -5837,7 +5835,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {cutData.faqs.map((faq, fIdx) => {
+                                  {(cutData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openCutoffFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -6057,7 +6055,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   <div className="overflow-x-auto rounded-2xl border border-slate-300 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
                                     <table className="w-full text-left border-collapse text-xs sm:text-[13.5px]">
                                       <tbody className="divide-y divide-slate-300">
-                                        {cfData.specialisations.map((spec, sIdx) => (
+                                        {(cfData.specialisations || []).map((spec, sIdx) => (
                                           <tr key={sIdx} className="hover:bg-slate-50/70 transition-colors">
                                             <td className="py-3.5 px-4 sm:px-5 font-semibold text-slate-900 align-top w-1/4 sm:w-1/5 border-r border-slate-300">
                                               {spec.category}
@@ -6121,7 +6119,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         </tr>
                                       </thead>
                                       <tbody className="font-normal divide-y divide-slate-300">
-                                        {cfData.popularCourses.map((cRow, cIdx) => (
+                                        {(cfData.popularCourses || []).map((cRow, cIdx) => (
                                           <tr key={cIdx} className="hover:bg-slate-50/70 transition-colors">
                                             <td className="py-3 px-4 sm:px-5 font-medium border-r border-slate-300">
                                               <span className="text-[#1a73e8] hover:text-[#0b57d0] hover:underline cursor-pointer font-medium">
@@ -6175,7 +6173,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         </tr>
                                       </thead>
                                       <tbody className="font-normal divide-y divide-slate-300">
-                                        {cfData.otherCharges.map((oRow, oIdx) => (
+                                        {(cfData.otherCharges || []).map((oRow, oIdx) => (
                                           <tr key={oIdx} className="hover:bg-slate-50/70 transition-colors">
                                             <td className="py-3 px-4 sm:px-5 border-r border-slate-300 align-top">
                                               <p className="font-medium text-slate-900">{oRow.component}</p>
@@ -6221,7 +6219,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             {/* SUB-BOX ACCORDION(S): UG / PG Courses Highlights Sub-Box (Exact User Reference Pattern) */}
                             {cfData.courseSummaryGroups && cfData.courseSummaryGroups.length > 0 && (
                               <div className="space-y-3.5 pt-2">
-                                {cfData.courseSummaryGroups.map((group, gIdx) => {
+                                {(cfData.courseSummaryGroups || []).map((group, gIdx) => {
                                   const isOpen = !!openCourseGroupIndices[gIdx];
                                   return (
                                     <div
@@ -6292,7 +6290,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                     }}
                                                   >
                                                     {/* Course Titles Row */}
-                                                    {group.courses.map((course, cIdx) => (
+                                                    {(group?.courses || []).map((course, cIdx) => (
                                                       <div
                                                         key={`hdr-${cIdx}`}
                                                         className="px-4 sm:px-5 py-2.5 sm:py-3 bg-white border-b border-r border-slate-200/80 last:border-r-0 flex items-center"
@@ -6304,7 +6302,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                     ))}
 
                                                     {/* Course Specs Rows */}
-                                                    {group.courses.map((course, cIdx) => (
+                                                    {(group?.courses || []).map((course, cIdx) => (
                                                       <div
                                                         key={`body-${cIdx}`}
                                                         className="p-4 sm:p-5 bg-white border-r border-slate-200/80 last:border-r-0 space-y-2.5 text-xs sm:text-[13px] text-slate-700 font-normal leading-relaxed"
@@ -6403,7 +6401,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {cfData.faqs.map((faq, fIdx) => {
+                                  {(cfData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openCoursesFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -6671,7 +6669,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-dashed divide-slate-200 font-normal">
-                                          {plData.statsTable.map((row, rIdx) => (
+                                          {(plData.statsTable || []).map((row, rIdx) => (
                                             <tr key={rIdx} className="hover:bg-blue-50/20 transition-colors">
                                               <td className="py-3.5 px-4 sm:px-5 font-normal sm:font-medium text-slate-800 border-r border-dashed border-slate-200/60 min-w-[200px] sm:min-w-[240px]">
                                                 {row.particular}
@@ -6740,7 +6738,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-dashed divide-slate-200 font-normal">
-                                          {plData.salaryTable.map((row, rIdx) => (
+                                          {(plData.salaryTable || []).map((row, rIdx) => (
                                             <tr key={rIdx} className="hover:bg-blue-50/20 transition-colors">
                                               <td className="py-3.5 px-5 font-normal sm:font-medium text-slate-800 border-r border-dashed border-slate-200/60 min-w-[200px] sm:min-w-[240px]">
                                                 {row.course}
@@ -6826,7 +6824,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   id="top-recruiters-scroll-list"
                                   className="flex items-stretch gap-3 sm:gap-3.5 overflow-x-auto no-scrollbar py-2 px-0.5 scroll-smooth"
                                 >
-                                  {plData.topRecruiters.map((rec, rIdx) => {
+                                  {(plData.topRecruiters || []).map((rec, rIdx) => {
                                     const fallbackInitials = rec.name.replace(/[^a-zA-Z]/g, "").slice(0, 2).toUpperCase() || "TC";
                                     return (
                                       <a
@@ -7046,7 +7044,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   id="insights-scroll-list"
                                   className="flex items-stretch gap-3 overflow-x-auto no-scrollbar py-2 px-0.5 scroll-smooth"
                                 >
-                                  {plData.insights.map((insight, inIdx) => (
+                                  {(plData.insights || []).map((insight, inIdx) => (
                                     <div
                                       key={inIdx}
                                       className="shrink-0 p-4 bg-white border border-slate-200/90 hover:border-indigo-300 rounded-2xl transition-all duration-300 hover:shadow-[0_8px_20px_-4px_rgba(15,23,42,0.06)] min-w-[240px] sm:min-w-[270px] max-w-[290px] flex flex-col justify-start"
@@ -7135,7 +7133,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {plData.faqs.map((faq, fIdx) => {
+                                  {(plData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openPlacementsFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -7304,7 +7302,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 {/* Bullet Points List */}
                                 {admData.bullets && admData.bullets.length > 0 && (
                                   <ul className="list-disc pl-5 space-y-2.5 text-slate-700">
-                                    {admData.bullets.map((b, bIdx) => (
+                                    {(admData.bullets || []).map((b, bIdx) => (
                                       <li key={bIdx} className="leading-relaxed pl-1">
                                         {renderFormattedText(b.text)}
                                       </li>
@@ -7346,7 +7344,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             {/* COURSE ADMISSION ACCORDION BOXES LIST */}
                             {admData.courseAdmissionBoxes && admData.courseAdmissionBoxes.length > 0 && (
                               <div className="pt-3 space-y-3">
-                                {admData.courseAdmissionBoxes.map((box, bIdx) => {
+                                {(admData.courseAdmissionBoxes || []).map((box, bIdx) => {
                                   const isBoxOpen = openAdmissionBoxes[bIdx] ?? false;
 
                                   return (
@@ -7403,7 +7401,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                     <span>Eligibility</span>
                                                   </div>
                                                   <ul className="list-disc pl-5 space-y-1.5 text-xs sm:text-[13px] text-slate-700 leading-relaxed">
-                                                    {box.eligibilityBullets.map((el, elIdx) => (
+                                                    {(box.eligibilityBullets || []).map((el, elIdx) => (
                                                       <li key={elIdx} className="pl-1">
                                                         {renderFormattedText(el)}
                                                       </li>
@@ -7449,7 +7447,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                         </tr>
                                                       </thead>
                                                       <tbody className="divide-y divide-slate-100">
-                                                        {box.datesTable.map((dRow, dIdx) => (
+                                                        {(box.datesTable || []).map((dRow, dIdx) => (
                                                           <tr key={dIdx} className="hover:bg-slate-50/70 transition-colors">
                                                             <td className="py-3 px-4 font-semibold text-slate-900 whitespace-nowrap align-middle border-r border-slate-100">
                                                               {dRow.dates}
@@ -7529,7 +7527,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {admData.faqs.map((faq, fIdx) => {
+                                  {(admData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openAdmissionFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -7719,7 +7717,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                          {rkData.internationalRows.map((row, rIdx) => (
+                                          {(rkData.internationalRows || []).map((row, rIdx) => (
                                             <tr key={rIdx} className="hover:bg-slate-50/70 transition-colors">
                                               <td className="py-3 px-4 font-semibold text-slate-900 align-middle border-r border-slate-100">
                                                 {row.body}
@@ -7761,7 +7759,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                          {rkData.nationalRows.map((row, rIdx) => (
+                                          {(rkData.nationalRows || []).map((row, rIdx) => (
                                             <tr key={rIdx} className="hover:bg-slate-50/70 transition-colors">
                                               <td className="py-3 px-4 font-semibold text-slate-900 align-middle border-r border-slate-100">
                                                 {row.body}
@@ -7801,7 +7799,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             {/* COURSE RANKINGS ACCORDION BOXES */}
                             {rkData.courseRankingBoxes && rkData.courseRankingBoxes.length > 0 && (
                               <div className="space-y-3 pt-2">
-                                {rkData.courseRankingBoxes.map((box, bIdx) => {
+                                {(rkData.courseRankingBoxes || []).map((box, bIdx) => {
                                   const isBoxOpen = !!openCourseRankingBoxes[bIdx];
 
                                   return (
@@ -7862,7 +7860,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                       </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-slate-100">
-                                                      {box.tableRows.map((r, rIdx) => (
+                                                      {(box.tableRows || []).map((r, rIdx) => (
                                                         <tr key={rIdx} className="hover:bg-slate-50/70 transition-colors">
                                                           <td className="py-3 px-4 font-semibold text-slate-900 align-middle border-r border-slate-100">
                                                             {r.publisher}
@@ -7935,7 +7933,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {rkData.faqs.map((faq, fIdx) => {
+                                  {(rkData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openRankingsFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -8195,7 +8193,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                           {/* Category Filter Pills (Placements, Infrastructure, Faculty, Other) */}
                           <div className="flex items-center gap-2.5 overflow-x-auto pb-1 no-scrollbar">
-                            {categories.map((cat: StudentFeedbackCategory, cIdx: number) => {
+                            {(categories || []).map((cat: StudentFeedbackCategory, cIdx: number) => {
                               const isCatActive = (cat.category.toLowerCase() === (activeItem?.category || "").toLowerCase());
                               return (
                                 <button
@@ -8306,7 +8304,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                           {/* Render Individual Review Cards */}
                           <div className="space-y-4">
-                            {cards.map((card: DetailedReviewCard, cIdx: number) => {
+                            {(cards || []).map((card: DetailedReviewCard, cIdx: number) => {
                               const isExpanded = !!expandedReviewCardIds[card.id];
                               const userVote = reviewHelpfulVotes[card.id];
 
@@ -8367,7 +8365,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   {/* Parameter Rating Badges Pill Row */}
                                   {card.parameterRatings && card.parameterRatings.length > 0 && (
                                     <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                                      {card.parameterRatings.map((p: ReviewParameterBadge, pIdx: number) => {
+                                      {(card.parameterRatings || []).map((p: ReviewParameterBadge, pIdx: number) => {
                                         const isLow = p.rating < 3.0;
                                         return (
                                           <div
@@ -8538,7 +8536,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     ref={mediaReviewsScrollRef}
                                     className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 no-scrollbar snap-x snap-mandatory"
                                   >
-                                    {mediaItems.map((item: StudentMediaReviewItem, mIdx: number) => {
+                                    {(mediaItems || []).map((item: StudentMediaReviewItem, mIdx: number) => {
                                       const isVideo = item.type === "video";
                                       const thumbUrl = getMediaThumbnailUrl(item);
                                       return (
@@ -8737,7 +8735,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Render Individual Review Cards */}
                                 <div className="space-y-4">
-                                  {moreCards.map((card: DetailedReviewCard, cIdx: number) => {
+                                  {(moreCards || []).map((card: DetailedReviewCard, cIdx: number) => {
                                     const isExpanded = !!expandedReviewCardIds[card.id];
                                     const userVote = reviewHelpfulVotes[card.id];
 
@@ -8798,7 +8796,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         {/* Parameter Rating Badges Pill Row */}
                                         {card.parameterRatings && card.parameterRatings.length > 0 && (
                                           <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                                            {card.parameterRatings.map((p: ReviewParameterBadge, pIdx: number) => {
+                                            {(card.parameterRatings || []).map((p: ReviewParameterBadge, pIdx: number) => {
                                               const isLow = p.rating < 3.0;
                                               return (
                                                 <div
@@ -9000,7 +8998,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                               {!isCampusExpanded ? (
                                 <div className="space-y-2">
                                   <ul className="space-y-1.5 pl-1">
-                                    {firstTwoHighlights.map((b: CampusHighlightBullet, bIdx: number) => (
+                                    {(firstTwoHighlights || []).map((b: CampusHighlightBullet, bIdx: number) => (
                                       <li
                                         key={bIdx}
                                         className={`flex items-start gap-2.5 text-slate-700 ${
@@ -9028,7 +9026,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="space-y-5 animate-in fade-in duration-300">
                                   {/* Full Campus Highlights list (Image 2) */}
                                   <ul className="space-y-1.5 pl-1">
-                                    {highlightsBullets.map((b: CampusHighlightBullet, bIdx: number) => (
+                                    {(highlightsBullets || []).map((b: CampusHighlightBullet, bIdx: number) => (
                                       <li key={bIdx} className="flex items-start gap-2.5 text-slate-700">
                                         <span className="text-slate-800 font-black mt-0.5">•</span>
                                         <span className="leading-relaxed">{b.text}</span>
@@ -9078,7 +9076,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       <table className="w-full text-left text-xs sm:text-[13px] border-collapse">
                                         <thead>
                                           <tr className="bg-[#f8fafd] border-b border-slate-200 text-slate-900 font-bold">
-                                            {feeTable.headers.map((h: string, hIdx: number) => (
+                                            {(feeTable?.headers || []).map((h: string, hIdx: number) => (
                                               <th key={hIdx} className="py-2.5 px-3.5 sm:px-4 font-bold">
                                                 {h}
                                               </th>
@@ -9086,7 +9084,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100 bg-white">
-                                          {feeTable.rows.map((row: HostelFeeRow, rIdx: number) => (
+                                          {(feeTable?.rows || []).map((row: HostelFeeRow, rIdx: number) => (
                                             <tr key={rIdx} className="hover:bg-slate-50/60 transition-colors">
                                               <td className="py-2.5 px-3.5 sm:px-4 font-semibold text-slate-800">
                                                 {row.component}
@@ -9128,7 +9126,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         {campusData.additionalFacilitiesIntro || `Students at ${collegeShortName} also benefit from:`}
                                       </p>
                                       <ul className="space-y-1 pl-1">
-                                        {additionalBullets.map((item: string, iIdx: number) => (
+                                        {(additionalBullets || []).map((item: string, iIdx: number) => (
                                           <li key={iIdx} className="flex items-start gap-2.5 text-slate-700">
                                             <span className="text-slate-800 font-black mt-0.5">•</span>
                                             <span className="leading-relaxed">{item}</span>
@@ -9163,7 +9161,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             {/* --- 1. TOP FACILITIES ICON ROW (Image 1) --- */}
                             <div className="pt-4 border-t border-slate-100">
                               <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2 px-1 no-scrollbar">
-                                {facilityIcons.map((fac: CampusFacilityIconItem, fIdx: number) => (
+                                {(facilityIcons || []).map((fac: CampusFacilityIconItem, fIdx: number) => (
                                   <div
                                     key={fac.id || fIdx}
                                     className="flex flex-col items-center justify-center min-w-[70px] sm:min-w-[84px] text-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group/fac"
@@ -9212,7 +9210,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   ref={infraInsightsScrollRef}
                                   className="flex gap-3 overflow-x-auto pb-3 pt-1 px-1 no-scrollbar snap-x snap-mandatory"
                                 >
-                                  {insightsCards.map((card: InfrastructureInsightCard, cIdx: number) => (
+                                  {(insightsCards || []).map((card: InfrastructureInsightCard, cIdx: number) => (
                                     <div
                                       key={card.id || cIdx}
                                       className="w-[230px] sm:w-[260px] shrink-0 rounded-2xl p-4 sm:p-5 border border-slate-200/90 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-300 transition-all duration-300 snap-start space-y-2 select-none"
@@ -9329,7 +9327,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           className="grid grid-rows-2 grid-flow-col gap-4 overflow-x-auto pb-4 pt-8 px-2 no-scrollbar snap-x"
                           style={{ gridAutoColumns: "minmax(230px, 260px)" }}
                         >
-                          {members.map((member: FacultyMember, mIdx: number) => (
+                          {(members || []).map((member: FacultyMember, mIdx: number) => (
                             <div
                               key={member.id || mIdx}
                               className="relative bg-white rounded-2xl border border-slate-200/90 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md hover:border-slate-300 transition-all duration-300 pt-8 pb-4 px-3.5 flex flex-col items-center justify-between text-center snap-start select-none min-h-[195px]"
@@ -9458,7 +9456,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-200/90 bg-[#f0f4fa]">
-                              {list.map((alumnus: AlumniItem, aIdx: number) => (
+                              {(list || []).map((alumnus: AlumniItem, aIdx: number) => (
                                 <tr
                                   key={alumnus.id || aIdx}
                                   className="hover:bg-[#e4edf7] transition-colors bg-[#f0f4fa]"
@@ -9538,7 +9536,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                       {/* Accordion Questions List */}
                       <div className="divide-y divide-slate-100">
-                        {faqsList.map((faq, fIdx) => {
+                        {(faqsList || []).map((faq, fIdx) => {
                           const isOpen = openFaqIdx === fIdx;
                           return (
                             <div key={fIdx} className="py-3.5 sm:py-4 transition-colors">
@@ -9685,7 +9683,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                               {!isCampusExpanded ? (
                                 <div className="space-y-2">
                                   <ul className="space-y-1.5 pl-1">
-                                    {firstTwoHighlights.map((b: CampusHighlightBullet, bIdx: number) => (
+                                    {(firstTwoHighlights || []).map((b: CampusHighlightBullet, bIdx: number) => (
                                       <li
                                         key={bIdx}
                                         className={`flex items-start gap-2.5 text-slate-700 ${
@@ -9713,7 +9711,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="space-y-5 animate-in fade-in duration-300">
                                   {/* Full Campus Highlights list (Image 2) */}
                                   <ul className="space-y-1.5 pl-1">
-                                    {highlightsBullets.map((b: CampusHighlightBullet, bIdx: number) => (
+                                    {(highlightsBullets || []).map((b: CampusHighlightBullet, bIdx: number) => (
                                       <li key={bIdx} className="flex items-start gap-2.5 text-slate-700">
                                         <span className="text-slate-800 font-black mt-0.5">•</span>
                                         <span className="leading-relaxed">{b.text}</span>
@@ -9763,7 +9761,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       <table className="w-full text-left text-xs sm:text-[13px] border-collapse">
                                         <thead>
                                           <tr className="bg-[#f8fafd] border-b border-slate-200 text-slate-900 font-bold">
-                                            {feeTable.headers.map((h: string, hIdx: number) => (
+                                            {(feeTable?.headers || []).map((h: string, hIdx: number) => (
                                               <th key={hIdx} className="py-2.5 px-3.5 sm:px-4 font-bold">
                                                 {h}
                                               </th>
@@ -9771,7 +9769,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100 bg-white">
-                                          {feeTable.rows.map((row: HostelFeeRow, rIdx: number) => (
+                                          {(feeTable?.rows || []).map((row: HostelFeeRow, rIdx: number) => (
                                             <tr key={rIdx} className="hover:bg-slate-50/60 transition-colors">
                                               <td className="py-2.5 px-3.5 sm:px-4 font-semibold text-slate-800">
                                                 {row.component}
@@ -9813,7 +9811,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         {campusData.additionalFacilitiesIntro || `Students at ${collegeShortName} also benefit from:`}
                                       </p>
                                       <ul className="space-y-1 pl-1">
-                                        {additionalBullets.map((item: string, iIdx: number) => (
+                                        {(additionalBullets || []).map((item: string, iIdx: number) => (
                                           <li key={iIdx} className="flex items-start gap-2.5 text-slate-700">
                                             <span className="text-slate-800 font-black mt-0.5">•</span>
                                             <span className="leading-relaxed">{item}</span>
@@ -9848,7 +9846,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             {/* --- 1. TOP FACILITIES ICON ROW (Image 1) --- */}
                             <div className="pt-4 border-t border-slate-100">
                               <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2 px-1 no-scrollbar">
-                                {facilityIcons.map((fac: CampusFacilityIconItem, fIdx: number) => (
+                                {(facilityIcons || []).map((fac: CampusFacilityIconItem, fIdx: number) => (
                                   <div
                                     key={fac.id || fIdx}
                                     className="flex flex-col items-center justify-center min-w-[70px] sm:min-w-[84px] text-center gap-1.5 p-2 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group/fac"
@@ -9897,7 +9895,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   ref={infraInsightsScrollRef}
                                   className="flex gap-3 overflow-x-auto pb-3 pt-1 px-1 no-scrollbar snap-x snap-mandatory"
                                 >
-                                  {insightsCards.map((card: InfrastructureInsightCard, cIdx: number) => (
+                                  {(insightsCards || []).map((card: InfrastructureInsightCard, cIdx: number) => (
                                     <div
                                       key={card.id || cIdx}
                                       className="w-[230px] sm:w-[260px] shrink-0 rounded-2xl p-4 sm:p-5 border border-slate-200/90 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-300 transition-all duration-300 snap-start space-y-2 select-none"
@@ -10014,7 +10012,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           className="grid grid-rows-2 grid-flow-col gap-4 overflow-x-auto pb-4 pt-8 px-2 no-scrollbar snap-x"
                           style={{ gridAutoColumns: "minmax(230px, 260px)" }}
                         >
-                          {members.map((member: FacultyMember, mIdx: number) => (
+                          {(members || []).map((member: FacultyMember, mIdx: number) => (
                             <div
                               key={member.id || mIdx}
                               className="relative bg-white rounded-2xl border border-slate-200/90 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md hover:border-slate-300 transition-all duration-300 pt-8 pb-4 px-3.5 flex flex-col items-center justify-between text-center snap-start select-none min-h-[195px]"
@@ -10144,7 +10142,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-200/90 bg-[#f0f4fa]">
-                              {list.map((alumnus: AlumniItem, aIdx: number) => (
+                              {(list || []).map((alumnus: AlumniItem, aIdx: number) => (
                                 <tr
                                   key={alumnus.id || aIdx}
                                   className="hover:bg-[#e4edf7] transition-colors bg-[#f0f4fa]"
@@ -10230,7 +10228,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                     {/* Accordion Questions List */}
                     <div className="divide-y divide-slate-100">
-                      {faqsList.map((faq, fIdx) => {
+                      {(faqsList || []).map((faq, fIdx) => {
                         const isOpen = openFaqIdx === fIdx;
                         return (
                           <div key={fIdx} className="py-3.5 sm:py-4 transition-colors">
@@ -10336,7 +10334,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           <div className="pt-3.5 space-y-3.5 text-[13.5px] sm:text-[14px] text-slate-700 leading-relaxed font-normal">
                             {!isCutoffArticleExpanded ? (
                               <div className="space-y-3 relative pt-0.5">
-                                {firstTwoParas.map((p, idx) => (
+                                {(firstTwoParas || []).map((p, idx) => (
                                   <p key={idx} className="leading-relaxed">
                                     {renderFormattedText(p)}
                                   </p>
@@ -10365,7 +10363,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             ) : (
                               <div className="space-y-3.5 pt-0.5">
                                 {/* All initial paragraphs */}
-                                {paragraphs.map((p, idx) => (
+                                {(paragraphs || []).map((p, idx) => (
                                   <p key={idx} className="leading-relaxed">
                                     {renderFormattedText(p)}
                                   </p>
@@ -10505,7 +10503,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                   </tr>
                                                 </thead>
                                                 <tbody className="font-medium text-xs sm:text-[13px]">
-                                                  {comparisonData.rows.map((row, rIdx) => (
+                                                  {(comparisonData?.rows || []).map((row, rIdx) => (
                                                     <tr key={rIdx} className="border-b border-dotted border-slate-300/70 last:border-b-0 hover:bg-slate-50/70 transition-colors">
                                                       <td className="py-3 px-4 text-slate-800 font-medium text-left leading-snug border-r border-dotted border-slate-200/70">
                                                         {row.course}
@@ -10700,7 +10698,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                   </tr>
                                                 </thead>
                                                 <tbody className="font-medium text-xs sm:text-[13px]">
-                                                  {displayedRows.map((row, rIdx) => (
+                                                  {(displayedRows || []).map((row, rIdx) => (
                                                     <tr key={rIdx} className="border-b border-dotted border-slate-300/70 last:border-b-0 hover:bg-slate-50/70 transition-colors">
                                                       <td className="py-3 px-4 text-slate-800 font-medium text-left leading-snug border-r border-dotted border-slate-200/70">
                                                         {row.course}
@@ -10783,7 +10781,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {cutData.faqs.map((faq, fIdx) => {
+                                  {(cutData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openCutoffFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -11010,7 +11008,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   <div className="overflow-x-auto rounded-2xl border border-slate-300 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
                                     <table className="w-full text-left border-collapse text-xs sm:text-[13.5px]">
                                       <tbody className="divide-y divide-slate-300">
-                                        {cfData.specialisations.map((spec, sIdx) => (
+                                        {(cfData.specialisations || []).map((spec, sIdx) => (
                                           <tr key={sIdx} className="hover:bg-slate-50/70 transition-colors">
                                             <td className="py-3.5 px-4 sm:px-5 font-semibold text-slate-900 align-top w-1/4 sm:w-1/5 border-r border-slate-300">
                                               {spec.category}
@@ -11074,7 +11072,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         </tr>
                                       </thead>
                                       <tbody className="font-normal divide-y divide-slate-300">
-                                        {cfData.popularCourses.map((cRow, cIdx) => (
+                                        {(cfData.popularCourses || []).map((cRow, cIdx) => (
                                           <tr key={cIdx} className="hover:bg-slate-50/70 transition-colors">
                                             <td className="py-3 px-4 sm:px-5 font-medium border-r border-slate-300">
                                               <span className="text-[#1a73e8] hover:text-[#0b57d0] hover:underline cursor-pointer font-medium">
@@ -11128,7 +11126,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         </tr>
                                       </thead>
                                       <tbody className="font-normal divide-y divide-slate-300">
-                                        {cfData.otherCharges.map((oRow, oIdx) => (
+                                        {(cfData.otherCharges || []).map((oRow, oIdx) => (
                                           <tr key={oIdx} className="hover:bg-slate-50/70 transition-colors">
                                             <td className="py-3 px-4 sm:px-5 border-r border-slate-300 align-top">
                                               <p className="font-medium text-slate-900">{oRow.component}</p>
@@ -11174,7 +11172,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             {/* SUB-BOX ACCORDION(S): UG / PG Courses Highlights Sub-Box (Exact User Reference Pattern) */}
                             {cfData.courseSummaryGroups && cfData.courseSummaryGroups.length > 0 && (
                               <div className="space-y-3.5 pt-2">
-                                {cfData.courseSummaryGroups.map((group, gIdx) => {
+                                {(cfData.courseSummaryGroups || []).map((group, gIdx) => {
                                   const isOpen = !!openCourseGroupIndices[gIdx];
                                   return (
                                     <div
@@ -11245,7 +11243,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                     }}
                                                   >
                                                     {/* Course Titles Row */}
-                                                    {group.courses.map((course, cIdx) => (
+                                                    {(group?.courses || []).map((course, cIdx) => (
                                                       <div
                                                         key={`hdr-${cIdx}`}
                                                         className="px-4 sm:px-5 py-2.5 sm:py-3 bg-white border-b border-r border-slate-200/80 last:border-r-0 flex items-center"
@@ -11257,7 +11255,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                     ))}
 
                                                     {/* Course Specs Rows */}
-                                                    {group.courses.map((course, cIdx) => (
+                                                    {(group?.courses || []).map((course, cIdx) => (
                                                       <div
                                                         key={`body-${cIdx}`}
                                                         className="p-4 sm:p-5 bg-white border-r border-slate-200/80 last:border-r-0 space-y-2.5 text-xs sm:text-[13px] text-slate-700 font-normal leading-relaxed"
@@ -11356,7 +11354,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {cfData.faqs.map((faq, fIdx) => {
+                                  {(cfData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openCoursesFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -11489,7 +11487,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-300 bg-white">
-                                        {cfData.offeredCourses.map((row, rIdx) => (
+                                        {(cfData.offeredCourses || []).map((row, rIdx) => (
                                           <tr
                                             key={rIdx}
                                             className="hover:bg-blue-50/20 transition-colors border-b border-slate-300 last:border-b-0"
@@ -11507,7 +11505,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                             {/* Column 3: Eligibility (Bullet list with Coral Checkmark Icons) */}
                                             <td className="py-4 px-5 align-middle text-left bg-white">
                                               <div className="space-y-2">
-                                                {row.eligibility.map((point, pIdx) => (
+                                                {(Array.isArray(row.eligibility) ? row.eligibility : []).map((point, pIdx) => (
                                                   <div key={pIdx} className="flex items-start gap-2.5">
                                                     <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-[#e0564c] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                                                       <Check className="w-2.5 h-2.5 stroke-[3.5]" />
@@ -11568,7 +11566,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-200 bg-white">
-                                        {cfData.feesEligibilityRows.map((row, rIdx) => (
+                                        {(cfData.feesEligibilityRows || []).map((row, rIdx) => (
                                           <tr
                                             key={rIdx}
                                             className="hover:bg-sky-50/40 transition-colors border-b border-slate-200 last:border-b-0"
@@ -11818,7 +11816,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-dashed divide-slate-200 font-normal">
-                                          {plData.statsTable.map((row, rIdx) => (
+                                          {(plData.statsTable || []).map((row, rIdx) => (
                                             <tr key={rIdx} className="hover:bg-blue-50/20 transition-colors">
                                               <td className="py-3.5 px-4 sm:px-5 font-normal sm:font-medium text-slate-800 border-r border-dashed border-slate-200/60 min-w-[200px] sm:min-w-[240px]">
                                                 {row.particular}
@@ -11887,7 +11885,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-dashed divide-slate-200 font-normal">
-                                          {plData.salaryTable.map((row, rIdx) => (
+                                          {(plData.salaryTable || []).map((row, rIdx) => (
                                             <tr key={rIdx} className="hover:bg-blue-50/20 transition-colors">
                                               <td className="py-3.5 px-5 font-normal sm:font-medium text-slate-800 border-r border-dashed border-slate-200/60 min-w-[200px] sm:min-w-[240px]">
                                                 {row.course}
@@ -11973,7 +11971,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   id="top-recruiters-scroll-list"
                                   className="flex items-stretch gap-3 sm:gap-3.5 overflow-x-auto no-scrollbar py-2 px-0.5 scroll-smooth"
                                 >
-                                  {plData.topRecruiters.map((rec, rIdx) => {
+                                  {(plData.topRecruiters || []).map((rec, rIdx) => {
                                     const fallbackInitials = rec.name.replace(/[^a-zA-Z]/g, "").slice(0, 2).toUpperCase() || "TC";
                                     return (
                                       <a
@@ -12193,7 +12191,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   id="insights-scroll-list"
                                   className="flex items-stretch gap-3 overflow-x-auto no-scrollbar py-2 px-0.5 scroll-smooth"
                                 >
-                                  {plData.insights.map((insight, inIdx) => (
+                                  {(plData.insights || []).map((insight, inIdx) => (
                                     <div
                                       key={inIdx}
                                       className="shrink-0 p-4 bg-white border border-slate-200/90 hover:border-indigo-300 rounded-2xl transition-all duration-300 hover:shadow-[0_8px_20px_-4px_rgba(15,23,42,0.06)] min-w-[240px] sm:min-w-[270px] max-w-[290px] flex flex-col justify-start"
@@ -12282,7 +12280,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {plData.faqs.map((faq, fIdx) => {
+                                  {(plData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openPlacementsFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -12458,7 +12456,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 {/* Bullet Points List */}
                                 {admData.bullets && admData.bullets.length > 0 && (
                                   <ul className="list-disc pl-5 space-y-2.5 text-slate-700">
-                                    {admData.bullets.map((b, bIdx) => (
+                                    {(admData.bullets || []).map((b, bIdx) => (
                                       <li key={bIdx} className="leading-relaxed pl-1">
                                         {renderFormattedText(b.text)}
                                       </li>
@@ -12500,7 +12498,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             {/* COURSE ADMISSION ACCORDION BOXES LIST */}
                             {admData.courseAdmissionBoxes && admData.courseAdmissionBoxes.length > 0 && (
                               <div className="pt-3 space-y-3">
-                                {admData.courseAdmissionBoxes.map((box, bIdx) => {
+                                {(admData.courseAdmissionBoxes || []).map((box, bIdx) => {
                                   const isBoxOpen = openAdmissionBoxes[bIdx] ?? false;
 
                                   return (
@@ -12557,7 +12555,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                     <span>Eligibility</span>
                                                   </div>
                                                   <ul className="list-disc pl-5 space-y-1.5 text-xs sm:text-[13px] text-slate-700 leading-relaxed">
-                                                    {box.eligibilityBullets.map((el, elIdx) => (
+                                                    {(box.eligibilityBullets || []).map((el, elIdx) => (
                                                       <li key={elIdx} className="pl-1">
                                                         {renderFormattedText(el)}
                                                       </li>
@@ -12603,7 +12601,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                         </tr>
                                                       </thead>
                                                       <tbody className="divide-y divide-slate-100">
-                                                        {box.datesTable.map((dRow, dIdx) => (
+                                                        {(box.datesTable || []).map((dRow, dIdx) => (
                                                           <tr key={dIdx} className="hover:bg-slate-50/70 transition-colors">
                                                             <td className="py-3 px-4 font-semibold text-slate-900 whitespace-nowrap align-middle border-r border-slate-100">
                                                               {dRow.dates}
@@ -12683,7 +12681,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {admData.faqs.map((faq, fIdx) => {
+                                  {(admData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openAdmissionFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -12880,7 +12878,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                          {rkData.internationalRows.map((row, rIdx) => (
+                                          {(rkData.internationalRows || []).map((row, rIdx) => (
                                             <tr key={rIdx} className="hover:bg-slate-50/70 transition-colors">
                                               <td className="py-3 px-4 font-semibold text-slate-900 align-middle border-r border-slate-100">
                                                 {row.body}
@@ -12922,7 +12920,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                          {rkData.nationalRows.map((row, rIdx) => (
+                                          {(rkData.nationalRows || []).map((row, rIdx) => (
                                             <tr key={rIdx} className="hover:bg-slate-50/70 transition-colors">
                                               <td className="py-3 px-4 font-semibold text-slate-900 align-middle border-r border-slate-100">
                                                 {row.body}
@@ -12962,7 +12960,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             {/* COURSE RANKINGS ACCORDION BOXES */}
                             {rkData.courseRankingBoxes && rkData.courseRankingBoxes.length > 0 && (
                               <div className="space-y-3 pt-2">
-                                {rkData.courseRankingBoxes.map((box, bIdx) => {
+                                {(rkData.courseRankingBoxes || []).map((box, bIdx) => {
                                   const isBoxOpen = !!openCourseRankingBoxes[bIdx];
 
                                   return (
@@ -13023,7 +13021,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                       </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-slate-100">
-                                                      {box.tableRows.map((r, rIdx) => (
+                                                      {(box.tableRows || []).map((r, rIdx) => (
                                                         <tr key={rIdx} className="hover:bg-slate-50/70 transition-colors">
                                                           <td className="py-3 px-4 font-semibold text-slate-900 align-middle border-r border-slate-100">
                                                             {r.publisher}
@@ -13096,7 +13094,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Accordion Questions List */}
                                 <div className="divide-y divide-slate-100/90 pt-1">
-                                  {rkData.faqs.map((faq, fIdx) => {
+                                  {(rkData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openRankingsFaqIdx === fIdx;
                                     const rawQ = faq.question.trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
@@ -13363,7 +13361,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                           {/* Category Filter Pills (Placements, Infrastructure, Faculty, Other) */}
                           <div className="flex items-center gap-2.5 overflow-x-auto pb-1 no-scrollbar">
-                            {categories.map((cat: StudentFeedbackCategory, cIdx: number) => {
+                            {(categories || []).map((cat: StudentFeedbackCategory, cIdx: number) => {
                               const isCatActive = (cat.category.toLowerCase() === (activeItem?.category || "").toLowerCase());
                               return (
                                 <button
@@ -13474,7 +13472,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                           {/* Render Individual Review Cards */}
                           <div className="space-y-4">
-                            {cards.map((card: DetailedReviewCard, cIdx: number) => {
+                            {(cards || []).map((card: DetailedReviewCard, cIdx: number) => {
                               const isExpanded = !!expandedReviewCardIds[card.id];
                               const userVote = reviewHelpfulVotes[card.id];
 
@@ -13535,7 +13533,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   {/* Parameter Rating Badges Pill Row */}
                                   {card.parameterRatings && card.parameterRatings.length > 0 && (
                                     <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                                      {card.parameterRatings.map((p: ReviewParameterBadge, pIdx: number) => {
+                                      {(card.parameterRatings || []).map((p: ReviewParameterBadge, pIdx: number) => {
                                         const isLow = p.rating < 3.0;
                                         return (
                                           <div
@@ -13706,7 +13704,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     ref={mediaReviewsScrollRef}
                                     className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 px-1 no-scrollbar snap-x snap-mandatory"
                                   >
-                                    {mediaItems.map((item: StudentMediaReviewItem, mIdx: number) => {
+                                    {(mediaItems || []).map((item: StudentMediaReviewItem, mIdx: number) => {
                                       const isVideo = item.type === "video";
                                       const thumbUrl = getMediaThumbnailUrl(item);
                                       return (
@@ -13905,7 +13903,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                 {/* Render Individual Review Cards */}
                                 <div className="space-y-4">
-                                  {moreCards.map((card: DetailedReviewCard, cIdx: number) => {
+                                  {(moreCards || []).map((card: DetailedReviewCard, cIdx: number) => {
                                     const isExpanded = !!expandedReviewCardIds[card.id];
                                     const userVote = reviewHelpfulVotes[card.id];
 
@@ -13966,7 +13964,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         {/* Parameter Rating Badges Pill Row */}
                                         {card.parameterRatings && card.parameterRatings.length > 0 && (
                                           <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                                            {card.parameterRatings.map((p: ReviewParameterBadge, pIdx: number) => {
+                                            {(card.parameterRatings || []).map((p: ReviewParameterBadge, pIdx: number) => {
                                               const isLow = p.rating < 3.0;
                                               return (
                                                 <div
@@ -14208,7 +14206,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   {collegeData.gallery[activePhotoIdx]?.caption} ({collegeData.gallery[activePhotoIdx]?.category})
                 </span>
                 <div className="flex gap-2">
-                  {collegeData.gallery.map((_, idx) => (
+                  {(collegeData.gallery || []).map((_, idx) => (
                     <button
                       key={idx}
                       onClick={() => setActivePhotoIdx(idx)}
@@ -14947,7 +14945,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                       </div>
 
                       <div className="max-h-44 overflow-y-auto space-y-1.5 pr-1">
-                        {tempData.highlights.map((h, idx) => (
+                        {(tempData.highlights || []).map((h, idx) => (
                           <div key={idx} className="flex items-center gap-2">
                             <input
                               type="text"
@@ -15176,7 +15174,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                               </div>
 
                               <div className="space-y-2.5">
-                                {group.courses.map((course, cIdx) => (
+                                {(group?.courses || []).map((course, cIdx) => (
                                   <div
                                     key={cIdx}
                                     className="p-3 bg-slate-50/70 hover:bg-slate-50 border border-slate-200/80 rounded-xl space-y-2 relative transition-all"
@@ -16452,7 +16450,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                               </div>
 
                               <div className="space-y-2.5">
-                                {group.courses.map((course, cIdx) => (
+                                {(group?.courses || []).map((course, cIdx) => (
                                   <div
                                     key={cIdx}
                                     className="p-3 bg-slate-50/70 hover:bg-slate-50 border border-slate-200/80 rounded-xl space-y-2 relative transition-all"
@@ -16813,7 +16811,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                       </div>
 
                       <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
-                        {tempData.cutoffs.map((cut, idx) => (
+                        {(tempData.cutoffs || []).map((cut, idx) => (
                           <div key={idx} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-2">
                             <input
                               type="text"
@@ -21132,7 +21130,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         </button>
                                       </div>
 
-                                      {box.tableRows.map((r, rIdx) => (
+                                      {(box.tableRows || []).map((r, rIdx) => (
                                         <div key={rIdx} className="grid grid-cols-12 gap-1.5 items-center bg-slate-50 p-1.5 rounded-lg border border-slate-200/80">
                                           <input
                                             type="text"
@@ -23715,7 +23713,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             </div>
 
                             <div className="space-y-2.5">
-                              {feeTable.rows.map((row: HostelFeeRow, rIdx: number) => (
+                              {(feeTable?.rows || []).map((row: HostelFeeRow, rIdx: number) => (
                                 <div key={rIdx} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2">
                                   <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                                     <span className="text-xs font-bold text-slate-700">Fee Item #{rIdx + 1}</span>
@@ -23936,7 +23934,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              {facilityIcons.map((fac: CampusFacilityIconItem, fIdx: number) => (
+                              {(facilityIcons || []).map((fac: CampusFacilityIconItem, fIdx: number) => (
                                 <div key={fac.id || fIdx} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2">
                                   <div className="flex items-center justify-between">
                                     <span className="text-xs font-bold text-slate-700">Icon #{fIdx + 1}</span>
@@ -24033,7 +24031,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             </div>
 
                             <div className="space-y-3">
-                              {insightsCards.map((card: InfrastructureInsightCard, cIdx: number) => (
+                              {(insightsCards || []).map((card: InfrastructureInsightCard, cIdx: number) => (
                                 <div key={card.id || cIdx} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2">
                                   <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                                     <div className="flex items-center gap-1.5">
@@ -24176,7 +24174,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           </div>
 
                           <div className="space-y-3">
-                            {members.map((member: FacultyMember, mIdx: number) => (
+                            {(members || []).map((member: FacultyMember, mIdx: number) => (
                               <div
                                 key={member.id || mIdx}
                                 className="p-4 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-3"
@@ -24413,7 +24411,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           </div>
 
                           <div className="space-y-3">
-                            {list.map((alumnus: AlumniItem, aIdx: number) => (
+                            {(list || []).map((alumnus: AlumniItem, aIdx: number) => (
                               <div
                                 key={alumnus.id || aIdx}
                                 className="p-4 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-3"
