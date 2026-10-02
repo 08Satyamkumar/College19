@@ -2917,23 +2917,11 @@ export default function CollegeDetailPage() {
             placementsArticle: parsedData.placementsArticle || IIT_DELHI_MASTER_DATA.placementsArticle,
             admissionArticle: parsedData.admissionArticle || IIT_DELHI_MASTER_DATA.admissionArticle,
             rankingsArticle: parsedData.rankingsArticle || IIT_DELHI_MASTER_DATA.rankingsArticle,
-            reviewsArticle: parsedData.reviewsArticle || (slug === "iit-delhi" ? IIT_DELHI_MASTER_DATA.reviewsArticle : undefined),
-            campusFacilitiesArticle: parsedData.campusFacilitiesArticle || (slug === "iit-delhi" ? DEFAULT_CAMPUS_FACILITIES_DATA : undefined),
-            faqsArticle: parsedData.faqsArticle || (slug === "iit-delhi" ? {
-              title: "IIT Delhi FAQs",
-              subtitle: "Frequently asked questions regarding admissions, courses, cutoffs, placements, and campus life at IIT Delhi.",
-              faqs: DEFAULT_COLLEGE_FAQS,
-            } : undefined),
-            alumniArticle: parsedData.alumniArticle || (slug === "iit-delhi" ? {
-              title: "IIT Delhi Alumni",
-              subtitle: "The following table lists notable alumni of the Indian Institute of Technology, Delhi.",
-              alumniList: DEFAULT_ALUMNI_LIST,
-            } : undefined),
-            facultyDetails: parsedData.facultyDetails || (slug === "iit-delhi" ? {
-              title: "IIT Delhi [IITD] Faculty Details",
-              subtitle: "Basic Information about the Faculty of IIT Delhi [IITD]",
-              members: DEFAULT_FACULTY_MEMBERS,
-            } : undefined),
+            reviewsArticle: parsedData.reviewsArticle || undefined,
+            campusFacilitiesArticle: parsedData.campusFacilitiesArticle || undefined,
+            faqsArticle: parsedData.faqsArticle || undefined,
+            alumniArticle: parsedData.alumniArticle || undefined,
+            facultyDetails: parsedData.facultyDetails || undefined,
           };
 
           setCollegeData(baseDetail);
