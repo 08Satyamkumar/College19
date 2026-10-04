@@ -1,15 +1,21 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin, supabase } from "@/lib/supabase";
+
+const dbClient = supabaseAdmin || supabase;
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { username, password, collegeData } = body;
 
-    // Verify admin credentials
-    if (username !== "Samrat1311" || password !== "1311161161") {
+    // Verify admin/writer credentials
+    const isAuthorized =
+      (username === "Samrat1311" && password === "1311161161") ||
+      (username?.toLowerCase() === "writer" && password === "Writer2026");
+
+    if (!isAuthorized) {
       return NextResponse.json(
-        { error: "Unauthorized admin access." },
+        { error: "Unauthorized access. Please login with valid credentials." },
         { status: 401 }
       );
     }
@@ -29,7 +35,7 @@ export async function POST(request: Request) {
     };
 
     // Perform database insertion
-    const { data, error } = await supabase
+    const { data, error } = await dbClient
       .from("colleges")
       .insert([recordToInsert])
       .select();

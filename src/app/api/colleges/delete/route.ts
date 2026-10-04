@@ -1,15 +1,21 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin, supabase } from "@/lib/supabase";
+
+const dbClient = supabaseAdmin || supabase;
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { username, password, slug } = body;
 
-    // Verify admin credentials
-    if (username !== "Samrat1311" || password !== "1311161161") {
+    // Verify admin/writer credentials
+    const isAuthorized =
+      (username === "Samrat1311" && password === "1311161161") ||
+      (username?.toLowerCase() === "writer" && password === "Writer2026");
+
+    if (!isAuthorized) {
       return NextResponse.json(
-        { error: "Unauthorized admin access." },
+        { error: "Unauthorized access. Please login with valid credentials." },
         { status: 401 }
       );
     }
@@ -21,11 +27,13 @@ export async function POST(request: Request) {
       );
     }
 
+    const cleanSlug = decodeURIComponent(slug).trim().toLowerCase();
+
     // Perform database deletion
-    const { error } = await supabase
+    const { error } = await dbClient
       .from("colleges")
       .delete()
-      .eq("slug", slug);
+      .eq("slug", cleanSlug);
 
     if (error) {
       throw error;

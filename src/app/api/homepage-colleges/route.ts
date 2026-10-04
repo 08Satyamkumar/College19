@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin, supabase } from "@/lib/supabase";
 
+const dbClient = supabaseAdmin || supabase;
 const HOMEPAGE_CONFIG_ID = "00000000-0000-0000-0000-000000000001";
 
 export async function GET() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await dbClient
       .from("colleges")
       .select("description")
       .eq("id", HOMEPAGE_CONFIG_ID)
@@ -43,10 +44,14 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { username, password, trending, featured } = body;
 
-    // Verify admin credentials
-    if (username !== "Samrat1311" || password !== "1311161161") {
+    // Verify admin/writer credentials
+    const isAuthorized =
+      (username === "Samrat1311" && password === "1311161161") ||
+      (username?.toLowerCase() === "writer" && password === "Writer2026");
+
+    if (!isAuthorized) {
       return NextResponse.json(
-        { error: "Unauthorized admin access." },
+        { error: "Unauthorized access. Please login with valid credentials." },
         { status: 401 }
       );
     }
@@ -75,7 +80,7 @@ export async function POST(request: Request) {
       image_url: "none",
     };
 
-    const { data, error } = await supabase
+    const { data, error } = await dbClient
       .from("colleges")
       .upsert(record, { onConflict: "id" })
       .select();
