@@ -3873,20 +3873,20 @@ export default function CollegeDetailPage() {
         answer: `${shortName} recorded an exceptional placement rate with over 85-90% eligible registered candidates successfully securing premium employment and international offers across core engineering, analytics, IT, and management sectors.`,
       },
       {
-        question: `How are the BTech placements at ${shortName}?`,
-        answer: `BTech placements at ${shortName} are among the highest ranked in the nation, with the undergraduate median package reaching INR 20 LPA and international/domestic highest compensation packages exceeding INR 2 Crore per annum.`,
+        question: `What was the highest and average salary package offered in ${shortName} Placements?`,
+        answer: `The highest domestic and international compensation package recorded at ${shortName} touched above INR 2 Crore per annum, while the median package for BTech graduates stood at INR 20 LPA and MTech median package was INR 19.25 LPA.`,
       },
       {
-        question: `Can I take admission at ${shortName} MTech course without GATE?`,
-        answer: `Direct admission for regular full-time MTech without GATE is typically open only to graduating IITians with a CGPA of 8.0 and above. Candidates from other recognized institutions require a valid GATE percentile followed by written assessment or interview.`,
+        question: `How are the MBA and PG Placements at ${shortName}?`,
+        answer: `MBA and PG students at ${shortName} achieved outstanding placement records across IT & Analytics (24.5%), Sales & Marketing (22.1%), Strategy & Consulting (17.2%), and Finance (14.0%) with top recruiters like Bain, McKinsey, Accenture, and Barclays.`,
       },
       {
-        question: `How can I get BTech Admission at ${shortName}?`,
-        answer: `Undergraduate BTech admission at ${shortName} is strictly merit-based through qualifying JEE Advanced with high cut-off ranks followed by centralized seat allocation via JoSAA counselling.`,
+        question: `Which top companies and global recruiters visit ${shortName} for campus placements?`,
+        answer: `Premier global recruiters visiting campus include Google, Microsoft, Amazon, Texas Instruments, Accenture, Deloitte, Goldman Sachs, Apple, Qualcomm, BlackRock, McKinsey, and KPMG offering domestic and overseas roles.`,
       },
       {
-        question: `Which are the top recruiters of ${shortName}?`,
-        answer: `Premier global recruiters visiting campus include Google, Microsoft, Amazon, Texas Instruments, Accenture, Deloitte, Goldman Sachs, Apple, Qualcomm, and KPMG, offering domestic and overseas roles.`,
+        question: `Does ${shortName} offer Pre-Placement Offers (PPOs) and international internship opportunities?`,
+        answer: `Yes, over 300+ Pre-Placement Offers (PPOs) are secured each placement season through summer internships, along with 40+ international job offers spanning countries like Japan, South Korea, the UAE, the UK, and the USA.`,
       },
     ];
 
@@ -12923,6 +12923,103 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                         </table>
                       </div>
                     )}
+                  </div>
+                );
+              })()}
+
+              {/* 5. COMMONLY ASKED QUESTIONS ON PLACEMENTS (STANDALONE FAQ SECTION AT THE END OF PLACEMENTS TAB) */}
+              {(() => {
+                const plData = getCollegePlacementsArticle(collegeData);
+                const faqsList = plData.faqs && plData.faqs.length > 0 ? plData.faqs : [];
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+
+                return (
+                  <div
+                    id="placements-faqs-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20 space-y-4"
+                  >
+                    {/* Header Row */}
+                    <div className="flex items-start justify-between gap-3 border-b border-slate-100/90 pb-3.5">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20">
+                          <HelpCircle className="w-5 h-5 stroke-[2.5]" />
+                        </div>
+                        <div>
+                          <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                            {plData.faqsHeading || `${collegeShortName} Placement FAQs`}
+                          </h3>
+                          <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">
+                            {plData.faqsSubtitle || `Frequently Asked Questions about ${collegeShortName} campus placements, packages & top recruiters`}
+                          </p>
+                        </div>
+                      </div>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("placements_faqs")}
+                          className="px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit Placement FAQs</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Accordion List */}
+                    <div className="divide-y divide-slate-100/90">
+                      {faqsList.map((faq, fIdx) => {
+                        const isOpen = openPlacementsFaqIdx === fIdx;
+                        const rawQ = (faq?.question || "").trim();
+                        const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
+                        const rawA = (faq?.answer || "").trim();
+                        const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
+
+                        return (
+                          <div key={fIdx} className="py-3 first:pt-1 last:pb-0">
+                            <button
+                              type="button"
+                              onClick={() => setOpenPlacementsFaqIdx(isOpen ? null : fIdx)}
+                              className="w-full flex items-center justify-between gap-3 text-left py-1 text-slate-800 hover:text-blue-600 transition-colors cursor-pointer group/q"
+                            >
+                              <span className="font-outfit font-bold text-[13.5px] sm:text-[14px] leading-snug group-hover/q:text-blue-600 transition-colors">
+                                {formattedQ}
+                              </span>
+                              <div className="flex items-center gap-2 shrink-0">
+                                {fIdx === 0 && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/70 text-[11px] font-bold">
+                                    5 👍
+                                  </span>
+                                )}
+                                <ChevronDown
+                                  className={`w-4 h-4 text-slate-500 group-hover/q:text-blue-600 transition-transform duration-200 ${
+                                    isOpen ? "rotate-180 text-blue-600" : ""
+                                  }`}
+                                />
+                              </div>
+                            </button>
+
+                            <AnimatePresence initial={false}>
+                              {isOpen && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.22, ease: "easeInOut" }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="pt-2.5 pb-2 pl-1 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal bg-slate-50/60 rounded-xl p-3 mt-1.5 border border-slate-100">
+                                    <p className="leading-relaxed whitespace-pre-line">
+                                      {formattedA}
+                                    </p>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               })()}
