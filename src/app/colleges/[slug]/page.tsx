@@ -1359,6 +1359,31 @@ interface NirfPlacementReleaseData {
   rows?: NirfPlacementRow[];
 }
 
+interface PlacementSectorRow {
+  sector: string;
+  percentage: string;
+}
+
+interface PlacementSectorReportData {
+  title?: string;
+  introParagraph?: string;
+  tableCols?: string[];
+  rows?: PlacementSectorRow[];
+}
+
+interface MbaPlacementSectorRow {
+  sector: string;
+  rate: string;
+  recruiters: string;
+}
+
+interface MbaPlacementSectorReportData {
+  title?: string;
+  introParagraph?: string;
+  tableCols?: string[];
+  rows?: MbaPlacementSectorRow[];
+}
+
 interface PlacementsArticleData {
   title?: string;
   introParagraph?: string;
@@ -1379,6 +1404,8 @@ interface PlacementsArticleData {
   faqsSubtitle?: string;
   faqs?: FaqItem[];
   nirfRelease?: NirfPlacementReleaseData;
+  sectorReport?: PlacementSectorReportData;
+  mbaSectorReport?: MbaPlacementSectorReportData;
 }
 
 interface FaqItem {
@@ -2537,6 +2564,8 @@ type MiniModalId =
   | "placements_insights"
   | "placements_faqs"
   | "placements_nirf"
+  | "placements_sector_report"
+  | "placements_mba_sector"
   | "admission"
   | "admission_faqs"
   | "cutoffs"
@@ -2830,7 +2859,7 @@ export default function CollegeDetailPage() {
   // Admin Session and In-Page Editing States
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeMiniModal, setActiveMiniModal] = useState<MiniModalId>(null);
-  const [placementsModalTab, setPlacementsModalTab] = useState<"article" | "stats" | "salary" | "recruiters" | "insights" | "faqs" | "nirf">("article");
+  const [placementsModalTab, setPlacementsModalTab] = useState<"article" | "stats" | "salary" | "recruiters" | "insights" | "faqs" | "nirf" | "sector" | "mba_sector">("article");
   const [openPlacementsFaqIdx, setOpenPlacementsFaqIdx] = useState<number | null>(null);
   const [isAdmissionCardOpen, setIsAdmissionCardOpen] = useState(true);
   const [isAdmissionArticleExpanded, setIsAdmissionArticleExpanded] = useState(false);
@@ -3692,6 +3721,59 @@ export default function CollegeDetailPage() {
       ],
     };
 
+    const defaultSectorReport: PlacementSectorReportData = {
+      title: `${shortName} Placements 2024: Sector-Wise Report`,
+      introParagraph: `${shortName} placements 2024 witnessed recruitments in multiple sectors like IT, Management and Analysis, Technical core, Consulting, Finance, Teaching and Research. The percentage of sector-wise placement is presented in the following table:`,
+      tableCols: ["Sector", "Placement Percentage"],
+      rows: [
+        { sector: "Technical", percentage: "29%" },
+        { sector: "IT", percentage: "24%" },
+        { sector: "Management and Analysis", percentage: "11%" },
+        { sector: "Consulting", percentage: "10%" },
+        { sector: "Teaching and Research", percentage: "9%" },
+        { sector: "Finance", percentage: "5%" },
+        { sector: "Others", percentage: "12%" },
+      ],
+    };
+
+    const defaultMbaSectorReport: MbaPlacementSectorReportData = {
+      title: `${shortName} MBA Placements: Sector-Wise Report`,
+      introParagraph: `Check the placement rates of ${shortName} MBA students of 2021-23 Batch in the various sectors, as presented in the below table:`,
+      tableCols: ["Placement in Sectors", "Placement Rate", "Recruiters"],
+      rows: [
+        {
+          sector: "IT & Analytics",
+          rate: "24.5%",
+          recruiters: "EXL Service, Wipro, Accenture, Capgemini, Paytm, Jio Saavn, Media.Net, Axtria, Merilytics, Mphasis, Diageo, etc.",
+        },
+        {
+          sector: "Sales & Marketing",
+          rate: "22.1%",
+          recruiters: "Texas Instruments, ICICI Bank, Tata Consumer Products, JSPL, GAIL, People Interactive, IBM, Yes Bank, Indegene, Optum, etc.",
+        },
+        {
+          sector: "Strategy & Consulting",
+          rate: "17.2%",
+          recruiters: "Bain & Company, McKinsey & Company, Accenture Strategy & Consulting, Alvarez & Marsal, Acuvon Consulting, Axtria, Inmorphis, Publicis Sapient, Deloitte, Infosys Consulting, PwC, Redseer Consulting etc.",
+        },
+        {
+          sector: "Finance",
+          rate: "14.0%",
+          recruiters: "Barclays, BlackRock, Yes Bank, Anand Rathi Financial Services, Tresvista, Power Finance Corporation, Maybank, etc.",
+        },
+        {
+          sector: "Supply Chain & Operations",
+          rate: "11.5%",
+          recruiters: "Amazon, Tata Consumer Products, JSPL, Whirlpool, Jubilant Foodworks Ltd., MTR, VOIS, Yum! Brands etc.",
+        },
+        {
+          sector: "General Management & Human Resources",
+          rate: "10.7%",
+          recruiters: "Adani Group, Bombay Shaving Company, JSPL, JSW, Landmark Group, etc.",
+        },
+      ],
+    };
+
     if (college.placementsArticle) {
       return {
         title: college.placementsArticle.title || `${shortName} Placements 2026`,
@@ -3733,6 +3815,8 @@ export default function CollegeDetailPage() {
             ? college.placementsArticle.faqs
             : defaultPlacementFaqs,
         nirfRelease: college.placementsArticle.nirfRelease || defaultNirfRelease,
+        sectorReport: college.placementsArticle.sectorReport || defaultSectorReport,
+        mbaSectorReport: college.placementsArticle.mbaSectorReport || defaultMbaSectorReport,
       };
     }
 
@@ -3756,6 +3840,8 @@ export default function CollegeDetailPage() {
       faqsSubtitle: "On Placements",
       faqs: defaultPlacementFaqs,
       nirfRelease: defaultNirfRelease,
+      sectorReport: defaultSectorReport,
+      mbaSectorReport: defaultMbaSectorReport,
     };
   };
 
@@ -12472,6 +12558,165 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   </div>
                 );
               })()}
+
+              {/* SECTOR-WISE REPORT PLACEMENTS SECTION (Table 1 - Image 1) */}
+              {(() => {
+                const plData = getCollegePlacementsArticle(collegeData);
+                const sectorData = plData.sectorReport;
+                if (!sectorData) return null;
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+                const cols = sectorData.tableCols && sectorData.tableCols.length === 2 ? sectorData.tableCols : ["Sector", "Placement Percentage"];
+                const rows = sectorData.rows && sectorData.rows.length > 0 ? sectorData.rows : [];
+
+                return (
+                  <div
+                    id="placements-sector-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20"
+                  >
+                    {/* Header Row */}
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                        {sectorData.title || `${collegeShortName} Placements 2024: Sector-Wise Report`}
+                      </h3>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("placements_sector_report")}
+                          className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit Sector Report</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Narrative Intro Paragraph */}
+                    {sectorData.introParagraph && (
+                      <div className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal mb-5 space-y-2">
+                        <p className="leading-relaxed">
+                          {renderFormattedText(sectorData.introParagraph)}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Table 1 Data Table */}
+                    {rows.length > 0 && (
+                      <div className="overflow-x-auto custom-scrollbar rounded-xl border border-slate-300 shadow-xs bg-white w-full">
+                        <table className="w-full text-left border-collapse text-xs sm:text-[13.5px] min-w-max">
+                          <thead>
+                            <tr className="bg-[#002f5e] text-white font-bold font-outfit text-xs sm:text-[13.5px]">
+                              {cols.map((colName, cIdx) => (
+                                <th
+                                  key={cIdx}
+                                  className={`py-3.5 px-4 sm:px-5 font-bold font-outfit text-white border-b-2 border-slate-300 ${
+                                    cIdx < cols.length - 1 ? "border-r border-slate-300" : ""
+                                  } ${cIdx === 0 ? "min-w-[200px] sm:min-w-[260px]" : "min-w-[180px] sm:min-w-[220px]"}`}
+                                >
+                                  {colName}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="font-normal divide-y divide-slate-300">
+                            {rows.map((row, rIdx) => (
+                              <tr key={rIdx} className="hover:bg-blue-50/30 transition-colors">
+                                <td className="py-3 px-4 sm:px-5 font-medium text-slate-800 border-r border-b border-slate-300 min-w-[200px] sm:min-w-[260px]">
+                                  {row.sector}
+                                </td>
+                                <td className="py-3 px-4 sm:px-5 font-bold text-slate-900 border-b border-slate-300 min-w-[180px] sm:min-w-[220px]">
+                                  {row.percentage}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* MBA SECTOR-WISE REPORT PLACEMENTS SECTION (Table 2 - Combined Images 2 & 3) */}
+              {(() => {
+                const plData = getCollegePlacementsArticle(collegeData);
+                const mbaSectorData = plData.mbaSectorReport;
+                if (!mbaSectorData) return null;
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+                const cols = mbaSectorData.tableCols && mbaSectorData.tableCols.length === 3 ? mbaSectorData.tableCols : ["Placement in Sectors", "Placement Rate", "Recruiters"];
+                const rows = mbaSectorData.rows && mbaSectorData.rows.length > 0 ? mbaSectorData.rows : [];
+
+                return (
+                  <div
+                    id="placements-mba-sector-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20"
+                  >
+                    {/* Header Row */}
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                        {mbaSectorData.title || `${collegeShortName} MBA Placements: Sector-Wise Report`}
+                      </h3>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("placements_mba_sector")}
+                          className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit MBA Sector Report</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Narrative Intro Paragraph */}
+                    {mbaSectorData.introParagraph && (
+                      <div className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal mb-5 space-y-2">
+                        <p className="leading-relaxed">
+                          {renderFormattedText(mbaSectorData.introParagraph)}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Table 2 Data Table */}
+                    {rows.length > 0 && (
+                      <div className="overflow-x-auto custom-scrollbar rounded-xl border border-slate-300 shadow-xs bg-white w-full">
+                        <table className="w-full text-left border-collapse text-xs sm:text-[13.5px] min-w-max">
+                          <thead>
+                            <tr className="bg-[#002f5e] text-white font-bold font-outfit text-xs sm:text-[13.5px]">
+                              {cols.map((colName, cIdx) => (
+                                <th
+                                  key={cIdx}
+                                  className={`py-3.5 px-4 sm:px-5 font-bold font-outfit text-white border-b-2 border-slate-300 ${
+                                    cIdx < cols.length - 1 ? "border-r border-slate-300" : ""
+                                  } ${cIdx === 0 ? "min-w-[190px] sm:min-w-[220px]" : cIdx === 1 ? "min-w-[130px] sm:min-w-[150px]" : "min-w-[280px] sm:min-w-[360px]"}`}
+                                >
+                                  {colName}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="font-normal divide-y divide-slate-300">
+                            {rows.map((row, rIdx) => (
+                              <tr key={rIdx} className="hover:bg-blue-50/30 transition-colors">
+                                <td className="py-3 px-4 sm:px-5 font-semibold text-slate-900 border-r border-b border-slate-300 min-w-[190px] sm:min-w-[220px]">
+                                  {row.sector}
+                                </td>
+                                <td className="py-3 px-4 sm:px-5 font-bold text-slate-900 border-r border-b border-slate-300 min-w-[130px] sm:min-w-[150px]">
+                                  {row.rate}
+                                </td>
+                                <td className="py-3 px-4 sm:px-5 text-slate-700 leading-relaxed border-b border-slate-300 min-w-[280px] sm:min-w-[360px]">
+                                  {row.recruiters}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           )}
 
@@ -15795,6 +16040,8 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     {activeMiniModal === "placements_insights" && "💡 Edit Placement Student Insights"}
                     {activeMiniModal === "placements_faqs" && "❓ Edit Placement FAQs"}
                     {activeMiniModal === "placements_nirf" && "🏛️ Edit NIRF Release Placements Table & Data"}
+                    {activeMiniModal === "placements_sector_report" && "📊 Edit Sector-Wise Placements Report Table"}
+                    {activeMiniModal === "placements_mba_sector" && "💼 Edit MBA Sector-Wise Placements Report Table"}
                     {activeMiniModal === "cutoffs" && "📈 Edit Cutoff Ranks Table"}
                     {activeMiniModal === "cutoff_comparison" && "📈 Edit Cutoff Round 3-Year Comparison Table"}
                     {activeMiniModal === "secondary_cutoff_comparison" && "📊 Edit Secondary Exam Cutoff Table (UCEED / Specialized)"}
@@ -19166,72 +19413,94 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                 {activeMiniModal === "placements" && (
                   <div className="space-y-3">
                     {/* Clean Section Switcher Tabs */}
-                    <div className="flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-xl border border-slate-200">
+                    <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100/80 rounded-xl border border-slate-200">
                       <button
                         type="button"
                         onClick={() => setPlacementsModalTab("article")}
-                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           placementsModalTab === "article"
                             ? "bg-white text-indigo-900 shadow-2xs"
                             : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
-                        📝 1. Article Text
+                        📝 1. Article
                       </button>
                       <button
                         type="button"
                         onClick={() => setPlacementsModalTab("stats")}
-                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           placementsModalTab === "stats"
                             ? "bg-white text-indigo-900 shadow-2xs"
                             : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
-                        📊 2. Highlights Table
+                        📊 2. Highlights
                       </button>
                       <button
                         type="button"
                         onClick={() => setPlacementsModalTab("salary")}
-                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           placementsModalTab === "salary"
                             ? "bg-white text-indigo-900 shadow-2xs"
                             : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
-                        💰 3. Median Salary Table
+                        💰 3. Median Salary
                       </button>
                       <button
                         type="button"
                         onClick={() => setPlacementsModalTab("recruiters")}
-                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           placementsModalTab === "recruiters"
                             ? "bg-white text-indigo-900 shadow-2xs"
                             : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
-                        🏢 4. Top Recruiters
+                        🏢 4. Recruiters
                       </button>
                       <button
                         type="button"
                         onClick={() => setPlacementsModalTab("insights")}
-                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           placementsModalTab === "insights"
                             ? "bg-white text-indigo-900 shadow-2xs"
                             : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
-                        💡 5. Student Insights
+                        💡 5. Insights
                       </button>
                       <button
                         type="button"
                         onClick={() => setPlacementsModalTab("nirf")}
-                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           placementsModalTab === "nirf"
                             ? "bg-white text-indigo-900 shadow-2xs"
                             : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
-                        🏛️ 6. NIRF Release Table
+                        🏛️ 6. NIRF Table
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPlacementsModalTab("sector")}
+                        className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          placementsModalTab === "sector"
+                            ? "bg-white text-indigo-900 shadow-2xs"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}
+                      >
+                        📊 7. Sector Report
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPlacementsModalTab("mba_sector")}
+                        className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          placementsModalTab === "mba_sector"
+                            ? "bg-white text-indigo-900 shadow-2xs"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}
+                      >
+                        💼 8. MBA Sector
                       </button>
                     </div>
 
@@ -20519,6 +20788,452 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                         })()}
                       </div>
                     )}
+
+                    {/* Tab 7: Sector-Wise Report */}
+                    {placementsModalTab === "sector" && (
+                      <div className="p-3.5 bg-gradient-to-br from-indigo-50/50 via-white to-blue-50/40 border border-indigo-200/80 rounded-2xl space-y-3.5">
+                        {(() => {
+                          const curArticle = tempData.placementsArticle || getCollegePlacementsArticle(tempData);
+                          const sectorData = curArticle.sectorReport || getCollegePlacementsArticle(tempData).sectorReport || {
+                            title: `${tempData.name.split(" - ")[0]} Placements 2024: Sector-Wise Report`,
+                            introParagraph: "",
+                            tableCols: ["Sector", "Placement Percentage"],
+                            rows: [],
+                          };
+                          const cols = sectorData.tableCols && sectorData.tableCols.length === 2 ? sectorData.tableCols : ["Sector", "Placement Percentage"];
+                          const rows = sectorData.rows || [];
+
+                          return (
+                            <>
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                  <span className="text-xs font-black text-indigo-950 uppercase tracking-wide block">
+                                    📊 Sector-Wise Placements Report Table
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 font-medium">
+                                    Manage Sector Report title, narrative paragraph, columns, and sector rows ({rows.length} rows)
+                                  </span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedRows: PlacementSectorRow[] = [
+                                      ...rows,
+                                      { sector: "New Sector", percentage: "0%" },
+                                    ];
+                                    setTempData({
+                                      ...tempData,
+                                      placementsArticle: {
+                                        ...curArticle,
+                                        sectorReport: {
+                                          ...sectorData,
+                                          rows: updatedRows,
+                                        },
+                                      },
+                                    });
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                                >
+                                  <Plus className="w-3 h-3" />
+                                  <span>Add Sector Row</span>
+                                </button>
+                              </div>
+
+                              {/* Section Title & Intro Paragraph */}
+                              <div className="space-y-2.5">
+                                <div>
+                                  <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                    Section Title *
+                                  </label>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={sectorData.title || ""}
+                                    onChange={(e) => {
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          sectorReport: { ...sectorData, title: e.target.value },
+                                        },
+                                      });
+                                    }}
+                                    placeholder="e.g. IIT Delhi Placements 2024: Sector-Wise Report"
+                                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                    Narrative Intro Paragraph (Supports **bold**)
+                                  </label>
+                                  <textarea
+                                    rows={3}
+                                    value={sectorData.introParagraph || ""}
+                                    onChange={(e) => {
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          sectorReport: { ...sectorData, introParagraph: e.target.value },
+                                        },
+                                      });
+                                    }}
+                                    placeholder="Placements witnessed recruitments in multiple sectors..."
+                                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 resize-none"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Table Columns Customizer */}
+                              <div className="bg-white/80 p-2.5 rounded-xl border border-indigo-100 space-y-2">
+                                <span className="text-[10.5px] font-bold text-slate-700 block uppercase tracking-wider">
+                                  Table Column Headers (2 Columns)
+                                </span>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  {cols.map((colName, cIdx) => (
+                                    <div key={cIdx} className="space-y-1">
+                                      <label className="text-[9.5px] font-bold text-slate-500 uppercase">
+                                        Col {cIdx + 1} ({cIdx === 0 ? "Sector" : "Placement Percentage"})
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={colName}
+                                        onChange={(e) => {
+                                          const newCols = [...cols];
+                                          newCols[cIdx] = e.target.value;
+                                          setTempData({
+                                            ...tempData,
+                                            placementsArticle: {
+                                              ...curArticle,
+                                              sectorReport: { ...sectorData, tableCols: newCols },
+                                            },
+                                          });
+                                        }}
+                                        placeholder={cIdx === 0 ? "Sector" : "Placement Percentage"}
+                                        className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800"
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Rows List */}
+                              <div className="space-y-2 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                                <label className="text-[9.5px] font-bold text-slate-500 block uppercase">
+                                  Sectors & Percentages ({rows.length} rows)
+                                </label>
+                                {rows.map((row, rIdx) => (
+                                  <div
+                                    key={rIdx}
+                                    className="flex items-center gap-2 p-2 bg-white border border-slate-200/90 hover:border-indigo-300 rounded-xl shadow-2xs transition-all"
+                                  >
+                                    <input
+                                      type="text"
+                                      value={row.sector}
+                                      onChange={(e) => {
+                                        const updated = [...rows];
+                                        updated[rIdx] = { ...updated[rIdx], sector: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          placementsArticle: {
+                                            ...curArticle,
+                                            sectorReport: { ...sectorData, rows: updated },
+                                          },
+                                        });
+                                      }}
+                                      placeholder="e.g. Technical / IT"
+                                      className="flex-1 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-900"
+                                    />
+                                    <input
+                                      type="text"
+                                      value={row.percentage}
+                                      onChange={(e) => {
+                                        const updated = [...rows];
+                                        updated[rIdx] = { ...updated[rIdx], percentage: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          placementsArticle: {
+                                            ...curArticle,
+                                            sectorReport: { ...sectorData, rows: updated },
+                                          },
+                                        });
+                                      }}
+                                      placeholder="e.g. 29%"
+                                      className="w-28 sm:w-36 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-indigo-950"
+                                    />
+                                    {rows.length > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const updated = rows.filter((_, i) => i !== rIdx);
+                                          setTempData({
+                                            ...tempData,
+                                            placementsArticle: {
+                                              ...curArticle,
+                                              sectorReport: { ...sectorData, rows: updated },
+                                            },
+                                          });
+                                        }}
+                                        className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer"
+                                        title="Delete Row"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </button>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    )}
+
+                    {/* Tab 8: MBA Sector-Wise Report */}
+                    {placementsModalTab === "mba_sector" && (
+                      <div className="p-3.5 bg-gradient-to-br from-indigo-50/50 via-white to-blue-50/40 border border-indigo-200/80 rounded-2xl space-y-3.5">
+                        {(() => {
+                          const curArticle = tempData.placementsArticle || getCollegePlacementsArticle(tempData);
+                          const mbaSectorData = curArticle.mbaSectorReport || getCollegePlacementsArticle(tempData).mbaSectorReport || {
+                            title: `${tempData.name.split(" - ")[0]} MBA Placements: Sector-Wise Report`,
+                            introParagraph: "",
+                            tableCols: ["Placement in Sectors", "Placement Rate", "Recruiters"],
+                            rows: [],
+                          };
+                          const cols = mbaSectorData.tableCols && mbaSectorData.tableCols.length === 3 ? mbaSectorData.tableCols : ["Placement in Sectors", "Placement Rate", "Recruiters"];
+                          const rows = mbaSectorData.rows || [];
+
+                          return (
+                            <>
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                  <span className="text-xs font-black text-indigo-950 uppercase tracking-wide block">
+                                    💼 MBA Sector-Wise Placements Report Table
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 font-medium">
+                                    Manage MBA Sector Report title, narrative paragraph, columns, and rows with recruiter lists ({rows.length} rows)
+                                  </span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedRows: MbaPlacementSectorRow[] = [
+                                      ...rows,
+                                      { sector: "New Sector", rate: "0%", recruiters: "Recruiter names..." },
+                                    ];
+                                    setTempData({
+                                      ...tempData,
+                                      placementsArticle: {
+                                        ...curArticle,
+                                        mbaSectorReport: {
+                                          ...mbaSectorData,
+                                          rows: updatedRows,
+                                        },
+                                      },
+                                    });
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                                >
+                                  <Plus className="w-3 h-3" />
+                                  <span>Add MBA Sector Row</span>
+                                </button>
+                              </div>
+
+                              {/* Section Title & Intro Paragraph */}
+                              <div className="space-y-2.5">
+                                <div>
+                                  <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                    Section Title *
+                                  </label>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={mbaSectorData.title || ""}
+                                    onChange={(e) => {
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          mbaSectorReport: { ...mbaSectorData, title: e.target.value },
+                                        },
+                                      });
+                                    }}
+                                    placeholder="e.g. IIT Delhi MBA Placements: Sector-Wise Report"
+                                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                    Narrative Intro Paragraph (Supports **bold**)
+                                  </label>
+                                  <textarea
+                                    rows={3}
+                                    value={mbaSectorData.introParagraph || ""}
+                                    onChange={(e) => {
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          mbaSectorReport: { ...mbaSectorData, introParagraph: e.target.value },
+                                        },
+                                      });
+                                    }}
+                                    placeholder="Check the placement rates of MBA students..."
+                                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 resize-none"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Table Columns Customizer */}
+                              <div className="bg-white/80 p-2.5 rounded-xl border border-indigo-100 space-y-2">
+                                <span className="text-[10.5px] font-bold text-slate-700 block uppercase tracking-wider">
+                                  Table Column Headers (3 Columns)
+                                </span>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                  {cols.map((colName, cIdx) => (
+                                    <div key={cIdx} className="space-y-1">
+                                      <label className="text-[9.5px] font-bold text-slate-500 uppercase">
+                                        Col {cIdx + 1} ({cIdx === 0 ? "Placement in Sectors" : cIdx === 1 ? "Placement Rate" : "Recruiters"})
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={colName}
+                                        onChange={(e) => {
+                                          const newCols = [...cols];
+                                          newCols[cIdx] = e.target.value;
+                                          setTempData({
+                                            ...tempData,
+                                            placementsArticle: {
+                                              ...curArticle,
+                                              mbaSectorReport: { ...mbaSectorData, tableCols: newCols },
+                                            },
+                                          });
+                                        }}
+                                        placeholder={cIdx === 0 ? "Placement in Sectors" : cIdx === 1 ? "Placement Rate" : "Recruiters"}
+                                        className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800"
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Rows List */}
+                              <div className="space-y-3 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                                <label className="text-[9.5px] font-bold text-slate-500 block uppercase">
+                                  MBA Sector Rows ({rows.length} rows)
+                                </label>
+                                {rows.map((row, rIdx) => (
+                                  <div
+                                    key={rIdx}
+                                    className="p-3 bg-white border border-slate-200/90 hover:border-indigo-300 rounded-xl space-y-2 shadow-2xs relative transition-all"
+                                  >
+                                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                                      <span className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                                        <span className="text-indigo-600 font-black">Row #{rIdx + 1}:</span> {row.sector || "Unnamed Sector"}
+                                      </span>
+                                      {rows.length > 1 && (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const updated = rows.filter((_, i) => i !== rIdx);
+                                            setTempData({
+                                              ...tempData,
+                                              placementsArticle: {
+                                                ...curArticle,
+                                                mbaSectorReport: { ...mbaSectorData, rows: updated },
+                                              },
+                                            });
+                                          }}
+                                          className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer flex items-center gap-1 text-[10px] font-bold transition-colors"
+                                          title="Delete Row"
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                          <span>Delete</span>
+                                        </button>
+                                      )}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                      <div>
+                                        <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                          Sector Name *
+                                        </label>
+                                        <input
+                                          type="text"
+                                          required
+                                          value={row.sector}
+                                          onChange={(e) => {
+                                            const updated = [...rows];
+                                            updated[rIdx] = { ...updated[rIdx], sector: e.target.value };
+                                            setTempData({
+                                              ...tempData,
+                                              placementsArticle: {
+                                                ...curArticle,
+                                                mbaSectorReport: { ...mbaSectorData, rows: updated },
+                                              },
+                                            });
+                                          }}
+                                          placeholder="e.g. IT & Analytics"
+                                          className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-900"
+                                        />
+                                      </div>
+                                      <div>
+                                        <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                          Placement Rate / Percentage *
+                                        </label>
+                                        <input
+                                          type="text"
+                                          required
+                                          value={row.rate}
+                                          onChange={(e) => {
+                                            const updated = [...rows];
+                                            updated[rIdx] = { ...updated[rIdx], rate: e.target.value };
+                                            setTempData({
+                                              ...tempData,
+                                              placementsArticle: {
+                                                ...curArticle,
+                                                mbaSectorReport: { ...mbaSectorData, rows: updated },
+                                              },
+                                            });
+                                          }}
+                                          placeholder="e.g. 24.5%"
+                                          className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-indigo-950"
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div>
+                                      <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                        Recruiting Companies List (comma-separated)
+                                      </label>
+                                      <textarea
+                                        rows={2}
+                                        value={row.recruiters}
+                                        onChange={(e) => {
+                                          const updated = [...rows];
+                                          updated[rIdx] = { ...updated[rIdx], recruiters: e.target.value };
+                                          setTempData({
+                                            ...tempData,
+                                            placementsArticle: {
+                                              ...curArticle,
+                                              mbaSectorReport: { ...mbaSectorData, rows: updated },
+                                            },
+                                          });
+                                        }}
+                                        placeholder="e.g. EXL Service, Wipro, Accenture, Capgemini..."
+                                        className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 resize-none leading-relaxed"
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -21312,6 +22027,452 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       )}
                                     </div>
                                   ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* MODAL: SECTOR-WISE PLACEMENTS REPORT TABLE (INDIVIDUAL) */}
+                {activeMiniModal === "placements_sector_report" && (
+                  <div className="p-3.5 bg-gradient-to-br from-indigo-50/50 via-white to-blue-50/40 border border-indigo-200/80 rounded-2xl space-y-3.5">
+                    {(() => {
+                      const curArticle = tempData.placementsArticle || getCollegePlacementsArticle(tempData);
+                      const sectorData = curArticle.sectorReport || getCollegePlacementsArticle(tempData).sectorReport || {
+                        title: `${tempData.name.split(" - ")[0]} Placements 2024: Sector-Wise Report`,
+                        introParagraph: "",
+                        tableCols: ["Sector", "Placement Percentage"],
+                        rows: [],
+                      };
+                      const cols = sectorData.tableCols && sectorData.tableCols.length === 2 ? sectorData.tableCols : ["Sector", "Placement Percentage"];
+                      const rows = sectorData.rows || [];
+
+                      return (
+                        <>
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                              <span className="text-xs font-black text-indigo-950 uppercase tracking-wide block">
+                                📊 Sector-Wise Placements Report Table
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-medium">
+                                Manage Sector Report title, narrative paragraph, columns, and sector rows ({rows.length} rows)
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updatedRows: PlacementSectorRow[] = [
+                                  ...rows,
+                                  { sector: "New Sector", percentage: "0%" },
+                                ];
+                                setTempData({
+                                  ...tempData,
+                                  placementsArticle: {
+                                    ...curArticle,
+                                    sectorReport: {
+                                      ...sectorData,
+                                      rows: updatedRows,
+                                    },
+                                  },
+                                });
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                            >
+                              <Plus className="w-3 h-3" />
+                              <span>Add Sector Row</span>
+                            </button>
+                          </div>
+
+                          {/* Section Title & Intro Paragraph */}
+                          <div className="space-y-2.5">
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                Section Title *
+                              </label>
+                              <input
+                                type="text"
+                                required
+                                value={sectorData.title || ""}
+                                onChange={(e) => {
+                                  setTempData({
+                                    ...tempData,
+                                    placementsArticle: {
+                                      ...curArticle,
+                                      sectorReport: { ...sectorData, title: e.target.value },
+                                    },
+                                  });
+                                }}
+                                placeholder="e.g. IIT Delhi Placements 2024: Sector-Wise Report"
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                Narrative Intro Paragraph (Supports **bold**)
+                              </label>
+                              <textarea
+                                rows={3}
+                                value={sectorData.introParagraph || ""}
+                                onChange={(e) => {
+                                  setTempData({
+                                    ...tempData,
+                                    placementsArticle: {
+                                      ...curArticle,
+                                      sectorReport: { ...sectorData, introParagraph: e.target.value },
+                                    },
+                                  });
+                                }}
+                                placeholder="Placements witnessed recruitments in multiple sectors..."
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 resize-none"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Table Columns Customizer */}
+                          <div className="bg-white/80 p-2.5 rounded-xl border border-indigo-100 space-y-2">
+                            <span className="text-[10.5px] font-bold text-slate-700 block uppercase tracking-wider">
+                              Table Column Headers (2 Columns)
+                            </span>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {cols.map((colName, cIdx) => (
+                                <div key={cIdx} className="space-y-1">
+                                  <label className="text-[9.5px] font-bold text-slate-500 uppercase">
+                                    Col {cIdx + 1} ({cIdx === 0 ? "Sector" : "Placement Percentage"})
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={colName}
+                                    onChange={(e) => {
+                                      const newCols = [...cols];
+                                      newCols[cIdx] = e.target.value;
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          sectorReport: { ...sectorData, tableCols: newCols },
+                                        },
+                                      });
+                                    }}
+                                    placeholder={cIdx === 0 ? "Sector" : "Placement Percentage"}
+                                    className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Rows List */}
+                          <div className="space-y-2 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                            <label className="text-[9.5px] font-bold text-slate-500 block uppercase">
+                              Sectors & Percentages ({rows.length} rows)
+                            </label>
+                            {rows.map((row, rIdx) => (
+                              <div
+                                key={rIdx}
+                                className="flex items-center gap-2 p-2 bg-white border border-slate-200/90 hover:border-indigo-300 rounded-xl shadow-2xs transition-all"
+                              >
+                                <input
+                                  type="text"
+                                  value={row.sector}
+                                  onChange={(e) => {
+                                    const updated = [...rows];
+                                    updated[rIdx] = { ...updated[rIdx], sector: e.target.value };
+                                    setTempData({
+                                      ...tempData,
+                                      placementsArticle: {
+                                        ...curArticle,
+                                        sectorReport: { ...sectorData, rows: updated },
+                                      },
+                                    });
+                                  }}
+                                  placeholder="e.g. Technical / IT"
+                                  className="flex-1 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-900"
+                                />
+                                <input
+                                  type="text"
+                                  value={row.percentage}
+                                  onChange={(e) => {
+                                    const updated = [...rows];
+                                    updated[rIdx] = { ...updated[rIdx], percentage: e.target.value };
+                                    setTempData({
+                                      ...tempData,
+                                      placementsArticle: {
+                                        ...curArticle,
+                                        sectorReport: { ...sectorData, rows: updated },
+                                      },
+                                    });
+                                  }}
+                                  placeholder="e.g. 29%"
+                                  className="w-28 sm:w-36 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-indigo-950"
+                                />
+                                {rows.length > 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = rows.filter((_, i) => i !== rIdx);
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          sectorReport: { ...sectorData, rows: updated },
+                                        },
+                                      });
+                                    }}
+                                    className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer"
+                                    title="Delete Row"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* MODAL: MBA SECTOR-WISE PLACEMENTS REPORT TABLE (INDIVIDUAL) */}
+                {activeMiniModal === "placements_mba_sector" && (
+                  <div className="p-3.5 bg-gradient-to-br from-indigo-50/50 via-white to-blue-50/40 border border-indigo-200/80 rounded-2xl space-y-3.5">
+                    {(() => {
+                      const curArticle = tempData.placementsArticle || getCollegePlacementsArticle(tempData);
+                      const mbaSectorData = curArticle.mbaSectorReport || getCollegePlacementsArticle(tempData).mbaSectorReport || {
+                        title: `${tempData.name.split(" - ")[0]} MBA Placements: Sector-Wise Report`,
+                        introParagraph: "",
+                        tableCols: ["Placement in Sectors", "Placement Rate", "Recruiters"],
+                        rows: [],
+                      };
+                      const cols = mbaSectorData.tableCols && mbaSectorData.tableCols.length === 3 ? mbaSectorData.tableCols : ["Placement in Sectors", "Placement Rate", "Recruiters"];
+                      const rows = mbaSectorData.rows || [];
+
+                      return (
+                        <>
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                              <span className="text-xs font-black text-indigo-950 uppercase tracking-wide block">
+                                💼 MBA Sector-Wise Placements Report Table
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-medium">
+                                Manage MBA Sector Report title, narrative paragraph, columns, and rows with recruiter lists ({rows.length} rows)
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updatedRows: MbaPlacementSectorRow[] = [
+                                  ...rows,
+                                  { sector: "New Sector", rate: "0%", recruiters: "Recruiter names..." },
+                                ];
+                                setTempData({
+                                  ...tempData,
+                                  placementsArticle: {
+                                    ...curArticle,
+                                    mbaSectorReport: {
+                                      ...mbaSectorData,
+                                      rows: updatedRows,
+                                    },
+                                  },
+                                });
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                            >
+                              <Plus className="w-3 h-3" />
+                              <span>Add MBA Sector Row</span>
+                            </button>
+                          </div>
+
+                          {/* Section Title & Intro Paragraph */}
+                          <div className="space-y-2.5">
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                Section Title *
+                              </label>
+                              <input
+                                type="text"
+                                required
+                                value={mbaSectorData.title || ""}
+                                onChange={(e) => {
+                                  setTempData({
+                                    ...tempData,
+                                    placementsArticle: {
+                                      ...curArticle,
+                                      mbaSectorReport: { ...mbaSectorData, title: e.target.value },
+                                    },
+                                  });
+                                }}
+                                placeholder="e.g. IIT Delhi MBA Placements: Sector-Wise Report"
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                Narrative Intro Paragraph (Supports **bold**)
+                              </label>
+                              <textarea
+                                rows={3}
+                                value={mbaSectorData.introParagraph || ""}
+                                onChange={(e) => {
+                                  setTempData({
+                                    ...tempData,
+                                    placementsArticle: {
+                                      ...curArticle,
+                                      mbaSectorReport: { ...mbaSectorData, introParagraph: e.target.value },
+                                    },
+                                  });
+                                }}
+                                placeholder="Check the placement rates of MBA students..."
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 resize-none"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Table Columns Customizer */}
+                          <div className="bg-white/80 p-2.5 rounded-xl border border-indigo-100 space-y-2">
+                            <span className="text-[10.5px] font-bold text-slate-700 block uppercase tracking-wider">
+                              Table Column Headers (3 Columns)
+                            </span>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                              {cols.map((colName, cIdx) => (
+                                <div key={cIdx} className="space-y-1">
+                                  <label className="text-[9.5px] font-bold text-slate-500 uppercase">
+                                    Col {cIdx + 1} ({cIdx === 0 ? "Placement in Sectors" : cIdx === 1 ? "Placement Rate" : "Recruiters"})
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={colName}
+                                    onChange={(e) => {
+                                      const newCols = [...cols];
+                                      newCols[cIdx] = e.target.value;
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          mbaSectorReport: { ...mbaSectorData, tableCols: newCols },
+                                        },
+                                      });
+                                    }}
+                                    placeholder={cIdx === 0 ? "Placement in Sectors" : cIdx === 1 ? "Placement Rate" : "Recruiters"}
+                                    className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Rows List */}
+                          <div className="space-y-3 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                            <label className="text-[9.5px] font-bold text-slate-500 block uppercase">
+                              MBA Sector Rows ({rows.length} rows)
+                            </label>
+                            {rows.map((row, rIdx) => (
+                              <div
+                                key={rIdx}
+                                className="p-3 bg-white border border-slate-200/90 hover:border-indigo-300 rounded-xl space-y-2 shadow-2xs relative transition-all"
+                              >
+                                <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                                  <span className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                                    <span className="text-indigo-600 font-black">Row #{rIdx + 1}:</span> {row.sector || "Unnamed Sector"}
+                                  </span>
+                                  {rows.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updated = rows.filter((_, i) => i !== rIdx);
+                                        setTempData({
+                                          ...tempData,
+                                          placementsArticle: {
+                                            ...curArticle,
+                                            mbaSectorReport: { ...mbaSectorData, rows: updated },
+                                          },
+                                        });
+                                      }}
+                                      className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer flex items-center gap-1 text-[10px] font-bold transition-colors"
+                                      title="Delete Row"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                      <span>Delete</span>
+                                    </button>
+                                  )}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  <div>
+                                    <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                      Sector Name *
+                                    </label>
+                                    <input
+                                      type="text"
+                                      required
+                                      value={row.sector}
+                                      onChange={(e) => {
+                                        const updated = [...rows];
+                                        updated[rIdx] = { ...updated[rIdx], sector: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          placementsArticle: {
+                                            ...curArticle,
+                                            mbaSectorReport: { ...mbaSectorData, rows: updated },
+                                          },
+                                        });
+                                      }}
+                                      placeholder="e.g. IT & Analytics"
+                                      className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-900"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                      Placement Rate / Percentage *
+                                    </label>
+                                    <input
+                                      type="text"
+                                      required
+                                      value={row.rate}
+                                      onChange={(e) => {
+                                        const updated = [...rows];
+                                        updated[rIdx] = { ...updated[rIdx], rate: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          placementsArticle: {
+                                            ...curArticle,
+                                            mbaSectorReport: { ...mbaSectorData, rows: updated },
+                                          },
+                                        });
+                                      }}
+                                      placeholder="e.g. 24.5%"
+                                      className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-indigo-950"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                    Recruiting Companies List (comma-separated)
+                                  </label>
+                                  <textarea
+                                    rows={2}
+                                    value={row.recruiters}
+                                    onChange={(e) => {
+                                      const updated = [...rows];
+                                      updated[rIdx] = { ...updated[rIdx], recruiters: e.target.value };
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          mbaSectorReport: { ...mbaSectorData, rows: updated },
+                                        },
+                                      });
+                                    }}
+                                    placeholder="e.g. EXL Service, Wipro, Accenture, Capgemini..."
+                                    className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 resize-none leading-relaxed"
+                                  />
                                 </div>
                               </div>
                             ))}
