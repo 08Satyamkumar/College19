@@ -12423,15 +12423,15 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                     {/* NIRF Data Table */}
                     {rows.length > 0 && (
-                      <div className="overflow-x-auto custom-scrollbar rounded-xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white w-full">
+                      <div className="overflow-x-auto custom-scrollbar rounded-xl border border-slate-300 shadow-xs bg-white w-full">
                         <table className="w-full text-left border-collapse text-xs sm:text-[13.5px] min-w-max">
                           <thead>
-                            <tr className="bg-[#eef4fc] text-slate-800 font-bold font-outfit text-xs sm:text-[13.5px]">
+                            <tr className="bg-[#eef4fc] text-slate-900 font-bold font-outfit text-xs sm:text-[13.5px]">
                               {cols.map((colName, cIdx) => (
                                 <th
                                   key={cIdx}
-                                  className={`py-3.5 px-4 sm:px-5 font-bold font-outfit text-slate-900 border-b border-slate-200/80 ${
-                                    cIdx < cols.length - 1 ? "border-r border-slate-200/70" : ""
+                                  className={`py-3.5 px-4 sm:px-5 font-bold font-outfit text-slate-900 border-b-2 border-slate-300 ${
+                                    cIdx < cols.length - 1 ? "border-r border-slate-300" : ""
                                   } ${cIdx === 0 ? "min-w-[170px] sm:min-w-[200px]" : cIdx === 1 ? "min-w-[200px] sm:min-w-[250px]" : "min-w-[170px] sm:min-w-[220px]"}`}
                                 >
                                   {colName}
@@ -12439,25 +12439,25 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                               ))}
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-200/80 font-normal">
+                          <tbody className="font-normal divide-y divide-slate-300">
                             {rows.map((rowGroup, gIdx) => {
                               const items = rowGroup.items && rowGroup.items.length > 0 ? rowGroup.items : [{ particular: "-", statistic: "-" }];
                               return (
                                 <React.Fragment key={gIdx}>
                                   {items.map((item, itemIdx) => (
-                                    <tr key={`${gIdx}-${itemIdx}`} className="hover:bg-blue-50/20 transition-colors">
+                                    <tr key={`${gIdx}-${itemIdx}`} className="hover:bg-blue-50/30 transition-colors">
                                       {itemIdx === 0 && (
                                         <td
                                           rowSpan={items.length}
-                                          className="py-3.5 px-4 sm:px-5 font-bold text-slate-900 bg-slate-50/50 border-r border-b border-slate-200/80 align-middle min-w-[170px] sm:min-w-[200px]"
+                                          className="py-3.5 px-4 sm:px-5 font-bold text-slate-900 bg-slate-50/70 border-r border-b border-slate-300 align-middle min-w-[170px] sm:min-w-[200px]"
                                         >
                                           {rowGroup.course}
                                         </td>
                                       )}
-                                      <td className="py-3.5 px-4 sm:px-5 font-normal sm:font-medium text-slate-800 border-r border-b border-slate-200/70 min-w-[200px] sm:min-w-[250px]">
+                                      <td className="py-3.5 px-4 sm:px-5 font-medium text-slate-800 border-r border-b border-slate-300 min-w-[200px] sm:min-w-[250px]">
                                         {item.particular}
                                       </td>
-                                      <td className="py-3.5 px-4 sm:px-5 font-bold text-indigo-950 border-b border-slate-200/70 min-w-[170px] sm:min-w-[220px]">
+                                      <td className="py-3.5 px-4 sm:px-5 font-bold text-indigo-950 border-b border-slate-300 min-w-[170px] sm:min-w-[220px]">
                                         {item.statistic}
                                       </td>
                                     </tr>
