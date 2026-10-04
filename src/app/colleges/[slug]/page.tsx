@@ -653,8 +653,8 @@ interface CollegeGalleryData {
 }
 
 const DEFAULT_COLLEGE_GALLERY_DATA: CollegeGalleryData = {
-  title: "IIT Delhi Campus Photo & Video Gallery",
-  subtitle: "Explore high-definition photographs, smart academic lecture theatres, 24/7 research laboratories, hostel rooms, and student reels.",
+  title: "IIT Delhi Campus & Academic Infrastructure Gallery",
+  subtitle: "Official visual archive of lecture theatres, high-performance computing labs, robotics cleanrooms, student residences, and vibrant campus life.",
   categories: ["Academic", "Campus & Hostels", "Events & Fest", "Sports & Life"],
   items: [
     // 1. ACADEMIC SECTION (Images & Video Reels)
@@ -907,6 +907,7 @@ const getCollegeGalleryData = (college?: Partial<CollegeDetail>): CollegeGallery
   if (college?.galleryData && college.galleryData.items && college.galleryData.items.length > 0) {
     return college.galleryData;
   }
+  const colName = (college?.name || "College").split(" - ")[0];
   if (college?.gallery && college.gallery.length > 0) {
     const legacyItems: GalleryMediaItem[] = college.gallery.map((g, idx) => ({
       id: `gal-legacy-${idx}`,
@@ -917,8 +918,8 @@ const getCollegeGalleryData = (college?: Partial<CollegeDetail>): CollegeGallery
       tag: g.category || "Photo",
     }));
     return {
-      title: `${(college.name || "College").split(" - ")[0]} Campus Photo & Video Gallery`,
-      subtitle: `Explore authentic photographs, lab setups, hostels, campus drone footage, and student reels.`,
+      title: `${colName} Campus & Academic Infrastructure Gallery`,
+      subtitle: `Official visual archive of lecture theatres, high-performance computing labs, robotics cleanrooms, student residences, and vibrant campus life.`,
       categories: ["Academic", "Campus & Hostels", "Events & Fest", "Sports & Life"],
       items: [
         ...legacyItems,
@@ -18424,15 +18425,15 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                         <div className="flex items-start gap-3">
-                          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-600 via-indigo-600 to-pink-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-purple-500/20">
-                            <Camera className="w-5 h-5 stroke-[2.5]" />
+                          <div className="w-11 h-11 rounded-2xl bg-white border border-slate-200 text-slate-900 flex items-center justify-center shrink-0 shadow-xs ring-4 ring-slate-100">
+                            <Camera className="w-5 h-5 text-slate-800 stroke-[2.2]" />
                           </div>
                           <div>
                             <h2 className="font-outfit font-black text-xl sm:text-2xl text-slate-900 tracking-tight flex items-center gap-2">
-                              <span>{galData.title || `${collegeShortName} Photo & Video Gallery`}</span>
+                              <span>{galData.title || `${collegeShortName} Campus & Academic Infrastructure Gallery`}</span>
                             </h2>
-                            <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">
-                              {galData.subtitle || `Explore high-definition photos of academic labs, smart lecture theatres, hostels, sports complex, and student reels.`}
+                            <p className="text-xs sm:text-[13px] text-slate-600 font-medium leading-relaxed mt-0.5">
+                              {galData.subtitle || `Official visual archive of lecture theatres, high-performance computing labs, robotics cleanrooms, student residences, and vibrant campus life.`}
                             </p>
                           </div>
                         </div>
@@ -18445,9 +18446,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                               setGalleryModalMediaSubTab("images");
                               openMiniModal("gallery");
                             }}
-                            className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                            className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-bold border border-slate-200/90 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
                           >
-                            <Edit className="w-3.5 h-3.5" />
+                            <Edit className="w-3.5 h-3.5 text-slate-600" />
                             <span>Edit Gallery</span>
                           </button>
                         )}
@@ -18459,10 +18460,10 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           <button
                             type="button"
                             onClick={() => setActiveGalleryCategoryTab("All")}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border ${
                               activeCategory === "All"
-                                ? "bg-slate-900 text-white shadow-xs"
-                                : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/70"
+                                ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                                : "bg-white text-slate-600 border-slate-200/90 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 shadow-3xs"
                             }`}
                           >
                             All ({allItems.length})
@@ -18477,15 +18478,15 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 key={cIdx}
                                 type="button"
                                 onClick={() => setActiveGalleryCategoryTab(cat)}
-                                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 border ${
                                   isSelected
-                                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm ring-2 ring-purple-300/40"
-                                    : "bg-slate-100/80 text-slate-700 hover:bg-slate-200/70 hover:text-slate-900"
+                                    ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                                    : "bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 shadow-3xs"
                                 }`}
                               >
                                 <span>{cat === "Academic" ? "🎓" : cat.includes("Hostel") || cat.includes("Campus") ? "🏢" : cat.includes("Event") || cat.includes("Fest") ? "✨" : "🏅"}</span>
                                 <span>{cat}</span>
-                                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600 font-bold"}`}>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold ${isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600 border border-slate-200/60"}`}>
                                   {count}
                                 </span>
                               </button>
@@ -18527,11 +18528,11 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             {/* Category Section Header */}
                             <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
                               <div className="flex items-center gap-2.5">
-                                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-black text-base shadow-3xs">
+                                <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-800 flex items-center justify-center font-bold text-base shadow-3xs">
                                   {categoryName === "Academic" ? "🎓" : categoryName.includes("Hostel") || categoryName.includes("Campus") ? "🏢" : categoryName.includes("Event") || categoryName.includes("Fest") ? "✨" : "🏅"}
                                 </div>
                                 <div>
-                                  <h3 className="font-outfit font-black text-lg sm:text-xl text-slate-900 tracking-tight">
+                                  <h3 className="font-outfit font-bold text-lg sm:text-xl text-slate-900 tracking-tight">
                                     {categoryName}
                                   </h3>
                                   <p className="text-[11.5px] text-slate-500 font-medium">
@@ -18547,7 +18548,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     setGalleryModalCategoryTab(categoryName);
                                     openMiniModal("gallery");
                                   }}
-                                  className="text-xs text-purple-600 hover:text-purple-800 font-bold hover:underline cursor-pointer flex items-center gap-1"
+                                  className="text-xs text-slate-600 hover:text-slate-900 font-bold hover:underline cursor-pointer flex items-center gap-1"
                                 >
                                   <Edit className="w-3 h-3" />
                                   <span>Edit {categoryName}</span>
@@ -18594,7 +18595,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     <div
                                       key={photo.id || pIdx}
                                       onClick={() => setGalleryLightbox({ isOpen: true, items: catPhotos, currentIndex: pIdx })}
-                                      className="snap-start w-[210px] sm:w-[240px] aspect-square flex-shrink-0 relative rounded-2xl overflow-hidden border border-slate-200/90 hover:border-orange-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group/imgcard cursor-pointer bg-slate-950 select-none"
+                                      className="snap-start w-[210px] sm:w-[240px] aspect-square flex-shrink-0 relative rounded-2xl overflow-hidden border border-slate-200/90 hover:border-slate-400/90 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group/imgcard cursor-pointer bg-slate-950 select-none"
                                     >
                                       {/* Background High-Res Image with Zoom on hover */}
                                       <img
@@ -18623,7 +18624,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         <h4 className="font-outfit font-bold text-white text-[11.5px] sm:text-xs line-clamp-2 leading-tight drop-shadow-sm">
                                           {photo.caption}
                                         </h4>
-                                        <span className="text-[9.5px] text-orange-300 font-medium opacity-0 group-hover/imgcard:opacity-100 transition-opacity duration-200 block pt-0.5">
+                                        <span className="text-[9.5px] text-slate-300 font-medium opacity-0 group-hover/imgcard:opacity-100 transition-opacity duration-200 block pt-0.5">
                                           Click to view full screen ↗
                                         </span>
                                       </div>
@@ -18679,7 +18680,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       <div
                                         key={video.id || vIdx}
                                         onClick={() => setGalleryLightbox({ isOpen: true, items: catVideos, currentIndex: vIdx })}
-                                        className="snap-start w-[170px] sm:w-[195px] h-[290px] sm:h-[330px] flex-shrink-0 relative rounded-2xl overflow-hidden border border-slate-800/80 hover:border-purple-500/80 shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 group/reelcard cursor-pointer bg-slate-950 select-none flex flex-col justify-between"
+                                        className="snap-start w-[170px] sm:w-[195px] h-[290px] sm:h-[330px] flex-shrink-0 relative rounded-2xl overflow-hidden border border-slate-800/80 hover:border-slate-600 shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 group/reelcard cursor-pointer bg-slate-950 select-none flex flex-col justify-between"
                                       >
                                         {/* Background Video Thumbnail */}
                                         <img
@@ -18693,34 +18694,34 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                                         {/* Top Meta Bar */}
                                         <div className="relative z-20 p-2.5 flex items-center justify-between gap-1">
-                                          <div className="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md text-white text-[10px] font-mono font-bold flex items-center gap-1 border border-white/10 shadow-xs">
-                                            <Film className="w-2.5 h-2.5 text-purple-400" />
+                                          <div className="px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-white text-[10px] font-mono font-bold flex items-center gap-1 border border-white/15 shadow-xs">
+                                            <Film className="w-2.5 h-2.5 text-slate-300" />
                                             <span>{video.duration || "00:45"}</span>
                                           </div>
 
-                                          <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[9px] font-black uppercase tracking-wider shadow-sm">
+                                          <span className="px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[9.5px] font-bold tracking-wide border border-white/20 shadow-xs">
                                             Reel
                                           </span>
                                         </div>
 
                                         {/* Center Pulsing Play Button */}
                                         <div className="relative z-20 flex items-center justify-center self-center my-auto">
-                                          <div className="w-12 h-12 rounded-full bg-white/25 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-lg group-hover/reelcard:scale-115 group-hover/reelcard:bg-purple-600 transition-all duration-300">
+                                          <div className="w-12 h-12 rounded-full bg-white/25 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-lg group-hover/reelcard:scale-110 group-hover/reelcard:bg-slate-900 transition-all duration-300">
                                             <Play className="w-5 h-5 fill-white translate-x-0.5" />
                                           </div>
                                         </div>
 
                                         {/* Bottom Overlay with Title & Author */}
                                         <div className="relative z-20 p-3 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent space-y-1">
-                                          <h4 className="font-outfit font-bold text-white text-[11px] sm:text-xs line-clamp-2 leading-tight drop-shadow-sm">
+                                          <h4 className="font-outfit font-bold text-white text-[11.5px] sm:text-xs line-clamp-2 leading-tight drop-shadow-sm">
                                             {video.title || video.caption}
                                           </h4>
                                           <div className="flex items-center justify-between pt-0.5">
-                                            <div className="flex items-center gap-1 text-[10px] text-purple-300 font-medium truncate">
+                                            <div className="flex items-center gap-1 text-[10px] text-slate-300 font-medium truncate">
                                               <User className="w-2.5 h-2.5 shrink-0" />
                                               <span className="truncate">{video.authorName || "Student Reel"}</span>
                                             </div>
-                                            <span className="text-[9.5px] text-pink-400 font-bold shrink-0 flex items-center gap-0.5">
+                                            <span className="text-[9.5px] text-sky-300 font-bold shrink-0 flex items-center gap-0.5">
                                               Watch ▷
                                             </span>
                                           </div>
@@ -32439,7 +32440,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* Top Navigation Bar */}
               <div className="flex items-center justify-between gap-4 z-10 shrink-0">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="px-3 py-1 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 text-white text-[11px] font-black uppercase tracking-wider shadow-lg">
+                  <span className="px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider border border-white/20 shadow-xs">
                     {currentItem.category || "Campus"}
                   </span>
                   {currentItem.tag && (
