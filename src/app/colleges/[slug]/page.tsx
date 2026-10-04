@@ -12605,11 +12605,11 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                       <div className="overflow-x-auto custom-scrollbar rounded-xl border border-slate-300 shadow-xs bg-white w-full">
                         <table className="w-full text-left border-collapse text-xs sm:text-[13.5px] min-w-max">
                           <thead>
-                            <tr className="bg-[#002f5e] text-white font-bold font-outfit text-xs sm:text-[13.5px]">
+                            <tr className="bg-[#eef4fc] text-slate-900 font-bold font-outfit text-xs sm:text-[13.5px]">
                               {cols.map((colName, cIdx) => (
                                 <th
                                   key={cIdx}
-                                  className={`py-3.5 px-4 sm:px-5 font-bold font-outfit text-white border-b-2 border-slate-300 ${
+                                  className={`py-3.5 px-4 sm:px-5 font-bold font-outfit text-slate-900 border-b-2 border-slate-300 ${
                                     cIdx < cols.length - 1 ? "border-r border-slate-300" : ""
                                   } ${cIdx === 0 ? "min-w-[200px] sm:min-w-[260px]" : "min-w-[180px] sm:min-w-[220px]"}`}
                                 >
@@ -12683,11 +12683,11 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                       <div className="overflow-x-auto custom-scrollbar rounded-xl border border-slate-300 shadow-xs bg-white w-full">
                         <table className="w-full text-left border-collapse text-xs sm:text-[13.5px] min-w-max">
                           <thead>
-                            <tr className="bg-[#002f5e] text-white font-bold font-outfit text-xs sm:text-[13.5px]">
+                            <tr className="bg-[#eef4fc] text-slate-900 font-bold font-outfit text-xs sm:text-[13.5px]">
                               {cols.map((colName, cIdx) => (
                                 <th
                                   key={cIdx}
-                                  className={`py-3.5 px-4 sm:px-5 font-bold font-outfit text-white border-b-2 border-slate-300 ${
+                                  className={`py-3.5 px-4 sm:px-5 font-bold font-outfit text-slate-900 border-b-2 border-slate-300 ${
                                     cIdx < cols.length - 1 ? "border-r border-slate-300" : ""
                                   } ${cIdx === 0 ? "min-w-[190px] sm:min-w-[220px]" : cIdx === 1 ? "min-w-[130px] sm:min-w-[150px]" : "min-w-[280px] sm:min-w-[360px]"}`}
                                 >
