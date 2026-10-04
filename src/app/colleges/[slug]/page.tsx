@@ -632,9 +632,315 @@ interface StudentMediaReviewsData {
   items: StudentMediaReviewItem[];
 }
 
+interface GalleryMediaItem {
+  id: string;
+  type: "image" | "video";
+  url: string;
+  title?: string;
+  caption: string;
+  category: string; // e.g. "Academic", "Campus & Hostels", "Events & Fest", "Sports & Life"
+  thumbnailUrl?: string;
+  duration?: string;
+  authorName?: string;
+  tag?: string;
+}
 
+interface CollegeGalleryData {
+  title?: string;
+  subtitle?: string;
+  categories?: string[];
+  items: GalleryMediaItem[];
+}
 
+const DEFAULT_COLLEGE_GALLERY_DATA: CollegeGalleryData = {
+  title: "IIT Delhi Campus Photo & Video Gallery",
+  subtitle: "Explore high-definition photographs, smart academic lecture theatres, 24/7 research laboratories, hostel rooms, and student reels.",
+  categories: ["Academic", "Campus & Hostels", "Events & Fest", "Sports & Life"],
+  items: [
+    // 1. ACADEMIC SECTION (Images & Video Reels)
+    {
+      id: "acad-img-1",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=85",
+      caption: "Central Air-Conditioned Digital Library (3 Lakh+ Resources & Silent Zones)",
+      category: "Academic",
+      tag: "Central Library",
+    },
+    {
+      id: "acad-img-2",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&auto=format&fit=crop&q=85",
+      caption: "Advanced Robotics & AI Research Studio with Autonomous Drones",
+      category: "Academic",
+      tag: "AI & Robotics Lab",
+    },
+    {
+      id: "acad-img-3",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&auto=format&fit=crop&q=85",
+      caption: "Multi-Tier Smart Lecture Theatre & Interactive Projection Amphitheatre",
+      category: "Academic",
+      tag: "Smart Classrooms",
+    },
+    {
+      id: "acad-img-4",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&auto=format&fit=crop&q=85",
+      caption: "High-Performance Supercomputing & Cloud Neural Network Hub",
+      category: "Academic",
+      tag: "Supercomputing",
+    },
+    {
+      id: "acad-img-5",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=1200&auto=format&fit=crop&q=85",
+      caption: "Semiconductor Cleanroom VLSI Design & Nanotech Prototyping Center",
+      category: "Academic",
+      tag: "VLSI Cleanroom",
+    },
+    {
+      id: "acad-img-6",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&auto=format&fit=crop&q=85",
+      caption: "Departmental Conference Auditorium & Research Paper Colloquium Pods",
+      category: "Academic",
+      tag: "Auditorium",
+    },
+    {
+      id: "acad-vid-1",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Inside India's Smartest Lecture Halls #academic #iitdelhi",
+      caption: "A 360-degree tour inside the newly upgraded digital lecture theatres.",
+      category: "Academic",
+      duration: "00:45",
+      authorName: "Karan Verma",
+      thumbnailUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&auto=format&fit=crop&q=80",
+      tag: "Lecture Hall Tour",
+    },
+    {
+      id: "acad-vid-2",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Exploring the 24/7 Supercomputer Research Lab #ai #coding",
+      caption: "Live computational deep learning demonstration on high-performance GPU clusters.",
+      category: "Academic",
+      duration: "01:10",
+      authorName: "Ananya Sen",
+      thumbnailUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&auto=format&fit=crop&q=80",
+      tag: "Supercomputing",
+    },
+    {
+      id: "acad-vid-3",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Central Library Silent Study Vlog & Digital Archives #studygram",
+      caption: "Late night peaceful study sessions in the central air-conditioned library.",
+      category: "Academic",
+      duration: "00:55",
+      authorName: "Rohit Mehta",
+      thumbnailUrl: "https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=80",
+      tag: "Library Vlog",
+    },
+    {
+      id: "acad-vid-4",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Hands-on Microelectronics VLSI Cleanroom Demo #engineering",
+      caption: "Precision fabrication processes demonstrated by postgraduate researchers.",
+      category: "Academic",
+      duration: "01:25",
+      authorName: "Pooja Singh",
+      thumbnailUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80",
+      tag: "Lab Reel",
+    },
 
+    // 2. CAMPUS & HOSTELS SECTION (Images & Video Reels)
+    {
+      id: "camp-img-1",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=85",
+      caption: "320-Acre Lush Green Campus Aerial Panorama & Main Academic Quad",
+      category: "Campus & Hostels",
+      tag: "Campus View",
+    },
+    {
+      id: "camp-img-2",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&auto=format&fit=crop&q=85",
+      caption: "Modern Air-Conditioned Single & Twin Occupancy Hostel Rooms",
+      category: "Campus & Hostels",
+      tag: "Hostel Living",
+    },
+    {
+      id: "camp-img-3",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=1200&auto=format&fit=crop&q=85",
+      caption: "Central Open-Air Amphitheatre & Sunset Courtyard Pavilion",
+      category: "Campus & Hostels",
+      tag: "Amphitheatre",
+    },
+    {
+      id: "camp-img-4",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&auto=format&fit=crop&q=85",
+      caption: "Student Activity Center (SAC) & Multi-Cuisine Night Food Court",
+      category: "Campus & Hostels",
+      tag: "Cafeteria & SAC",
+    },
+    {
+      id: "camp-vid-1",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Hostel Room Tour & Reality Check! Single vs Double #hostellife",
+      caption: "Detailed room layout, study desks, storage cabinets, and balcony overview.",
+      category: "Campus & Hostels",
+      duration: "01:15",
+      authorName: "Vikramaditya Rao",
+      thumbnailUrl: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600&auto=format&fit=crop&q=80",
+      tag: "Hostel Tour",
+    },
+    {
+      id: "camp-vid-2",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Night Canteen Vibes at 2 AM with Friends #campusdiaries",
+      caption: "Enjoying late-night Maggi, coffee, and lively chats in the student quad.",
+      category: "Campus & Hostels",
+      duration: "00:48",
+      authorName: "Shubham Jain",
+      thumbnailUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&auto=format&fit=crop&q=80",
+      tag: "Night Canteen",
+    },
+
+    // 3. EVENTS & FEST SECTION (Images & Video Reels)
+    {
+      id: "evt-img-1",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=85",
+      caption: "Rendezvous - North India's Largest Cultural Fest Star Night & EDM Arena",
+      category: "Events & Fest",
+      tag: "Cultural Fest",
+    },
+    {
+      id: "evt-img-2",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&auto=format&fit=crop&q=85",
+      caption: "Tryst Technical Festival - National Robowars Combat Arena",
+      category: "Events & Fest",
+      tag: "Tech Fest",
+    },
+    {
+      id: "evt-img-3",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1200&auto=format&fit=crop&q=85",
+      caption: "Annual Convocation Ceremony & Golden Jubilee Graduation Walk",
+      category: "Events & Fest",
+      tag: "Convocation",
+    },
+    {
+      id: "evt-vid-1",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Rendezvous Star Night EDM Arena Aftermovie #rendezvous #fest",
+      caption: "Electrifying festival vibes with over 50,000 students grooving together.",
+      category: "Events & Fest",
+      duration: "01:30",
+      authorName: "Fest Media Team",
+      thumbnailUrl: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=80",
+      tag: "Fest Aftermovie",
+    },
+    {
+      id: "evt-vid-2",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Robowars Arena Champion Bout Highlights | Tryst Techfest",
+      caption: "Heavyweight battle bots clashing in the electrified combat cage.",
+      category: "Events & Fest",
+      duration: "00:50",
+      authorName: "Robotics Society",
+      thumbnailUrl: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&auto=format&fit=crop&q=80",
+      tag: "Robowars",
+    },
+
+    // 4. SPORTS & LIFE SECTION (Images & Video Reels)
+    {
+      id: "spt-img-1",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&auto=format&fit=crop&q=85",
+      caption: "Floodlit International Standard Synthetic Football & Athletics Turf",
+      category: "Sports & Life",
+      tag: "Sports Complex",
+    },
+    {
+      id: "spt-img-2",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1200&auto=format&fit=crop&q=85",
+      caption: "Olympic-Standard Heated Swimming Pool & Diving Facility",
+      category: "Sports & Life",
+      tag: "Aquatics",
+    },
+    {
+      id: "spt-img-3",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&auto=format&fit=crop&q=85",
+      caption: "High-Tech Gymnasium, CrossFit Arena & Aerobic Studios",
+      category: "Sports & Life",
+      tag: "Fitness Center",
+    },
+    {
+      id: "spt-vid-1",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Inter-IIT Sports Meet Finals Thriller Match #sports #champions",
+      caption: "High-octane stadium moments cheering the college football team to victory.",
+      category: "Sports & Life",
+      duration: "01:05",
+      authorName: "Sports Council",
+      thumbnailUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&auto=format&fit=crop&q=80",
+      tag: "Sports Reel",
+    },
+  ],
+};
+
+const getCollegeGalleryData = (college?: Partial<CollegeDetail>): CollegeGalleryData => {
+  if (college?.galleryData && college.galleryData.items && college.galleryData.items.length > 0) {
+    return college.galleryData;
+  }
+  if (college?.gallery && college.gallery.length > 0) {
+    const legacyItems: GalleryMediaItem[] = college.gallery.map((g, idx) => ({
+      id: `gal-legacy-${idx}`,
+      type: "image",
+      url: g.url,
+      caption: g.caption || "Campus Photograph",
+      category: g.category || "Academic",
+      tag: g.category || "Photo",
+    }));
+    return {
+      title: `${(college.name || "College").split(" - ")[0]} Campus Photo & Video Gallery`,
+      subtitle: `Explore authentic photographs, lab setups, hostels, campus drone footage, and student reels.`,
+      categories: ["Academic", "Campus & Hostels", "Events & Fest", "Sports & Life"],
+      items: [
+        ...legacyItems,
+        ...DEFAULT_COLLEGE_GALLERY_DATA.items.filter((item) => !legacyItems.some((l) => l.url === item.url)),
+      ],
+    };
+  }
+  return DEFAULT_COLLEGE_GALLERY_DATA;
+};
+
+const getGalleryVideoEmbedUrl = (url: string): string => {
+  if (!url) return "";
+  const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
+  if (ytMatch && ytMatch[1]) {
+    return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0&modestbranding=1`;
+  }
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+  if (vimeoMatch && vimeoMatch[1]) {
+    return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`;
+  }
+  return url;
+};
 
 const DEFAULT_CAMPUS_FACILITIES_DATA: CampusFacilitiesArticleData = {
   title: "IIT Delhi Campus & Facilities 2026",
@@ -1647,6 +1953,7 @@ interface CollegeDetail {
   faqsArticle?: CollegeFaqsArticleData;
   compareFaqs?: FaqItem[];
   compareReviews?: DetailedReviewCard[];
+  galleryData?: CollegeGalleryData;
   shortName?: string;
 }
 
@@ -2583,6 +2890,7 @@ Spanning over 320 acres in the historic and posh area of Hauz Khas in South Delh
     { url: "/images/amity_real.jpg", caption: "High-Tech AI & Robotics Research Lab", category: "Labs" },
     { url: "/images/chandigarh_real.jpg", caption: "Student Hostels & Green Courtyards", category: "Hostel" },
   ],
+  galleryData: DEFAULT_COLLEGE_GALLERY_DATA,
   facultyList: [
     { name: "Prof. Rangan Banerjee", designation: "Director & Senior Professor", dept: "Energy Science and Engineering", qualification: "Ph.D. IIT Bombay", experience: "32+ Years" },
     { name: "Prof. Mausam", designation: "Head of School of AI (ScAI)", dept: "Computer Science & Artificial Intelligence", qualification: "Ph.D. University of Washington (USA)", experience: "18+ Years" },
@@ -2792,6 +3100,48 @@ export default function CollegeDetailPage() {
   }, []);
   const [loading, setLoading] = useState(false);
   const [activePhotoIdx, setActivePhotoIdx] = useState<number | null>(null);
+
+  // Gallery state
+  const [activeGalleryCategoryTab, setActiveGalleryCategoryTab] = useState<string>("All");
+  const [galleryModalCategoryTab, setGalleryModalCategoryTab] = useState<string>("Academic");
+  const [galleryModalMediaSubTab, setGalleryModalMediaSubTab] = useState<"images" | "videos">("images");
+  const [galleryLightbox, setGalleryLightbox] = useState<{
+    isOpen: boolean;
+    items: GalleryMediaItem[];
+    currentIndex: number;
+  } | null>(null);
+
+  const scrollGalleryRow = (elementId: string, direction: "left" | "right") => {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const scrollAmount = direction === "left" ? -340 : 340;
+    el.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
+
+  // Keyboard navigation for Fullscreen Lightbox (Esc, Left, Right)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!galleryLightbox?.isOpen) return;
+      if (e.key === "Escape") {
+        setGalleryLightbox(null);
+      } else if (e.key === "ArrowLeft") {
+        setGalleryLightbox((prev) => {
+          if (!prev) return null;
+          const nextIdx = (prev.currentIndex - 1 + prev.items.length) % prev.items.length;
+          return { ...prev, currentIndex: nextIdx };
+        });
+      } else if (e.key === "ArrowRight") {
+        setGalleryLightbox((prev) => {
+          if (!prev) return null;
+          const nextIdx = (prev.currentIndex + 1) % prev.items.length;
+          return { ...prev, currentIndex: nextIdx };
+        });
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [galleryLightbox]);
+
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(0);
   const [courseSearch, setCourseSearch] = useState("");
   const [isTocOpen, setIsTocOpen] = useState(true);
@@ -18047,7 +18397,352 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
             </div>
           )}
 
-          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && activeTab !== "admissions" && activeTab !== "rankings" && activeTab !== "reviews" && activeTab !== "compare" && (
+          {/* TAB: GALLERY (ACADEMIC FIRST, SQUARE PHOTO FRAMES & 9:16 REELS CAROUSELS) */}
+          {activeTab === "gallery" && (
+            <div className="space-y-6">
+              {(() => {
+                const galData = getCollegeGalleryData(collegeData);
+                const allItems = galData.items || [];
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+                
+                const availableCategories = galData.categories && galData.categories.length > 0
+                  ? galData.categories
+                  : ["Academic", "Campus & Hostels", "Events & Fest", "Sports & Life"];
+
+                const activeCategory = activeGalleryCategoryTab;
+                
+                const filteredCategories = activeCategory === "All"
+                  ? availableCategories
+                  : availableCategories.filter((c) => c.toLowerCase() === activeCategory.toLowerCase());
+
+                const totalPhotosCount = allItems.filter((i) => i.type === "image").length;
+                const totalVideosCount = allItems.filter((i) => i.type === "video").length;
+
+                return (
+                  <div className="space-y-6">
+                    {/* Top Gallery Header & Category Pill Bar */}
+                    <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                        <div className="flex items-start gap-3">
+                          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-600 via-indigo-600 to-pink-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-purple-500/20">
+                            <Camera className="w-5 h-5 stroke-[2.5]" />
+                          </div>
+                          <div>
+                            <h2 className="font-outfit font-black text-xl sm:text-2xl text-slate-900 tracking-tight flex items-center gap-2">
+                              <span>{galData.title || `${collegeShortName} Photo & Video Gallery`}</span>
+                            </h2>
+                            <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">
+                              {galData.subtitle || `Explore high-definition photos of academic labs, smart lecture theatres, hostels, sports complex, and student reels.`}
+                            </p>
+                          </div>
+                        </div>
+
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setGalleryModalCategoryTab("Academic");
+                              setGalleryModalMediaSubTab("images");
+                              openMiniModal("gallery");
+                            }}
+                            className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Gallery</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Filter Categories Pill Row + Counter Stats */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                          <button
+                            type="button"
+                            onClick={() => setActiveGalleryCategoryTab("All")}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                              activeCategory === "All"
+                                ? "bg-slate-900 text-white shadow-xs"
+                                : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/70"
+                            }`}
+                          >
+                            All ({allItems.length})
+                          </button>
+
+                          {availableCategories.map((cat, cIdx) => {
+                            const count = allItems.filter((i) => i.category.toLowerCase() === cat.toLowerCase()).length;
+                            const isSelected = activeCategory.toLowerCase() === cat.toLowerCase();
+
+                            return (
+                              <button
+                                key={cIdx}
+                                type="button"
+                                onClick={() => setActiveGalleryCategoryTab(cat)}
+                                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                                  isSelected
+                                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm ring-2 ring-purple-300/40"
+                                    : "bg-slate-100/80 text-slate-700 hover:bg-slate-200/70 hover:text-slate-900"
+                                }`}
+                              >
+                                <span>{cat === "Academic" ? "🎓" : cat.includes("Hostel") || cat.includes("Campus") ? "🏢" : cat.includes("Event") || cat.includes("Fest") ? "✨" : "🏅"}</span>
+                                <span>{cat}</span>
+                                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600 font-bold"}`}>
+                                  {count}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        <div className="flex items-center gap-3 text-xs text-slate-500 font-semibold shrink-0">
+                          <span className="flex items-center gap-1">
+                            <ImageIcon className="w-3.5 h-3.5 text-blue-500" />
+                            <span>{totalPhotosCount} Photos</span>
+                          </span>
+                          <span>•</span>
+                          <span className="flex items-center gap-1">
+                            <Film className="w-3.5 h-3.5 text-pink-500" />
+                            <span>{totalVideosCount} Reels</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* RENDER CATEGORY SECTIONS (ACADEMIC FIRST, THEN HOSTELS, EVENTS, SPORTS) */}
+                    <div className="space-y-7">
+                      {filteredCategories.map((categoryName, catIdx) => {
+                        const catItems = allItems.filter((i) => i.category.toLowerCase() === categoryName.toLowerCase());
+                        const catPhotos = catItems.filter((i) => i.type === "image");
+                        const catVideos = catItems.filter((i) => i.type === "video");
+
+                        if (catItems.length === 0) return null;
+
+                        const imgRowId = `gallery-img-carousel-${catIdx}`;
+                        const vidRowId = `gallery-vid-carousel-${catIdx}`;
+
+                        return (
+                          <div
+                            key={catIdx}
+                            className="bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] space-y-6 transition-all"
+                          >
+                            {/* Category Section Header */}
+                            <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-black text-base shadow-3xs">
+                                  {categoryName === "Academic" ? "🎓" : categoryName.includes("Hostel") || categoryName.includes("Campus") ? "🏢" : categoryName.includes("Event") || categoryName.includes("Fest") ? "✨" : "🏅"}
+                                </div>
+                                <div>
+                                  <h3 className="font-outfit font-black text-lg sm:text-xl text-slate-900 tracking-tight">
+                                    {categoryName}
+                                  </h3>
+                                  <p className="text-[11.5px] text-slate-500 font-medium">
+                                    {catPhotos.length} High-Res Photos • {catVideos.length} Video Reels & Shorts
+                                  </p>
+                                </div>
+                              </div>
+
+                              {isAdmin && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setGalleryModalCategoryTab(categoryName);
+                                    openMiniModal("gallery");
+                                  }}
+                                  className="text-xs text-purple-600 hover:text-purple-800 font-bold hover:underline cursor-pointer flex items-center gap-1"
+                                >
+                                  <Edit className="w-3 h-3" />
+                                  <span>Edit {categoryName}</span>
+                                </button>
+                              )}
+                            </div>
+
+                            {/* 1. SQUARE PHOTO FRAMES (SIDE-SCROLLING HORIZONTAL CAROUSEL) */}
+                            {catPhotos.length > 0 && (
+                              <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                                    <ImageIcon className="w-3.5 h-3.5 text-blue-500" />
+                                    <span>Campus Photographs ({catPhotos.length})</span>
+                                  </span>
+
+                                  {/* Left / Right Scroll Buttons */}
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => scrollGalleryRow(imgRowId, "left")}
+                                      className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center cursor-pointer transition-colors"
+                                      title="Scroll Left"
+                                    >
+                                      <ChevronLeft className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => scrollGalleryRow(imgRowId, "right")}
+                                      className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center cursor-pointer transition-colors"
+                                      title="Scroll Right"
+                                    >
+                                      <ChevronRight className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Scrollable Square Cards Carousel */}
+                                <div
+                                  id={imgRowId}
+                                  className="flex overflow-x-auto no-scrollbar gap-3.5 pb-2 scroll-smooth snap-x snap-mandatory"
+                                >
+                                  {catPhotos.map((photo, pIdx) => (
+                                    <div
+                                      key={photo.id || pIdx}
+                                      onClick={() => setGalleryLightbox({ isOpen: true, items: catPhotos, currentIndex: pIdx })}
+                                      className="snap-start w-[210px] sm:w-[240px] aspect-square flex-shrink-0 relative rounded-2xl overflow-hidden border border-slate-200/90 hover:border-orange-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group/imgcard cursor-pointer bg-slate-950 select-none"
+                                    >
+                                      {/* Background High-Res Image with Zoom on hover */}
+                                      <img
+                                        src={photo.url}
+                                        alt={photo.caption || photo.tag || "College Photo"}
+                                        className="w-full h-full object-cover object-center group-hover/imgcard:scale-110 transition-transform duration-700 ease-out"
+                                        onError={(e) => {
+                                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&auto=format&fit=crop&q=80";
+                                        }}
+                                      />
+
+                                      {/* Top Left Tag Badge */}
+                                      {photo.tag && (
+                                        <div className="absolute top-2.5 left-2.5 z-20 px-2.5 py-1 rounded-lg bg-black/60 hover:bg-black/80 backdrop-blur-md text-white text-[10px] font-bold tracking-wide border border-white/20 shadow-sm truncate max-w-[75%]">
+                                          {photo.tag}
+                                        </div>
+                                      )}
+
+                                      {/* Top Right Zoom Eye Icon Button */}
+                                      <div className="absolute top-2.5 right-2.5 z-20 w-7 h-7 rounded-full bg-black/60 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover/imgcard:opacity-100 transition-opacity duration-300 shadow-md">
+                                        <Eye className="w-3.5 h-3.5" />
+                                      </div>
+
+                                      {/* Bottom Dark Gradient Sheen with Caption */}
+                                      <div className="absolute inset-x-0 bottom-0 z-20 p-3 bg-gradient-to-t from-slate-950 via-slate-950/75 to-transparent space-y-0.5">
+                                        <h4 className="font-outfit font-bold text-white text-[11.5px] sm:text-xs line-clamp-2 leading-tight drop-shadow-sm">
+                                          {photo.caption}
+                                        </h4>
+                                        <span className="text-[9.5px] text-orange-300 font-medium opacity-0 group-hover/imgcard:opacity-100 transition-opacity duration-200 block pt-0.5">
+                                          Click to view full screen ↗
+                                        </span>
+                                      </div>
+
+                                      {/* Shimmer Sheen Reflection Effect */}
+                                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover/imgcard:translate-x-full transition-transform duration-1000 pointer-events-none" />
+                                    </div>
+                                  ))}
+                                </div>
+                                <ScrollProgressIndicator targetId={imgRowId} />
+                              </div>
+                            )}
+
+                            {/* 2. VERTICAL VIDEO REELS / SHORTS (9:16 REELS CAROUSEL) */}
+                            {catVideos.length > 0 && (
+                              <div className="space-y-3 pt-2 border-t border-slate-100">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                                    <Film className="w-3.5 h-3.5 text-pink-500" />
+                                    <span>Video Reels & Campus Shorts ({catVideos.length})</span>
+                                  </span>
+
+                                  {/* Left / Right Scroll Buttons */}
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => scrollGalleryRow(vidRowId, "left")}
+                                      className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center cursor-pointer transition-colors"
+                                      title="Scroll Left"
+                                    >
+                                      <ChevronLeft className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => scrollGalleryRow(vidRowId, "right")}
+                                      className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center cursor-pointer transition-colors"
+                                      title="Scroll Right"
+                                    >
+                                      <ChevronRight className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Scrollable Vertical Reel Cards Carousel */}
+                                <div
+                                  id={vidRowId}
+                                  className="flex overflow-x-auto no-scrollbar gap-3.5 pb-2 scroll-smooth snap-x snap-mandatory"
+                                >
+                                  {catVideos.map((video, vIdx) => {
+                                    const thumb = video.thumbnailUrl || (getYouTubeVideoId(video.url) ? `https://img.youtube.com/vi/${getYouTubeVideoId(video.url)}/hqdefault.jpg` : "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80");
+
+                                    return (
+                                      <div
+                                        key={video.id || vIdx}
+                                        onClick={() => setGalleryLightbox({ isOpen: true, items: catVideos, currentIndex: vIdx })}
+                                        className="snap-start w-[170px] sm:w-[195px] h-[290px] sm:h-[330px] flex-shrink-0 relative rounded-2xl overflow-hidden border border-slate-800/80 hover:border-purple-500/80 shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 group/reelcard cursor-pointer bg-slate-950 select-none flex flex-col justify-between"
+                                      >
+                                        {/* Background Video Thumbnail */}
+                                        <img
+                                          src={thumb}
+                                          alt={video.title || video.caption}
+                                          className="absolute inset-0 w-full h-full object-cover object-center group-hover/reelcard:scale-105 transition-transform duration-700 opacity-80 group-hover/reelcard:opacity-95"
+                                          onError={(e) => {
+                                            (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80";
+                                          }}
+                                        />
+
+                                        {/* Top Meta Bar */}
+                                        <div className="relative z-20 p-2.5 flex items-center justify-between gap-1">
+                                          <div className="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md text-white text-[10px] font-mono font-bold flex items-center gap-1 border border-white/10 shadow-xs">
+                                            <Film className="w-2.5 h-2.5 text-purple-400" />
+                                            <span>{video.duration || "00:45"}</span>
+                                          </div>
+
+                                          <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[9px] font-black uppercase tracking-wider shadow-sm">
+                                            Reel
+                                          </span>
+                                        </div>
+
+                                        {/* Center Pulsing Play Button */}
+                                        <div className="relative z-20 flex items-center justify-center self-center my-auto">
+                                          <div className="w-12 h-12 rounded-full bg-white/25 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-lg group-hover/reelcard:scale-115 group-hover/reelcard:bg-purple-600 transition-all duration-300">
+                                            <Play className="w-5 h-5 fill-white translate-x-0.5" />
+                                          </div>
+                                        </div>
+
+                                        {/* Bottom Overlay with Title & Author */}
+                                        <div className="relative z-20 p-3 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent space-y-1">
+                                          <h4 className="font-outfit font-bold text-white text-[11px] sm:text-xs line-clamp-2 leading-tight drop-shadow-sm">
+                                            {video.title || video.caption}
+                                          </h4>
+                                          <div className="flex items-center justify-between pt-0.5">
+                                            <div className="flex items-center gap-1 text-[10px] text-purple-300 font-medium truncate">
+                                              <User className="w-2.5 h-2.5 shrink-0" />
+                                              <span className="truncate">{video.authorName || "Student Reel"}</span>
+                                            </div>
+                                            <span className="text-[9.5px] text-pink-400 font-bold shrink-0 flex items-center gap-0.5">
+                                              Watch ▷
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                                <ScrollProgressIndicator targetId={vidRowId} />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && activeTab !== "admissions" && activeTab !== "rankings" && activeTab !== "reviews" && activeTab !== "compare" && activeTab !== "gallery" && (
             <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-500">
                 <Sparkles className="w-6 h-6" />
@@ -30262,6 +30957,502 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   </div>
                 )}
 
+                {/* MODAL: GALLERY (IMAGES & VIDEO REELS MANAGER) */}
+                {activeMiniModal === "gallery" && (
+                  <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+                    {(() => {
+                      const curGal = tempData.galleryData || getCollegeGalleryData(tempData);
+                      const allItems = curGal.items || [];
+                      const categories = curGal.categories && curGal.categories.length > 0
+                        ? curGal.categories
+                        : ["Academic", "Campus & Hostels", "Events & Fest", "Sports & Life"];
+
+                      const selectedCategory = galleryModalCategoryTab || categories[0] || "Academic";
+                      const currentCategoryItems = allItems.filter((i) => i.category.toLowerCase() === selectedCategory.toLowerCase());
+                      const currentPhotos = currentCategoryItems.filter((i) => i.type === "image");
+                      const currentVideos = currentCategoryItems.filter((i) => i.type === "video");
+
+                      const updateGalleryItems = (newItems: GalleryMediaItem[]) => {
+                        const legacyPhotos: GalleryPhoto[] = newItems
+                          .filter((i) => i.type === "image")
+                          .map((img) => ({ url: img.url, caption: img.caption, category: img.category }));
+
+                        setTempData({
+                          ...tempData,
+                          gallery: legacyPhotos,
+                          galleryData: {
+                            ...curGal,
+                            items: newItems,
+                          },
+                        });
+                      };
+
+                      return (
+                        <div className="space-y-5">
+                          {/* Top Section Title & Subtitle */}
+                          <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                            <div>
+                              <label className="text-[10.5px] font-bold text-slate-700 block mb-1">
+                                Gallery Section Title
+                              </label>
+                              <input
+                                type="text"
+                                value={curGal.title || ""}
+                                onChange={(e) => {
+                                  setTempData({
+                                    ...tempData,
+                                    galleryData: { ...curGal, title: e.target.value },
+                                  });
+                                }}
+                                placeholder="e.g. IIT Delhi Campus Photo & Video Gallery"
+                                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10.5px] font-bold text-slate-700 block mb-1">
+                                Gallery Description Subtitle
+                              </label>
+                              <input
+                                type="text"
+                                value={curGal.subtitle || ""}
+                                onChange={(e) => {
+                                  setTempData({
+                                    ...tempData,
+                                    galleryData: { ...curGal, subtitle: e.target.value },
+                                  });
+                                }}
+                                placeholder="Explore high-definition photos of academic labs, lecture halls, and student reels..."
+                                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900"
+                              />
+                            </div>
+                          </div>
+
+                          {/* 1. Category Switcher Bar with Add Category Button */}
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <label className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                                1. Select Category to Manage:
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newCatName = prompt("Enter new Category Name (e.g. Student Clubs & Fests):");
+                                  if (newCatName && newCatName.trim()) {
+                                    const trimmed = newCatName.trim();
+                                    if (!categories.includes(trimmed)) {
+                                      const updatedCats = [...categories, trimmed];
+                                      setTempData({
+                                        ...tempData,
+                                        galleryData: { ...curGal, categories: updatedCats },
+                                      });
+                                      setGalleryModalCategoryTab(trimmed);
+                                    }
+                                  }
+                                }}
+                                className="text-xs text-purple-600 font-bold hover:underline cursor-pointer flex items-center gap-1"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add New Category</span>
+                              </button>
+                            </div>
+
+                            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                              {categories.map((cat, cIdx) => {
+                                const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+                                const catCount = allItems.filter((i) => i.category.toLowerCase() === cat.toLowerCase()).length;
+
+                                return (
+                                  <button
+                                    key={cIdx}
+                                    type="button"
+                                    onClick={() => setGalleryModalCategoryTab(cat)}
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                                      isSelected
+                                        ? "bg-purple-600 text-white shadow-sm ring-2 ring-purple-300"
+                                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                    }`}
+                                  >
+                                    <span>{cat === "Academic" ? "🎓" : cat.includes("Hostel") || cat.includes("Campus") ? "🏢" : cat.includes("Event") || cat.includes("Fest") ? "✨" : "🏅"}</span>
+                                    <span>{cat}</span>
+                                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"}`}>
+                                      {catCount}
+                                    </span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* 2. Media Type Switcher Tabs (Photos vs Video Reels) */}
+                          <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+                            <button
+                              type="button"
+                              onClick={() => setGalleryModalMediaSubTab("images")}
+                              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                                galleryModalMediaSubTab === "images"
+                                  ? "bg-blue-600 text-white shadow-xs"
+                                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                              }`}
+                            >
+                              <ImageIcon className="w-3.5 h-3.5" />
+                              <span>🖼️ Square Photos ({currentPhotos.length})</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setGalleryModalMediaSubTab("videos")}
+                              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                                galleryModalMediaSubTab === "videos"
+                                  ? "bg-pink-600 text-white shadow-xs"
+                                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                              }`}
+                            >
+                              <Film className="w-3.5 h-3.5" />
+                              <span>🎬 Video Reels & Shorts ({currentVideos.length})</span>
+                            </button>
+                          </div>
+
+                          {/* SUBTAB 1: PHOTOS MANAGER */}
+                          {galleryModalMediaSubTab === "images" && (
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                                  Photos in "{selectedCategory}" ({currentPhotos.length})
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newPhoto: GalleryMediaItem = {
+                                      id: `photo-${Date.now()}`,
+                                      type: "image",
+                                      url: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=85",
+                                      caption: `New ${selectedCategory} Photograph`,
+                                      category: selectedCategory,
+                                      tag: selectedCategory,
+                                    };
+                                    updateGalleryItems([...allItems, newPhoto]);
+                                  }}
+                                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>+ Add Photo Box</span>
+                                </button>
+                              </div>
+
+                              <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+                                {currentPhotos.map((photo, pIdx) => {
+                                  const globalIdx = allItems.findIndex((i) => i.id === photo.id);
+
+                                  return (
+                                    <div
+                                      key={photo.id || pIdx}
+                                      className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 relative shadow-2xs"
+                                    >
+                                      <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-black flex items-center justify-center">
+                                            {pIdx + 1}
+                                          </span>
+                                          <span className="text-xs font-bold text-slate-900">
+                                            Photo #{pIdx + 1} ({photo.tag || selectedCategory})
+                                          </span>
+                                        </div>
+
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const updated = allItems.filter((i) => i.id !== photo.id);
+                                            updateGalleryItems(updated);
+                                          }}
+                                          className="p-1 text-red-500 hover:bg-red-50 rounded-lg text-xs flex items-center gap-1 cursor-pointer transition-colors"
+                                          title="Delete Photo"
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                          <span>Delete</span>
+                                        </button>
+                                      </div>
+
+                                      {/* Photo Preview & URL input */}
+                                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                                        {/* Square Thumbnail Preview */}
+                                        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-300 bg-black flex items-center justify-center relative shadow-xs">
+                                          <img
+                                            src={photo.url}
+                                            alt={photo.caption}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80";
+                                            }}
+                                          />
+                                        </div>
+
+                                        <div className="flex-1 w-full space-y-1.5">
+                                          <label className="text-[10px] font-bold text-slate-600 block">
+                                            Image URL or Upload from Device:
+                                          </label>
+                                          <div className="flex items-center gap-2">
+                                            <input
+                                              type="text"
+                                              value={photo.url}
+                                              onChange={(e) => {
+                                                const updated = [...allItems];
+                                                if (globalIdx !== -1) {
+                                                  updated[globalIdx] = { ...updated[globalIdx], url: e.target.value };
+                                                  updateGalleryItems(updated);
+                                                }
+                                              }}
+                                              placeholder="https://images.unsplash.com/... or /images/..."
+                                              className="flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono"
+                                            />
+
+                                            <label className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs transition-all active:scale-95">
+                                              <Upload className="w-3.5 h-3.5" />
+                                              <span>Upload</span>
+                                              <input
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={(e) => {
+                                                  const file = e.target.files?.[0];
+                                                  if (file) {
+                                                    const reader = new FileReader();
+                                                    reader.onload = (ev) => {
+                                                      const res = ev.target?.result as string;
+                                                      if (res && globalIdx !== -1) {
+                                                        const updated = [...allItems];
+                                                        updated[globalIdx] = { ...updated[globalIdx], url: res };
+                                                        updateGalleryItems(updated);
+                                                      }
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                  }
+                                                }}
+                                              />
+                                            </label>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      {/* Caption & Tag */}
+                                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                        <div className="sm:col-span-2">
+                                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                                            Photo Caption / Title
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={photo.caption}
+                                            onChange={(e) => {
+                                              const updated = [...allItems];
+                                              if (globalIdx !== -1) {
+                                                updated[globalIdx] = { ...updated[globalIdx], caption: e.target.value };
+                                                updateGalleryItems(updated);
+                                              }
+                                            }}
+                                            placeholder="e.g. Central Air-Conditioned Digital Library"
+                                            className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-900"
+                                          />
+                                        </div>
+
+                                        <div>
+                                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                                            Top Corner Tag Badge
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={photo.tag || ""}
+                                            onChange={(e) => {
+                                              const updated = [...allItems];
+                                              if (globalIdx !== -1) {
+                                                updated[globalIdx] = { ...updated[globalIdx], tag: e.target.value };
+                                                updateGalleryItems(updated);
+                                              }
+                                            }}
+                                            placeholder="e.g. Central Library"
+                                            className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-blue-700"
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* SUBTAB 2: VIDEO REELS MANAGER */}
+                          {galleryModalMediaSubTab === "videos" && (
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                                  Video Reels & Shorts in "{selectedCategory}" ({currentVideos.length})
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newVideo: GalleryMediaItem = {
+                                      id: `video-${Date.now()}`,
+                                      type: "video",
+                                      url: "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+                                      title: `New ${selectedCategory} Reel`,
+                                      caption: `Short video demonstration of ${selectedCategory}`,
+                                      category: selectedCategory,
+                                      duration: "00:45",
+                                      authorName: "Student Creator",
+                                      tag: "Reel",
+                                    };
+                                    updateGalleryItems([...allItems, newVideo]);
+                                  }}
+                                  className="px-3 py-1.5 bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>+ Add Video / Reel Box</span>
+                                </button>
+                              </div>
+
+                              <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+                                {currentVideos.map((video, vIdx) => {
+                                  const globalIdx = allItems.findIndex((i) => i.id === video.id);
+                                  const thumb = video.thumbnailUrl || (getYouTubeVideoId(video.url) ? `https://img.youtube.com/vi/${getYouTubeVideoId(video.url)}/hqdefault.jpg` : "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80");
+
+                                  return (
+                                    <div
+                                      key={video.id || vIdx}
+                                      className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 relative shadow-2xs"
+                                    >
+                                      <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="w-5 h-5 rounded-full bg-pink-100 text-pink-800 text-[10px] font-black flex items-center justify-center">
+                                            {vIdx + 1}
+                                          </span>
+                                          <span className="text-xs font-bold text-slate-900">
+                                            Video Reel #{vIdx + 1} ({video.duration || "00:45"})
+                                          </span>
+                                        </div>
+
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const updated = allItems.filter((i) => i.id !== video.id);
+                                            updateGalleryItems(updated);
+                                          }}
+                                          className="p-1 text-red-500 hover:bg-red-50 rounded-lg text-xs flex items-center gap-1 cursor-pointer transition-colors"
+                                          title="Delete Video"
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                          <span>Delete</span>
+                                        </button>
+                                      </div>
+
+                                      {/* Video URL & Thumbnail Preview */}
+                                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                                        <div className="w-14 h-20 rounded-xl overflow-hidden shrink-0 border border-slate-300 bg-black flex items-center justify-center relative shadow-xs">
+                                          <img
+                                            src={thumb}
+                                            alt={video.title}
+                                            className="w-full h-full object-cover"
+                                          />
+                                          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                                            <Play className="w-4 h-4 fill-white text-white" />
+                                          </div>
+                                        </div>
+
+                                        <div className="flex-1 w-full space-y-2">
+                                          <div>
+                                            <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                                              Video URL (YouTube standard, Shorts, Reels, MP4 link):
+                                            </label>
+                                            <input
+                                              type="text"
+                                              value={video.url}
+                                              onChange={(e) => {
+                                                const updated = [...allItems];
+                                                if (globalIdx !== -1) {
+                                                  updated[globalIdx] = { ...updated[globalIdx], url: e.target.value };
+                                                  updateGalleryItems(updated);
+                                                }
+                                              }}
+                                              placeholder="https://youtube.com/shorts/... or https://...mp4"
+                                              className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono"
+                                            />
+                                          </div>
+
+                                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                            <div className="sm:col-span-2">
+                                              <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                                                Video Reel Title
+                                              </label>
+                                              <input
+                                                type="text"
+                                                value={video.title || video.caption}
+                                                onChange={(e) => {
+                                                  const updated = [...allItems];
+                                                  if (globalIdx !== -1) {
+                                                    updated[globalIdx] = {
+                                                      ...updated[globalIdx],
+                                                      title: e.target.value,
+                                                      caption: e.target.value,
+                                                    };
+                                                    updateGalleryItems(updated);
+                                                  }
+                                                }}
+                                                placeholder="e.g. Inside India's Smartest Lecture Halls"
+                                                className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                                              />
+                                            </div>
+
+                                            <div>
+                                              <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                                                Duration (e.g. 00:45)
+                                              </label>
+                                              <input
+                                                type="text"
+                                                value={video.duration || "00:45"}
+                                                onChange={(e) => {
+                                                  const updated = [...allItems];
+                                                  if (globalIdx !== -1) {
+                                                    updated[globalIdx] = { ...updated[globalIdx], duration: e.target.value };
+                                                    updateGalleryItems(updated);
+                                                  }
+                                                }}
+                                                placeholder="00:45"
+                                                className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold"
+                                              />
+                                            </div>
+                                          </div>
+
+                                          <div>
+                                            <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                                              Author / Student Name
+                                            </label>
+                                            <input
+                                              type="text"
+                                              value={video.authorName || ""}
+                                              onChange={(e) => {
+                                                const updated = [...allItems];
+                                                if (globalIdx !== -1) {
+                                                  updated[globalIdx] = { ...updated[globalIdx], authorName: e.target.value };
+                                                  updateGalleryItems(updated);
+                                                }
+                                              }}
+                                              placeholder="e.g. Karan Verma (Student POV)"
+                                              className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-medium"
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
                 {/* MODAL FOOTER */}
                 <div className="pt-3 flex justify-end gap-2 border-t border-slate-100">
                   <button
@@ -31227,6 +32418,171 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
             </motion.div>
           </div>
         )}
+      </AnimatePresence>
+
+      {/* FULL-SCREEN GALLERY LIGHTBOX & REELS PLAYER */}
+      <AnimatePresence>
+        {galleryLightbox && galleryLightbox.isOpen && galleryLightbox.items.length > 0 && (() => {
+          const currentItem = galleryLightbox.items[galleryLightbox.currentIndex] || galleryLightbox.items[0];
+          const totalItems = galleryLightbox.items.length;
+          const currentIdx = galleryLightbox.currentIndex;
+
+          return (
+            <div
+              className="fixed inset-0 z-[9999] flex flex-col justify-between bg-black/95 backdrop-blur-md p-3 sm:p-6 select-none overflow-hidden"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setGalleryLightbox(null);
+                }
+              }}
+            >
+              {/* Top Navigation Bar */}
+              <div className="flex items-center justify-between gap-4 z-10 shrink-0">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="px-3 py-1 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 text-white text-[11px] font-black uppercase tracking-wider shadow-lg">
+                    {currentItem.category || "Campus"}
+                  </span>
+                  {currentItem.tag && (
+                    <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-white/15 text-white/90 text-[10px] font-bold">
+                      #{currentItem.tag}
+                    </span>
+                  )}
+                  <span className="text-white/60 text-xs font-semibold">
+                    {currentIdx + 1} / {totalItems}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        navigator.clipboard?.writeText(window.location.href);
+                      }
+                    }}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
+                    title="Share Link"
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGalleryLightbox(null)}
+                    className="px-3.5 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-black transition-colors cursor-pointer flex items-center gap-1.5 border border-white/20"
+                  >
+                    <X className="w-4 h-4" />
+                    <span className="hidden sm:inline">ESC</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Main Stage with Side Arrows */}
+              <div className="flex-1 flex items-center justify-between relative min-h-0 py-3 sm:py-6 gap-2">
+                {/* Prev Button */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (currentIdx > 0) {
+                      setGalleryLightbox((prev) => prev ? { ...prev, currentIndex: prev.currentIndex - 1 } : null);
+                    }
+                  }}
+                  disabled={currentIdx === 0}
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/15 hover:bg-white/25 disabled:opacity-20 disabled:pointer-events-none text-white flex items-center justify-center transition-all cursor-pointer z-10 shrink-0 backdrop-blur-sm border border-white/15 shadow-xl active:scale-95"
+                  title="Previous (Left Arrow)"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+
+                {/* Media Content Display */}
+                <div
+                  className="flex-1 flex flex-col items-center justify-center max-h-full overflow-hidden px-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <motion.div
+                    key={currentItem.id || currentIdx}
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex flex-col items-center justify-center max-h-full max-w-full"
+                  >
+                    {currentItem.type === "image" ? (
+                      <img
+                        src={currentItem.url}
+                        alt={currentItem.caption || "Campus Gallery"}
+                        className="max-h-[68vh] sm:max-h-[76vh] max-w-full object-contain rounded-2xl shadow-2xl border border-white/15 ring-1 ring-black/40"
+                      />
+                    ) : (
+                      <div className="w-full max-w-xs sm:max-w-sm md:max-w-md aspect-[9/16] max-h-[76vh] rounded-2xl overflow-hidden shadow-2xl border border-white/20 bg-black flex items-center justify-center ring-1 ring-white/10">
+                        {currentItem.url.includes("youtube.com") ||
+                        currentItem.url.includes("youtu.be") ||
+                        currentItem.url.includes("vimeo.com") ? (
+                          <iframe
+                            src={getGalleryVideoEmbedUrl(currentItem.url)}
+                            title={currentItem.title || "College Reel"}
+                            className="w-full h-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        ) : (
+                          <video
+                            src={currentItem.url}
+                            controls
+                            autoPlay
+                            playsInline
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                </div>
+
+                {/* Next Button */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (currentIdx < totalItems - 1) {
+                      setGalleryLightbox((prev) => prev ? { ...prev, currentIndex: prev.currentIndex + 1 } : null);
+                    }
+                  }}
+                  disabled={currentIdx === totalItems - 1}
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/15 hover:bg-white/25 disabled:opacity-20 disabled:pointer-events-none text-white flex items-center justify-center transition-all cursor-pointer z-10 shrink-0 backdrop-blur-sm border border-white/15 shadow-xl active:scale-95"
+                  title="Next (Right Arrow)"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Bottom Caption & Filmstrip Bar */}
+              <div className="flex flex-col items-center gap-2 z-10 shrink-0 max-w-4xl mx-auto w-full text-center px-4">
+                {currentItem.title && (
+                  <h4 className="text-sm sm:text-base font-bold text-white tracking-wide">
+                    {currentItem.title}
+                  </h4>
+                )}
+                {currentItem.caption && (
+                  <p className="text-xs sm:text-sm text-slate-300 font-medium line-clamp-2 max-w-2xl">
+                    {currentItem.caption}
+                  </p>
+                )}
+                <div className="flex items-center gap-3 text-[11px] text-slate-400 font-medium pt-1">
+                  {currentItem.authorName && (
+                    <span>Captured by: <strong className="text-white">{currentItem.authorName}</strong></span>
+                  )}
+                  {currentItem.duration && (
+                    <span className="px-2 py-0.5 rounded-md bg-white/15 text-white font-bold">
+                      ⏱️ {currentItem.duration}
+                    </span>
+                  )}
+                  <span className="hidden sm:inline text-white/40">Use ⬅️ / ➡️ keys to navigate</span>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </AnimatePresence>
     </div>
   );
