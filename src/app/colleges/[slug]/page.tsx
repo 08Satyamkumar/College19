@@ -2948,7 +2948,7 @@ export default function CollegeDetailPage() {
     if (college.cutoffComparison && college.cutoffComparison.rows && college.cutoffComparison.rows.length > 0) {
       return college.cutoffComparison;
     }
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
     const exam = college.stream === "Medical" ? "NEET UG" : college.type.includes("Private") ? "Entrance Exam / JEE Main" : "JEE Advanced";
     const round = "Round 5";
 
@@ -3030,7 +3030,7 @@ export default function CollegeDetailPage() {
   };
 
   const getCollegeCutoffArticle = (college: CollegeDetail): CutoffArticleData => {
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
     const topBranch = college.cutoffs?.[0]?.branch || "Computer Science & Engineering (CSE)";
     const closeRank = college.cutoffs?.[0]?.closeRank ? String(college.cutoffs[0].closeRank) : "128";
     const round = college.cutoffs?.[0]?.round || "Round 5";
@@ -3080,7 +3080,7 @@ export default function CollegeDetailPage() {
   };
 
   const getCollegeHighlightsArticle = (college: CollegeDetail): HighlightsArticleData => {
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
     const defaultFaqs: FaqItem[] = [
       {
         question: `What was the highest package offered during ${shortName} placements?`,
@@ -3139,7 +3139,7 @@ export default function CollegeDetailPage() {
   };
 
   const getCollegeCoursesFeesArticle = (college: CollegeDetail): CoursesFeesArticleData => {
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
     const abbr = (college as any).shortName || shortName.replace(/[^A-Z]/g, '') || "IITD";
 
     const defaultCoursesFaqs: FaqItem[] = [
@@ -3432,7 +3432,7 @@ export default function CollegeDetailPage() {
   };
 
   const getCollegePlacementsArticle = (college: CollegeDetail): PlacementsArticleData => {
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
     const defaultSubsections: PlacementSubSection[] = [
       {
@@ -3710,7 +3710,7 @@ export default function CollegeDetailPage() {
   };
 
   const getCollegeAdmissionArticle = (college: CollegeDetail): AdmissionArticleData => {
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
     const officialWebsite = shortName.toLowerCase().includes("iit") && shortName.toLowerCase().includes("delhi")
       ? "iitd.ac.in"
       : `${shortName.toLowerCase().replace(/[^a-z0-9]/g, "")}.ac.in`;
@@ -4138,7 +4138,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
   };
 
   const getCollegeRankingsArticle = (college: CollegeDetail): RankingsArticleData => {
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
     const fullName = college.fullName || college.name;
 
     const defaultInternationalRows: RankingTableRow[] = [
@@ -4258,7 +4258,7 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
 
     
 const getCollegeFaqsArticle = (college: CollegeDetail): CollegeFaqsArticleData => {
-  const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+  const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
   const defaultList = DEFAULT_COLLEGE_FAQS;
   const list = (college.faqsArticle?.faqs && college.faqsArticle.faqs.length > 0)
     ? college.faqsArticle.faqs
@@ -4272,7 +4272,7 @@ const getCollegeFaqsArticle = (college: CollegeDetail): CollegeFaqsArticleData =
 };
 
 const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
     const fullName = college.fullName || college.name || "Institute";
     if (college.alumniArticle && college.alumniArticle.alumniList && college.alumniArticle.alumniList.length > 0) {
       return {
@@ -4289,7 +4289,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
   };
 
   const getCollegeFacultyData = (college: CollegeDetail): CollegeFacultySectionData => {
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
     const abbr = (college as any).shortName || shortName.replace(/[^A-Z]/g, '') || "IITD";
     if (college.facultyDetails && college.facultyDetails.members && college.facultyDetails.members.length > 0) {
       return {
@@ -4498,7 +4498,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
         tabId: "info",
       }));
     }
-    const shortName = college.name.split(" - ")[0].split("(")[0].trim() || "College";
+    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
     return [
       { label: `${shortName} Highlights 2026`, targetId: "highlights-section", tabId: "info" },
       { label: `${shortName} Cutoff 2026`, targetId: "cutoffs-section", tabId: "info" },
@@ -4613,10 +4613,10 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
     }, 3000);
   };
 
-  const filteredCourses = collegeData.courses.filter(
+  const filteredCourses = (collegeData?.courses || []).filter(
     (c) =>
-      c.name.toLowerCase().includes(courseSearch.toLowerCase()) ||
-      c.eligibility.toLowerCase().includes(courseSearch.toLowerCase())
+      (c?.name || "").toLowerCase().includes((courseSearch || "").toLowerCase()) ||
+      (c?.eligibility || "").toLowerCase().includes((courseSearch || "").toLowerCase())
   );
 
   if (loading) {
@@ -4956,7 +4956,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                 const tocList = getCollegeTocList(collegeData);
                 const visibleList = isTocExpanded ? tocList : tocList.slice(0, 5);
                 const remainingCount = Math.max(0, tocList.length - 5);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
                   <div className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300">
@@ -5054,7 +5054,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 2. HIGHLIGHTS 2026 CARD (EXACT USER REFERENCE TEMPLATE) */}
               {(() => {
                 const hlData = getCollegeHighlightsArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
                 const bullets = hlData.bullets || [];
                 const firstBullet = bullets[0];
 
@@ -5217,9 +5217,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(hlData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openHighlightFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -5251,7 +5251,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                               <div className="pt-2 pb-3 space-y-3 pl-0.5 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
                                                 {/* Multi-paragraph answer */}
                                                 <div className="space-y-2">
-                                                  {formattedA.split("\n\n").map((para, pIdx) => (
+                                                  {(formattedA || "").split("\n\n").map((para, pIdx) => (
                                                     <p key={pIdx} className="leading-relaxed">
                                                       {para}
                                                     </p>
@@ -5321,7 +5321,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 3. CUTOFF 2026 CARD (STEP 2 IN MASTER TEMPLATE) */}
               {(() => {
                 const cutData = getCollegeCutoffArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
                 const paragraphs = cutData.paragraphs || [];
                 const firstTwoParas = paragraphs.slice(0, 2);
                 const thirdPara = paragraphs[2];
@@ -5825,9 +5825,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(cutData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openCutoffFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -5859,7 +5859,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                               <div className="pt-2 pb-3 space-y-3 pl-0.5 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
                                                 {/* Multi-paragraph answer text */}
                                                 <div className="space-y-2">
-                                                  {formattedA.split("\n\n").map((para, pIdx) => (
+                                                  {(formattedA || "").split("\n\n").map((para, pIdx) => (
                                                     <p key={pIdx} className="leading-relaxed">
                                                       {para}
                                                     </p>
@@ -5951,7 +5951,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 4. COURSES & FEES 2026 CARD (STEP 3 IN MASTER TEMPLATE) */}
               {(() => {
                 const cfData = getCollegeCoursesFeesArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
                   <div
@@ -6391,9 +6391,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(cfData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openCoursesFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -6425,7 +6425,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                               <div className="pt-2 pb-3 space-y-3 pl-0.5 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
                                                 {/* Multi-paragraph answer text */}
                                                 <div className="space-y-2">
-                                                  {formattedA.split("\n\n").map((para, pIdx) => (
+                                                  {(formattedA || "").split("\n\n").map((para, pIdx) => (
                                                     <p key={pIdx} className="leading-relaxed">
                                                       {para}
                                                     </p>
@@ -7123,9 +7123,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(plData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openPlacementsFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -7186,7 +7186,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 5. ADMISSION & APPLICATION PROCESS 2026 SUB-BOX */}
               {(() => {
                 const admData = getCollegeAdmissionArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
                   <div
@@ -7517,9 +7517,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(admData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openAdmissionFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -7595,7 +7595,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 6. RANKINGS 2026 SUB-BOX */}
               {(() => {
                 const rkData = getCollegeRankingsArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
                   <div
@@ -7923,9 +7923,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(rkData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openRankingsFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -8905,7 +8905,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 9. CAMPUS & FACILITIES 2026 CARD (EXACT USER REFERENCE TEMPLATE) */}
               {(() => {
                 const campusData = getCollegeCampusFacilitiesArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
                 const highlightsBullets = campusData.highlightsBullets || [];
                 const firstTwoHighlights = highlightsBullets.slice(0, 2);
                 const feeTable = campusData.hostelFeeTable || { headers: [], rows: [] };
@@ -9495,7 +9495,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                 {(() => {
                   const faqsArticle = getCollegeFaqsArticle(collegeData);
                   const faqsList = faqsArticle.faqs || [];
-                  const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                  const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                   return (
                     <div
@@ -9590,7 +9590,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 9. CAMPUS & FACILITIES 2026 CARD (EXACT USER REFERENCE TEMPLATE) */}
               {(() => {
                 const campusData = getCollegeCampusFacilitiesArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
                 const highlightsBullets = campusData.highlightsBullets || [];
                 const firstTwoHighlights = highlightsBullets.slice(0, 2);
                 const feeTable = campusData.hostelFeeTable || { headers: [], rows: [] };
@@ -10187,7 +10187,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {(() => {
                 const faqsArticle = getCollegeFaqsArticle(collegeData);
                 const faqsList = faqsArticle.faqs || [];
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
                   <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-5 sm:p-7 shadow-xs space-y-5">
@@ -10267,7 +10267,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 3. CUTOFF 2026 CARD (STEP 2 IN MASTER TEMPLATE) */}
               {(() => {
                 const cutData = getCollegeCutoffArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
                 const paragraphs = cutData.paragraphs || [];
                 const firstTwoParas = paragraphs.slice(0, 2);
                 const thirdPara = paragraphs[2];
@@ -10771,9 +10771,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(cutData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openCutoffFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -10805,7 +10805,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                               <div className="pt-2 pb-3 space-y-3 pl-0.5 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
                                                 {/* Multi-paragraph answer text */}
                                                 <div className="space-y-2">
-                                                  {formattedA.split("\n\n").map((para, pIdx) => (
+                                                  {(formattedA || "").split("\n\n").map((para, pIdx) => (
                                                     <p key={pIdx} className="leading-relaxed">
                                                       {para}
                                                     </p>
@@ -10904,7 +10904,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 4. COURSES & FEES 2026 CARD (STEP 3 IN MASTER TEMPLATE) */}
               {(() => {
                 const cfData = getCollegeCoursesFeesArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
                   <div
@@ -11344,9 +11344,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(cfData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openCoursesFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -11378,7 +11378,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                               <div className="pt-2 pb-3 space-y-3 pl-0.5 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal">
                                                 {/* Multi-paragraph answer text */}
                                                 <div className="space-y-2">
-                                                  {formattedA.split("\n\n").map((para, pIdx) => (
+                                                  {(formattedA || "").split("\n\n").map((para, pIdx) => (
                                                     <p key={pIdx} className="leading-relaxed">
                                                       {para}
                                                     </p>
@@ -12270,9 +12270,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(plData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openPlacementsFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -12340,7 +12340,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 5. ADMISSION & APPLICATION PROCESS 2026 SUB-BOX */}
               {(() => {
                 const admData = getCollegeAdmissionArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
                   <div
@@ -12671,9 +12671,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(admData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openAdmissionFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -12756,7 +12756,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 6. RANKINGS 2026 SUB-BOX */}
               {(() => {
                 const rkData = getCollegeRankingsArticle(collegeData);
-                const collegeShortName = collegeData.name.split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
                   <div
@@ -13084,9 +13084,9 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 <div className="divide-y divide-slate-100/90 pt-1">
                                   {(rkData.faqs || []).map((faq, fIdx) => {
                                     const isOpen = openRankingsFaqIdx === fIdx;
-                                    const rawQ = faq.question.trim();
+                                    const rawQ = (faq?.question || "").trim();
                                     const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
-                                    const rawA = faq.answer.trim();
+                                    const rawA = (faq?.answer || "").trim();
                                     const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
 
                                     return (
@@ -25002,7 +25002,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                           <th className="w-[8%] py-3.5 px-3 text-center font-bold text-xs sm:text-[13px] tracking-wide border-r border-[#173860]">
                             #
                           </th>
-                          {(selectedCourseDetail.table.headers && selectedCourseDetail.table.headers.length > 0
+                          {((selectedCourseDetail?.table?.headers && selectedCourseDetail.table.headers.length > 0)
                             ? selectedCourseDetail.table.headers
                             : ["Specialization", "Year 1 Fees", "Year 2 Fees"]
                           ).map((hdr, hIdx) => (
@@ -25018,7 +25018,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200 bg-white">
-                        {(selectedCourseDetail.table.rows && selectedCourseDetail.table.rows.length > 0
+                        {((selectedCourseDetail?.table?.rows && selectedCourseDetail.table.rows.length > 0)
                           ? selectedCourseDetail.table.rows
                           : []
                         ).map((rCells, rIdx) => (
