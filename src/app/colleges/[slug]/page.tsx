@@ -4981,39 +4981,65 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
       <div className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-[0_6px_28px_rgba(0,0,0,0.09)] transition-all duration-300">
         {/* Banner Section (100% Full-Width Edge-to-Edge, Crystal-Clear World-Class Display & Interactive Controls) */}
         <div
-          className={`group/banner relative w-full overflow-hidden bg-slate-900 border-t-2 border-orange-500/50 transition-all duration-500 ${
+          className={`group/banner relative w-full overflow-hidden bg-slate-950 border-t-2 border-orange-500/50 transition-all duration-500 ${
             isBannerScrolled
               ? "h-[58px] sm:h-[64px] px-4 sm:px-8 flex items-center justify-between shadow-xs"
-              : "h-[260px] sm:h-[320px] md:h-[380px]"
+              : "h-[240px] xs:h-[280px] sm:h-[340px] md:h-[400px] lg:h-[460px] xl:h-[500px] 2xl:h-[540px]"
           }`}
         >
           {/* Top Ambient Glow Sheen */}
           <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/90 to-transparent z-30 pointer-events-none" />
-          <div className="absolute top-0 inset-x-0 h-10 bg-gradient-to-b from-black/40 to-transparent z-20 pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-black/50 via-black/20 to-transparent z-20 pointer-events-none" />
 
-          {/* Background Cover Image Carousel with Crystal-Clear Clarity & Smooth Cinematic Animation */}
+          {/* Background Cover Image Carousel with Multi-Device Auto-Fit & Crystal Clarity */}
           {(() => {
-            const activeImages =
+            const rawImages =
               collegeData.coverImages && collegeData.coverImages.length > 0
                 ? collegeData.coverImages
                 : [collegeData.image || "/images/iitdelhi_real.jpg"];
+
+            const activeImages = rawImages.map((img) => {
+              if (img && typeof img === "string" && img.includes("unsplash.com") && !img.includes("auto=format")) {
+                const sep = img.includes("?") ? "&" : "?";
+                return `${img}${sep}auto=format&fit=crop&q=85&w=2000`;
+              }
+              return img;
+            });
+
             const currentImg = activeImages[currentCoverIdx % activeImages.length] || activeImages[0];
 
             return (
               <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-950">
+                {/* Layer 1: Ambient Background Aura (Prevents empty/letterbox bars on ultra-wide screens) */}
+                <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
+                  <img
+                    src={currentImg}
+                    alt=""
+                    aria-hidden="true"
+                    className="w-full h-full object-cover scale-110 blur-2xl opacity-40 brightness-75 contrast-125"
+                  />
+                </div>
+
+                {/* Layer 2: Main High-Definition Hero Image (Zero distortion, perfectly centered across all devices) */}
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentImg + currentCoverIdx}
-                    initial={{ opacity: 0, scale: 1.06 }}
-                    animate={{ opacity: 1, scale: 1.01 }}
-                    exit={{ opacity: 0, scale: 0.99 }}
-                    transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="w-full h-full transform-gpu"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.45, ease: "easeInOut" }}
+                    className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden z-10"
                   >
                     <img
                       src={currentImg}
                       alt={collegeData.name}
-                      className="w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover/banner:scale-105"
+                      loading="eager"
+                      decoding="async"
+                      className="w-full h-full object-cover object-center transform-gpu select-none"
+                      style={{
+                        imageRendering: "auto",
+                        WebkitBackfaceVisibility: "hidden",
+                      }}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src =
                           "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&auto=format&fit=crop&q=85";
@@ -5022,9 +5048,8 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Ultra-Clean Bottom Scrim Gradient (No Side Black Gradients for 100% Brightness & Clarity) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-transparent pointer-events-none" />
+                {/* Ultra-Clean Bottom Gradient (Covers only lower 45% for high-contrast text while keeping 60% of center photo bright & clear) */}
+                <div className="absolute inset-x-0 bottom-0 h-44 sm:h-56 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent pointer-events-none z-20" />
 
                 {/* Interactive Glassmorphism Navigation Controls (Prev / Next Buttons on Hover) */}
                 {activeImages.length > 1 && !isBannerScrolled && (
