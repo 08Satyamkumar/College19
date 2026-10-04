@@ -2971,6 +2971,22 @@ export default function CollegeDetailPage() {
   const [rankingsModalTab, setRankingsModalTab] = useState<"overview" | "international" | "national" | "course_boxes" | "faqs">("overview");
   const [isUpdating, setIsUpdating] = useState(false);
 
+  // College Compare States
+  const [compareC1, setCompareC1] = useState<string>("1");
+  const [compareC2, setCompareC2] = useState<string>("2");
+  const [isCompareCardOpen, setIsCompareCardOpen] = useState(true);
+
+  useEffect(() => {
+    if (slug) {
+      setCompareC1(slug);
+      if (slug === "2" || slug === "iim-ahmedabad") {
+        setCompareC2("1");
+      } else {
+        setCompareC2("2");
+      }
+    }
+  }, [slug]);
+
   // Section-by-Section Edit State Buffer
   const [tempData, setTempData] = useState<CollegeDetail>(IIT_DELHI_MASTER_DATA);
 
@@ -4953,6 +4969,8 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
       setIsAdmissionCardOpen(true);
     } else if (item.targetId === "campus-section") {
       setIsCampusCardOpen(true);
+    } else if (item.targetId === "compare-section") {
+      setIsCompareCardOpen(true);
     }
 
     // 3. Smoothly scroll directly to the box with sticky header offset
@@ -9354,6 +9372,401 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                         </div>
                       );
                     })()}
+                  </div>
+                );
+              })()}
+
+              {/* 8.5. COLLEGE COMPARE SIDE-BY-SIDE CARD (HOMEPAGE MASTER TEMPLATE) */}
+              {(() => {
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeStream = collegeData?.stream || "Engineering";
+
+                const compareOptions = [
+                  { id: slug || "1", name: `${collegeShortName} (${collegeStream})` },
+                  { id: "1", name: "IIT Delhi (Engineering)" },
+                  { id: "iit-bombay", name: "IIT Bombay (Engineering)" },
+                  { id: "2", name: "IIM Ahmedabad (Management)" },
+                  { id: "3", name: "Galgotias University (Engineering)" },
+                  { id: "4", name: "SIBM Pune (Management)" },
+                  { id: "5", name: "RV College of Engg (Engineering)" },
+                  { id: "6", name: "KMC Mangalore (Medical)" },
+                  { id: "7", name: "NLSIU Bangalore (Law)" },
+                  { id: "8", name: "AIIMS Delhi (Medical)" },
+                  { id: "dtu", name: "DTU Delhi (Engineering)" },
+                  { id: "nsut", name: "NSUT Delhi (Engineering)" },
+                  { id: "nit-delhi", name: "NIT Delhi (Engineering)" },
+                  { id: "iiit-delhi", name: "IIIT Delhi (Engineering)" },
+                  { id: "igdtuw", name: "IGDTUW Delhi (Engineering)" },
+                  { id: "jmi", name: "Jamia Millia Islamia (Engineering)" },
+                  { id: "amity-noida", name: "Amity University (Engineering)" },
+                ].filter((c, idx, arr) => arr.findIndex((x) => x.id === c.id) === idx);
+
+                const popularComparisonsList = [
+                  {
+                    c1: {
+                      id: slug || "1",
+                      name: collegeShortName,
+                      course: collegeData.flagshipCourse || (collegeData.courses && collegeData.courses.length > 0 ? collegeData.courses[0].name : "B.Tech Computer Science"),
+                      rating: collegeData.rating || 4.8,
+                      reviews: collegeData.ratingCount?.replace(/[^0-9]/g, "") || 142,
+                      logo: collegeData.logo || collegeData.image || "",
+                    },
+                    c2: {
+                      id: slug === "1" || slug === "iit-delhi" ? "iit-bombay" : "1",
+                      name: slug === "1" || slug === "iit-delhi" ? "IIT Bombay" : "IIT Delhi",
+                      course: "B.Tech Computer Science",
+                      rating: 4.9,
+                      reviews: 230,
+                      logo: slug === "1" || slug === "iit-delhi" ? "https://upload.wikimedia.org/wikipedia/en/thumb/1/1d/Indian_Institute_of_Technology_Bombay_Logo.svg/220px-Indian_Institute_of_Technology_Bombay_Logo.svg.png" : "https://www.iitbbs.ac.in/wp-content/uploads/2023/07/iit_delhi.png",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "igdtuw",
+                      name: "IGDTUW Delhi",
+                      course: "B.Tech Computer Science & IT",
+                      rating: 4.5,
+                      reviews: 44,
+                      logo: "https://images.careerindia.com/img/2013/05/22-iiit-delhi.jpg",
+                    },
+                    c2: {
+                      id: "jmi",
+                      name: "Jamia Millia Islamia",
+                      course: "B.Tech Computer Engineering",
+                      rating: 4.6,
+                      reviews: 68,
+                      logo: "https://www.jobsgyan.in/wp-content/uploads/2023/05/Jamia-Millia-Islamia-Logo.jpg",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "nit-delhi",
+                      name: "NIT Delhi",
+                      course: "B.Tech Computer Science",
+                      rating: 4.4,
+                      reviews: 52,
+                      logo: "https://static.pw.live/5eb393ee95fab7468a79d189/GLOBAL_CMS/238f2312-1d90-42e9-a8d0-1df90efbffe5.webp",
+                    },
+                    c2: {
+                      id: "iiit-delhi",
+                      name: "IIIT Delhi",
+                      course: "B.Tech Computer Science & AI",
+                      rating: 4.6,
+                      reviews: 76,
+                      logo: "https://www.careerindia.com/img/2014/04/28-iiitdelhi.jpg",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "dtu",
+                      name: "DTU Delhi",
+                      course: "B.Tech Computer Engineering",
+                      rating: 4.7,
+                      reviews: 118,
+                      logo: "https://cdn.rm.dcedtu.in/images/dtu.png",
+                    },
+                    c2: {
+                      id: "nsut",
+                      name: "NSUT Delhi",
+                      course: "B.Tech Computer Science",
+                      rating: 4.6,
+                      reviews: 92,
+                      logo: "https://tse3.mm.bing.net/th/id/OIP.pRuDP23vlNjtzZ1EvNp-jgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "1",
+                      name: "IIT Delhi",
+                      course: "B.Tech Computer Science",
+                      rating: 4.9,
+                      reviews: 215,
+                      logo: "https://www.iitbbs.ac.in/wp-content/uploads/2023/07/iit_delhi.png",
+                    },
+                    c2: {
+                      id: "iit-bombay",
+                      name: "IIT Bombay",
+                      course: "B.Tech Computer Science",
+                      rating: 4.9,
+                      reviews: 230,
+                      logo: "https://upload.wikimedia.org/wikipedia/en/thumb/1/1d/Indian_Institute_of_Technology_Bombay_Logo.svg/220px-Indian_Institute_of_Technology_Bombay_Logo.svg.png",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "amity-noida",
+                      name: "Amity University",
+                      course: "B.Tech CSE",
+                      rating: 4.5,
+                      reviews: 88,
+                      logo: "https://clicktranscripts.com/new/wp-content/uploads/2022/05/Amity-University.png",
+                    },
+                    c2: {
+                      id: "3",
+                      name: "Galgotias University",
+                      course: "B.Tech Computer Science",
+                      rating: 4.2,
+                      reviews: 96,
+                      logo: "/images/galgotias.png",
+                    },
+                  },
+                ];
+
+                return (
+                  <div
+                    id="compare-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-blue-500/20 hover:border-blue-500/50 rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgba(59,130,246,0.12)] transition-all duration-300 scroll-mt-24 overflow-hidden"
+                  >
+                    {/* Automatic Shimmer Sheen Reflection Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-[50%] h-[200%] pointer-events-none animate-shimmer-sheen z-10" />
+                    <div className="absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-blue-500/10 to-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+
+                    {/* Header Row */}
+                    <div className="flex items-center justify-between gap-3 relative z-20 pb-3 border-b border-slate-100/90">
+                      <div className="space-y-1">
+                        <h2 className="font-outfit font-black text-lg md:text-xl text-slate-900 flex items-center gap-2">
+                          <div className="p-1.5 rounded-lg bg-blue-50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                            <Layers className="w-4 h-4" />
+                          </div>
+                          Compare {collegeShortName} Side-by-Side
+                        </h2>
+                        <p className="text-[11.5px] sm:text-xs text-slate-500 leading-tight">
+                          Select any two institutes to compare packages, fees, ranks & ratings side-by-side.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsCompareCardOpen(!isCompareCardOpen)}
+                        aria-label={isCompareCardOpen ? "Collapse Compare Section" : "Expand Compare Section"}
+                        className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 flex items-center justify-center text-slate-600 hover:text-slate-950 transition-all cursor-pointer shadow-2xs active:scale-90 shrink-0"
+                      >
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform duration-300 ease-out ${
+                            isCompareCardOpen ? "rotate-180 text-blue-600" : ""
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    {/* Body */}
+                    <AnimatePresence initial={false}>
+                      {isCompareCardOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="overflow-hidden relative z-20 pt-4 space-y-4"
+                        >
+                          {/* Interactive Selectors */}
+                          <div className="space-y-3 bg-gradient-to-br from-slate-50/90 to-blue-50/30 p-3.5 sm:p-4 rounded-xl border border-slate-200/80">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider block">
+                                  Select College 1
+                                </label>
+                                <select
+                                  value={compareC1}
+                                  onChange={(e) => setCompareC1(e.target.value)}
+                                  className="w-full mt-1 px-3 py-2 border border-slate-200/90 hover:border-blue-300 rounded-lg bg-white text-xs text-slate-900 outline-none focus:border-blue-500 font-bold transition-all shadow-xs cursor-pointer"
+                                >
+                                  {compareOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>
+                                      {opt.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+
+                              <div>
+                                <label className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider block">
+                                  Select College 2
+                                </label>
+                                <select
+                                  value={compareC2}
+                                  onChange={(e) => setCompareC2(e.target.value)}
+                                  className="w-full mt-1 px-3 py-2 border border-slate-200/90 hover:border-blue-300 rounded-lg bg-white text-xs text-slate-900 outline-none focus:border-blue-500 font-bold transition-all shadow-xs cursor-pointer"
+                                >
+                                  {compareOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>
+                                      {opt.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+
+                            <div className="pt-1">
+                              {compareC1 === compareC2 ? (
+                                <div className="text-rose-500 text-[11px] font-bold pb-1.5 flex items-center gap-1">
+                                  <span>⚠️ Please select two different colleges to compare!</span>
+                                </div>
+                              ) : null}
+                              <Link
+                                href={`/compare?ids=${compareC1},${compareC2}`}
+                                className={`w-full py-2.5 bg-slate-950 hover:bg-blue-600 text-white font-black text-xs rounded-xl active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2 ${
+                                  compareC1 === compareC2 ? "pointer-events-none opacity-50" : ""
+                                }`}
+                              >
+                                Compare Selected Colleges
+                                <ArrowRight className="w-4 h-4" />
+                              </Link>
+                            </div>
+                          </div>
+
+                          {/* Popular Comparisons Carousel */}
+                          <div className="pt-2 border-t border-slate-100 space-y-2.5">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                                <span className="text-xs font-black uppercase tracking-wider text-slate-800 font-outfit">
+                                  Popular Comparisons
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    document
+                                      .getElementById("college-popular-vs-carousel-info")
+                                      ?.scrollBy({ left: -240, behavior: "smooth" });
+                                  }}
+                                  className="w-6 h-6 rounded-full bg-slate-100 hover:bg-orange-500 hover:text-white flex items-center justify-center text-slate-600 transition-all cursor-pointer shadow-xs active:scale-95"
+                                  title="Previous"
+                                >
+                                  <ChevronLeft className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    document
+                                      .getElementById("college-popular-vs-carousel-info")
+                                      ?.scrollBy({ left: 240, behavior: "smooth" });
+                                  }}
+                                  className="w-6 h-6 rounded-full bg-slate-100 hover:bg-orange-500 hover:text-white flex items-center justify-center text-slate-600 transition-all cursor-pointer shadow-xs active:scale-95"
+                                  title="Next"
+                                >
+                                  <ChevronRight className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Scrollable Popular VS Matchups Carousel */}
+                            <div
+                              id="college-popular-vs-carousel-info"
+                              className="flex overflow-x-auto no-scrollbar gap-3 pb-1 scroll-smooth snap-x snap-mandatory"
+                            >
+                              {popularComparisonsList.map((item, idx) => (
+                                <div
+                                  key={idx}
+                                  className="snap-start w-[200px] sm:w-[220px] flex-shrink-0 bg-gradient-to-b from-white to-slate-50/80 border border-slate-200/90 hover:border-orange-500/50 rounded-xl p-2.5 shadow-xs hover:shadow-sm transition-all duration-300 flex flex-col justify-between group/vscard select-none"
+                                >
+                                  {/* Top: 2 Logos with central circular VS badge */}
+                                  <div className="relative flex items-center justify-between px-0.5 py-0.5">
+                                    {/* College 1 Logo Box */}
+                                    <div className="w-[43%] h-10 rounded-lg bg-white border border-slate-200/90 p-1 flex items-center justify-center shadow-xs overflow-hidden relative">
+                                      {item.c1.logo ? (
+                                        <img
+                                          src={item.c1.logo}
+                                          alt={item.c1.name}
+                                          className="max-h-full max-w-full object-contain relative z-10"
+                                          onError={(e) => {
+                                            const target = e.target as HTMLElement;
+                                            target.style.display = "none";
+                                            const fallback = target.nextElementSibling as HTMLElement;
+                                            if (fallback) fallback.style.display = "flex";
+                                          }}
+                                        />
+                                      ) : null}
+                                      <div
+                                        style={{ display: item.c1.logo ? "none" : "flex" }}
+                                        className="w-full h-full rounded-md bg-orange-50 text-orange-600 font-extrabold text-[9px] items-center justify-center text-center uppercase"
+                                      >
+                                        {item.c1.name.slice(0, 4)}
+                                      </div>
+                                    </div>
+
+                                    {/* Central VS Badge */}
+                                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-900 text-white font-black text-[8px] flex items-center justify-center border border-white shadow-xs z-20">
+                                      VS
+                                    </div>
+
+                                    {/* College 2 Logo Box */}
+                                    <div className="w-[43%] h-10 rounded-lg bg-white border border-slate-200/90 p-1 flex items-center justify-center shadow-xs overflow-hidden relative">
+                                      {item.c2.logo ? (
+                                        <img
+                                          src={item.c2.logo}
+                                          alt={item.c2.name}
+                                          className="max-h-full max-w-full object-contain relative z-10"
+                                          onError={(e) => {
+                                            const target = e.target as HTMLElement;
+                                            target.style.display = "none";
+                                            const fallback = target.nextElementSibling as HTMLElement;
+                                            if (fallback) fallback.style.display = "flex";
+                                          }}
+                                        />
+                                      ) : null}
+                                      <div
+                                        style={{ display: item.c2.logo ? "none" : "flex" }}
+                                        className="w-full h-full rounded-md bg-blue-50 text-blue-600 font-extrabold text-[9px] items-center justify-center text-center uppercase"
+                                      >
+                                        {item.c2.name.slice(0, 4)}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Middle: 2-Column Names, Course & Ratings */}
+                                  <div className="grid grid-cols-2 gap-1.5 text-left pt-2 pb-1.5 border-b border-slate-100">
+                                    {/* Left Column */}
+                                    <div className="space-y-0.5 overflow-hidden">
+                                      <h4 className="font-outfit font-bold text-[10px] text-slate-800 leading-tight truncate" title={item.c1.name}>
+                                        {item.c1.name}
+                                      </h4>
+                                      <p className="text-[8.5px] text-slate-500 truncate leading-none">
+                                        {item.c1.course}
+                                      </p>
+                                      <div className="flex items-center gap-0.5 text-[8.5px] text-slate-700 font-bold pt-0.5">
+                                        <span>{item.c1.rating}</span>
+                                        <span className="text-amber-400 text-[8.5px]">★</span>
+                                        <span className="text-[7.5px] text-slate-400 font-normal">
+                                          ({item.c1.reviews})
+                                        </span>
+                                      </div>
+                                    </div>
+
+                                    {/* Right Column */}
+                                    <div className="space-y-0.5 pl-1.5 border-l border-slate-100 overflow-hidden">
+                                      <h4 className="font-outfit font-bold text-[10px] text-slate-800 leading-tight truncate" title={item.c2.name}>
+                                        {item.c2.name}
+                                      </h4>
+                                      <p className="text-[8.5px] text-slate-500 truncate leading-none">
+                                        {item.c2.course}
+                                      </p>
+                                      <div className="flex items-center gap-0.5 text-[8.5px] text-slate-700 font-bold pt-0.5">
+                                        <span>{item.c2.rating}</span>
+                                        <span className="text-amber-400 text-[8.5px]">★</span>
+                                        <span className="text-[7.5px] text-slate-400 font-normal">
+                                          ({item.c2.reviews})
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Bottom CTA Button */}
+                                  <Link
+                                    href={`/compare?ids=${item.c1.id},${item.c2.id}`}
+                                    className="w-full mt-2 py-1.5 px-2 bg-[#f26522] hover:bg-[#d9531e] active:bg-[#c04312] text-white font-bold text-[10px] rounded-md text-center shadow-xs transition-all duration-200 cursor-pointer block"
+                                  >
+                                    Compare
+                                  </Link>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 );
               })()}
@@ -16926,7 +17339,375 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           )}
 
 
-          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && activeTab !== "admissions" && activeTab !== "rankings" && activeTab !== "reviews" && (
+          {/* TAB: COLLEGE COMPARE */}
+          {activeTab === "compare" && (
+            <div className="space-y-6">
+              {(() => {
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+                const collegeStream = collegeData?.stream || "Engineering";
+
+                const compareOptions = [
+                  { id: slug || "1", name: `${collegeShortName} (${collegeStream})` },
+                  { id: "1", name: "IIT Delhi (Engineering)" },
+                  { id: "iit-bombay", name: "IIT Bombay (Engineering)" },
+                  { id: "2", name: "IIM Ahmedabad (Management)" },
+                  { id: "3", name: "Galgotias University (Engineering)" },
+                  { id: "4", name: "SIBM Pune (Management)" },
+                  { id: "5", name: "RV College of Engg (Engineering)" },
+                  { id: "6", name: "KMC Mangalore (Medical)" },
+                  { id: "7", name: "NLSIU Bangalore (Law)" },
+                  { id: "8", name: "AIIMS Delhi (Medical)" },
+                  { id: "dtu", name: "DTU Delhi (Engineering)" },
+                  { id: "nsut", name: "NSUT Delhi (Engineering)" },
+                  { id: "nit-delhi", name: "NIT Delhi (Engineering)" },
+                  { id: "iiit-delhi", name: "IIIT Delhi (Engineering)" },
+                  { id: "igdtuw", name: "IGDTUW Delhi (Engineering)" },
+                  { id: "jmi", name: "Jamia Millia Islamia (Engineering)" },
+                  { id: "amity-noida", name: "Amity University (Engineering)" },
+                ].filter((c, idx, arr) => arr.findIndex((x) => x.id === c.id) === idx);
+
+                const popularComparisonsList = [
+                  {
+                    c1: {
+                      id: slug || "1",
+                      name: collegeShortName,
+                      course: collegeData.flagshipCourse || (collegeData.courses && collegeData.courses.length > 0 ? collegeData.courses[0].name : "B.Tech Computer Science"),
+                      rating: collegeData.rating || 4.8,
+                      reviews: collegeData.ratingCount?.replace(/[^0-9]/g, "") || 142,
+                      logo: collegeData.logo || collegeData.image || "",
+                    },
+                    c2: {
+                      id: slug === "1" || slug === "iit-delhi" ? "iit-bombay" : "1",
+                      name: slug === "1" || slug === "iit-delhi" ? "IIT Bombay" : "IIT Delhi",
+                      course: "B.Tech Computer Science",
+                      rating: 4.9,
+                      reviews: 230,
+                      logo: slug === "1" || slug === "iit-delhi" ? "https://upload.wikimedia.org/wikipedia/en/thumb/1/1d/Indian_Institute_of_Technology_Bombay_Logo.svg/220px-Indian_Institute_of_Technology_Bombay_Logo.svg.png" : "https://www.iitbbs.ac.in/wp-content/uploads/2023/07/iit_delhi.png",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "igdtuw",
+                      name: "IGDTUW Delhi",
+                      course: "B.Tech Computer Science & IT",
+                      rating: 4.5,
+                      reviews: 44,
+                      logo: "https://images.careerindia.com/img/2013/05/22-iiit-delhi.jpg",
+                    },
+                    c2: {
+                      id: "jmi",
+                      name: "Jamia Millia Islamia",
+                      course: "B.Tech Computer Engineering",
+                      rating: 4.6,
+                      reviews: 68,
+                      logo: "https://www.jobsgyan.in/wp-content/uploads/2023/05/Jamia-Millia-Islamia-Logo.jpg",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "nit-delhi",
+                      name: "NIT Delhi",
+                      course: "B.Tech Computer Science",
+                      rating: 4.4,
+                      reviews: 52,
+                      logo: "https://static.pw.live/5eb393ee95fab7468a79d189/GLOBAL_CMS/238f2312-1d90-42e9-a8d0-1df90efbffe5.webp",
+                    },
+                    c2: {
+                      id: "iiit-delhi",
+                      name: "IIIT Delhi",
+                      course: "B.Tech Computer Science & AI",
+                      rating: 4.6,
+                      reviews: 76,
+                      logo: "https://www.careerindia.com/img/2014/04/28-iiitdelhi.jpg",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "dtu",
+                      name: "DTU Delhi",
+                      course: "B.Tech Computer Engineering",
+                      rating: 4.7,
+                      reviews: 118,
+                      logo: "https://cdn.rm.dcedtu.in/images/dtu.png",
+                    },
+                    c2: {
+                      id: "nsut",
+                      name: "NSUT Delhi",
+                      course: "B.Tech Computer Science",
+                      rating: 4.6,
+                      reviews: 92,
+                      logo: "https://tse3.mm.bing.net/th/id/OIP.pRuDP23vlNjtzZ1EvNp-jgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "1",
+                      name: "IIT Delhi",
+                      course: "B.Tech Computer Science",
+                      rating: 4.9,
+                      reviews: 215,
+                      logo: "https://www.iitbbs.ac.in/wp-content/uploads/2023/07/iit_delhi.png",
+                    },
+                    c2: {
+                      id: "iit-bombay",
+                      name: "IIT Bombay",
+                      course: "B.Tech Computer Science",
+                      rating: 4.9,
+                      reviews: 230,
+                      logo: "https://upload.wikimedia.org/wikipedia/en/thumb/1/1d/Indian_Institute_of_Technology_Bombay_Logo.svg/220px-Indian_Institute_of_Technology_Bombay_Logo.svg.png",
+                    },
+                  },
+                  {
+                    c1: {
+                      id: "amity-noida",
+                      name: "Amity University",
+                      course: "B.Tech CSE",
+                      rating: 4.5,
+                      reviews: 88,
+                      logo: "https://clicktranscripts.com/new/wp-content/uploads/2022/05/Amity-University.png",
+                    },
+                    c2: {
+                      id: "3",
+                      name: "Galgotias University",
+                      course: "B.Tech Computer Science",
+                      rating: 4.2,
+                      reviews: 96,
+                      logo: "/images/galgotias.png",
+                    },
+                  },
+                ];
+
+                return (
+                  <div className="group relative bg-white/95 backdrop-blur-sm border border-blue-500/20 hover:border-blue-500/50 rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgba(59,130,246,0.12)] transition-all duration-300 overflow-hidden space-y-5">
+                    {/* Automatic Shimmer Sheen Reflection Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-[50%] h-[200%] pointer-events-none animate-shimmer-sheen z-10" />
+                    <div className="absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-blue-500/10 to-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+
+                    {/* Header Row */}
+                    <div className="space-y-1 relative z-20 pb-3 border-b border-slate-100/90">
+                      <h2 className="font-outfit font-black text-xl md:text-2xl text-slate-900 flex items-center gap-2.5">
+                        <div className="p-2 rounded-xl bg-blue-50 text-blue-500 shadow-xs">
+                          <Layers className="w-5 h-5" />
+                        </div>
+                        Compare {collegeShortName} Side-by-Side
+                      </h2>
+                      <p className="text-xs sm:text-sm text-slate-500 leading-tight">
+                        Select any two institutes to compare packages, fees, ranks & ratings side-by-side.
+                      </p>
+                    </div>
+
+                    {/* Interactive Selectors */}
+                    <div className="space-y-3.5 bg-gradient-to-br from-slate-50/90 to-blue-50/30 p-4 sm:p-5 rounded-2xl border border-slate-200/80 relative z-20">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-[10.5px] text-slate-600 font-black uppercase tracking-wider block">
+                            Select College 1
+                          </label>
+                          <select
+                            value={compareC1}
+                            onChange={(e) => setCompareC1(e.target.value)}
+                            className="w-full mt-1.5 px-3.5 py-2.5 border border-slate-200/90 hover:border-blue-300 rounded-xl bg-white text-xs sm:text-sm text-slate-900 outline-none focus:border-blue-500 font-bold transition-all shadow-xs cursor-pointer"
+                          >
+                            {compareOptions.map((opt) => (
+                              <option key={opt.id} value={opt.id}>
+                                {opt.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="text-[10.5px] text-slate-600 font-black uppercase tracking-wider block">
+                            Select College 2
+                          </label>
+                          <select
+                            value={compareC2}
+                            onChange={(e) => setCompareC2(e.target.value)}
+                            className="w-full mt-1.5 px-3.5 py-2.5 border border-slate-200/90 hover:border-blue-300 rounded-xl bg-white text-xs sm:text-sm text-slate-900 outline-none focus:border-blue-500 font-bold transition-all shadow-xs cursor-pointer"
+                          >
+                            {compareOptions.map((opt) => (
+                              <option key={opt.id} value={opt.id}>
+                                {opt.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="pt-1.5">
+                        {compareC1 === compareC2 ? (
+                          <div className="text-rose-500 text-xs font-bold pb-2 flex items-center gap-1">
+                            <span>⚠️ Please select two different colleges to compare!</span>
+                          </div>
+                        ) : null}
+                        <Link
+                          href={`/compare?ids=${compareC1},${compareC2}`}
+                          className={`w-full py-3 bg-slate-950 hover:bg-blue-600 text-white font-black text-xs sm:text-sm rounded-xl active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2 ${
+                            compareC1 === compareC2 ? "pointer-events-none opacity-50" : ""
+                          }`}
+                        >
+                          Compare Selected Colleges
+                          <ArrowRight className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Popular Comparisons Carousel */}
+                    <div className="pt-3 border-t border-slate-100 space-y-3 relative z-20">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                          <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-800 font-outfit">
+                            Popular Head-to-Head Comparisons
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              document
+                                .getElementById("college-popular-vs-carousel-tab")
+                                ?.scrollBy({ left: -260, behavior: "smooth" });
+                            }}
+                            className="w-7 h-7 rounded-full bg-slate-100 hover:bg-orange-500 hover:text-white flex items-center justify-center text-slate-600 transition-all cursor-pointer shadow-xs active:scale-95"
+                            title="Previous"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              document
+                                .getElementById("college-popular-vs-carousel-tab")
+                                ?.scrollBy({ left: 260, behavior: "smooth" });
+                            }}
+                            className="w-7 h-7 rounded-full bg-slate-100 hover:bg-orange-500 hover:text-white flex items-center justify-center text-slate-600 transition-all cursor-pointer shadow-xs active:scale-95"
+                            title="Next"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Scrollable Popular VS Matchups Carousel */}
+                      <div
+                        id="college-popular-vs-carousel-tab"
+                        className="flex overflow-x-auto no-scrollbar gap-3.5 pb-2 scroll-smooth snap-x snap-mandatory"
+                      >
+                        {popularComparisonsList.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="snap-start w-[210px] sm:w-[240px] flex-shrink-0 bg-gradient-to-b from-white to-slate-50/80 border border-slate-200/90 hover:border-orange-500/50 rounded-2xl p-3 shadow-xs hover:shadow-sm transition-all duration-300 flex flex-col justify-between group/vscard select-none"
+                          >
+                            {/* Top: 2 Logos with central circular VS badge */}
+                            <div className="relative flex items-center justify-between px-0.5 py-0.5">
+                              {/* College 1 Logo Box */}
+                              <div className="w-[43%] h-11 rounded-xl bg-white border border-slate-200/90 p-1 flex items-center justify-center shadow-xs overflow-hidden relative">
+                                {item.c1.logo ? (
+                                  <img
+                                    src={item.c1.logo}
+                                    alt={item.c1.name}
+                                    className="max-h-full max-w-full object-contain relative z-10"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLElement;
+                                      target.style.display = "none";
+                                      const fallback = target.nextElementSibling as HTMLElement;
+                                      if (fallback) fallback.style.display = "flex";
+                                    }}
+                                  />
+                                ) : null}
+                                <div
+                                  style={{ display: item.c1.logo ? "none" : "flex" }}
+                                  className="w-full h-full rounded-lg bg-orange-50 text-orange-600 font-extrabold text-[9px] items-center justify-center text-center uppercase"
+                                >
+                                  {item.c1.name.slice(0, 4)}
+                                </div>
+                              </div>
+
+                              {/* Central VS Badge */}
+                              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-900 text-white font-black text-[8px] flex items-center justify-center border border-white shadow-xs z-20">
+                                VS
+                              </div>
+
+                              {/* College 2 Logo Box */}
+                              <div className="w-[43%] h-11 rounded-xl bg-white border border-slate-200/90 p-1 flex items-center justify-center shadow-xs overflow-hidden relative">
+                                {item.c2.logo ? (
+                                  <img
+                                    src={item.c2.logo}
+                                    alt={item.c2.name}
+                                    className="max-h-full max-w-full object-contain relative z-10"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLElement;
+                                      target.style.display = "none";
+                                      const fallback = target.nextElementSibling as HTMLElement;
+                                      if (fallback) fallback.style.display = "flex";
+                                    }}
+                                  />
+                                ) : null}
+                                <div
+                                  style={{ display: item.c2.logo ? "none" : "flex" }}
+                                  className="w-full h-full rounded-lg bg-blue-50 text-blue-600 font-extrabold text-[9px] items-center justify-center text-center uppercase"
+                                >
+                                  {item.c2.name.slice(0, 4)}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Middle: 2-Column Names, Course & Ratings */}
+                            <div className="grid grid-cols-2 gap-1.5 text-left pt-2 pb-1.5 border-b border-slate-100">
+                              {/* Left Column */}
+                              <div className="space-y-0.5 overflow-hidden">
+                                <h4 className="font-outfit font-bold text-[10.5px] text-slate-800 leading-tight truncate" title={item.c1.name}>
+                                  {item.c1.name}
+                                </h4>
+                                <p className="text-[9px] text-slate-500 truncate leading-none">
+                                  {item.c1.course}
+                                </p>
+                                <div className="flex items-center gap-0.5 text-[9px] text-slate-700 font-bold pt-0.5">
+                                  <span>{item.c1.rating}</span>
+                                  <span className="text-amber-400 text-[9px]">★</span>
+                                  <span className="text-[8px] text-slate-400 font-normal">
+                                    ({item.c1.reviews})
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Right Column */}
+                              <div className="space-y-0.5 pl-1.5 border-l border-slate-100 overflow-hidden">
+                                <h4 className="font-outfit font-bold text-[10.5px] text-slate-800 leading-tight truncate" title={item.c2.name}>
+                                  {item.c2.name}
+                                </h4>
+                                <p className="text-[9px] text-slate-500 truncate leading-none">
+                                  {item.c2.course}
+                                </p>
+                                <div className="flex items-center gap-0.5 text-[9px] text-slate-700 font-bold pt-0.5">
+                                  <span>{item.c2.rating}</span>
+                                  <span className="text-amber-400 text-[9px]">★</span>
+                                  <span className="text-[8px] text-slate-400 font-normal">
+                                    ({item.c2.reviews})
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Bottom CTA Button */}
+                            <Link
+                              href={`/compare?ids=${item.c1.id},${item.c2.id}`}
+                              className="w-full mt-2 py-1.5 px-2 bg-[#f26522] hover:bg-[#d9531e] active:bg-[#c04312] text-white font-bold text-[10.5px] rounded-lg text-center shadow-xs transition-all duration-200 cursor-pointer block"
+                            >
+                              Compare
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {activeTab !== "info" && activeTab !== "hostel" && activeTab !== "qa" && activeTab !== "cutoffs" && activeTab !== "courses" && activeTab !== "placements" && activeTab !== "admissions" && activeTab !== "rankings" && activeTab !== "reviews" && activeTab !== "compare" && (
             <div className="bg-white/95 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-500">
                 <Sparkles className="w-6 h-6" />
