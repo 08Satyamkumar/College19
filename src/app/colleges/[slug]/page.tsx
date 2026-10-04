@@ -1645,6 +1645,8 @@ interface CollegeDetail {
   facultyDetails?: CollegeFacultySectionData;
   alumniArticle?: AlumniArticleData;
   faqsArticle?: CollegeFaqsArticleData;
+  compareFaqs?: FaqItem[];
+  compareReviews?: DetailedReviewCard[];
   shortName?: string;
 }
 
@@ -2665,6 +2667,7 @@ type MiniModalId =
   | "alumni"
   | "qa"
   | "scholarships"
+  | "compare_faqs"
   | null;
 
 const iconMap: Record<string, any> = {
@@ -2975,6 +2978,7 @@ export default function CollegeDetailPage() {
   const [compareC1, setCompareC1] = useState<string>("1");
   const [compareC2, setCompareC2] = useState<string>("2");
   const [isCompareCardOpen, setIsCompareCardOpen] = useState(true);
+  const [openCompareFaqIdx, setOpenCompareFaqIdx] = useState<number | null>(null);
 
   useEffect(() => {
     if (slug) {
@@ -4705,6 +4709,35 @@ const getCollegeFaqsArticle = (college: CollegeDetail): CollegeFaqsArticleData =
     subtitle: college.faqsArticle?.subtitle || `Frequently asked questions regarding admissions, courses, cutoffs, placements, and campus life at ${shortName}.`,
     faqs: list,
   };
+};
+
+const getCollegeCompareFaqs = (college: CollegeDetail): FaqItem[] => {
+  if (college.compareFaqs && college.compareFaqs.length > 0) {
+    return college.compareFaqs;
+  }
+  const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+  return [
+    {
+      question: `How does Think Your College compare ${shortName} with other premier institutes?`,
+      answer: `Think Your College provides a data-backed, head-to-head comparison evaluating official NIRF rankings, highest & average placement packages, verified median CTC, tuition fees, course eligibility, faculty-to-student ratios, and accredited campus infrastructure metrics to help you make an informed decision.`,
+    },
+    {
+      question: `Which parameters are most critical when comparing ${shortName} side-by-side?`,
+      answer: `Key parameters to evaluate include Return on Investment (ROI), curriculum quality & faculty expertise, placement consistency over the last 3-5 years, campus culture & location advantages, active alumni network reach, and industry research collaborations.`,
+    },
+    {
+      question: `Are placement packages and average CTCs verified across colleges?`,
+      answer: `Yes, our comparison tool utilizes officially verified NIRF audited reports, institute annual placement releases, and validated student feedback to ensure reliable salary stats and recruitment track records without inflated numbers.`,
+    },
+    {
+      question: `Can I compare ${shortName} across different categories, cities, and streams?`,
+      answer: `Absolutely! You can compare Engineering, Management, Medical, Law, and Science colleges across different cities (such as Delhi, Mumbai, Bangalore, Pune, etc.) and ownership types (Government, Autonomous, and Private).`,
+    },
+    {
+      question: `How do cutoff ranks and JoSAA/State counseling rounds impact comparison?`,
+      answer: `Our comparison engine maps opening and closing ranks from recent counseling rounds (JoSAA, CSAB, JAC Delhi, etc.), helping you evaluate which college offers higher branch preferences and admission probabilities for your percentile.`,
+    },
+  ];
 };
 
 const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
@@ -17704,6 +17737,313 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   </div>
                 );
               })()}
+
+              {/* 2. COMMONLY ASKED QUESTIONS ON COLLEGE COMPARISON (STANDALONE FAQ SECTION) */}
+              {(() => {
+                const faqsList = getCollegeCompareFaqs(collegeData);
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+
+                return (
+                  <div
+                    id="compare-faqs-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20 space-y-4"
+                  >
+                    {/* Header Row */}
+                    <div className="flex items-start justify-between gap-3 border-b border-slate-100/90 pb-3.5">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20">
+                          <HelpCircle className="w-5 h-5 stroke-[2.5]" />
+                        </div>
+                        <div>
+                          <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                            {collegeShortName} Comparison FAQs
+                          </h3>
+                          <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">
+                            Frequently Asked Questions about comparing {collegeShortName} side-by-side with other colleges, packages, cutoffs & ROI
+                          </p>
+                        </div>
+                      </div>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("compare_faqs")}
+                          className="px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit Comparison FAQs</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Accordion List */}
+                    <div className="divide-y divide-slate-100/90">
+                      {faqsList.map((faq, fIdx) => {
+                        const isOpen = openCompareFaqIdx === fIdx;
+                        const rawQ = (faq?.question || "").trim();
+                        const formattedQ = rawQ.startsWith("Q:") || rawQ.startsWith("Q.") ? rawQ : `Q: ${rawQ}`;
+                        const rawA = (faq?.answer || "").trim();
+                        const formattedA = rawA.startsWith("A:") || rawA.startsWith("A.") ? rawA : `A: ${rawA}`;
+
+                        return (
+                          <div key={fIdx} className="py-3 first:pt-1 last:pb-0">
+                            <button
+                              type="button"
+                              onClick={() => setOpenCompareFaqIdx(isOpen ? null : fIdx)}
+                              className="w-full flex items-center justify-between gap-3 text-left py-1 text-slate-800 hover:text-blue-600 transition-colors cursor-pointer group/q"
+                            >
+                              <span className="font-outfit font-bold text-[13.5px] sm:text-[14px] leading-snug group-hover/q:text-blue-600 transition-colors">
+                                {formattedQ}
+                              </span>
+                              <div className="flex items-center gap-2 shrink-0">
+                                {fIdx === 0 && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/70 text-[11px] font-bold">
+                                    5 👍
+                                  </span>
+                                )}
+                                <ChevronDown
+                                  className={`w-4 h-4 text-slate-500 group-hover/q:text-blue-600 transition-transform duration-200 ${
+                                    isOpen ? "rotate-180 text-blue-600" : ""
+                                  }`}
+                                />
+                              </div>
+                            </button>
+
+                            <AnimatePresence initial={false}>
+                              {isOpen && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.22, ease: "easeInOut" }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="pt-2.5 pb-2 pl-1 text-[13px] sm:text-[13.5px] text-slate-600 leading-relaxed font-normal bg-slate-50/60 rounded-xl p-3 mt-1.5 border border-slate-100">
+                                    <p className="leading-relaxed whitespace-pre-line">
+                                      {formattedA}
+                                    </p>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 3. STUDENT RATINGS & VERIFIED REVIEWS SECTION (COMPARE TAB) */}
+              {(() => {
+                const revData = getCollegeReviewsArticle(collegeData);
+                const cards = (collegeData.compareReviews && collegeData.compareReviews.length > 0)
+                  ? collegeData.compareReviews
+                  : (revData.reviewCards && revData.reviewCards.length > 0
+                    ? revData.reviewCards
+                    : DEFAULT_DETAILED_REVIEW_CARDS);
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+
+                return (
+                  <div
+                    id="compare-student-reviews-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20 space-y-4"
+                  >
+                    {/* Top Header Row */}
+                    <div className="flex items-start justify-between gap-3 border-b border-slate-100/90 pb-3.5">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20">
+                          <Star className="w-5 h-5 fill-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                            {collegeShortName} Student Comparison Reviews
+                          </h3>
+                          <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">
+                            Real experiences and comparative feedback shared by verified students and alumni.
+                          </p>
+                        </div>
+                      </div>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("reviewCards")}
+                          className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit Reviews ({cards.length})</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Review Cards List */}
+                    <div className="space-y-4">
+                      {(cards || []).map((card: DetailedReviewCard, cIdx: number) => {
+                        const isExpanded = !!expandedReviewCardIds[card.id];
+                        const userVote = reviewHelpfulVotes[card.id];
+
+                        return (
+                          <div
+                            key={card.id || cIdx}
+                            className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 space-y-3.5"
+                          >
+                            {/* Top Row: Avatar + Author Info + Score Badge */}
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex items-center gap-3">
+                                {/* Square/Rounded Avatar Box */}
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs relative bg-slate-100 flex items-center justify-center">
+                                  {card.avatarUrl ? (
+                                    <img
+                                      src={card.avatarUrl}
+                                      alt={card.authorName}
+                                      className="w-full h-full object-cover object-center"
+                                      onError={(e) => {
+                                        (e.currentTarget as HTMLElement).style.display = "none";
+                                        const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                        if (fallback) fallback.style.display = "flex";
+                                      }}
+                                    />
+                                  ) : null}
+                                  <div
+                                    className={`w-full h-full flex items-center justify-center font-black text-lg sm:text-xl font-outfit ${
+                                      card.avatarBgColor || "bg-amber-100 text-amber-800"
+                                    } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                  >
+                                    {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                  </div>
+                                </div>
+
+                                {/* Name & Course */}
+                                <div>
+                                  <div className="flex items-center gap-1.5">
+                                    <h5 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-snug">
+                                      {card.authorName}
+                                    </h5>
+                                    {card.verified && (
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500 shrink-0" />
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-slate-500 font-medium leading-tight pt-0.5">
+                                    {card.courseAndBatch}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Overall Rating Badge */}
+                              <div className="px-2.5 py-1 rounded-md bg-[#00a859] text-white font-bold text-xs sm:text-[13px] flex items-center gap-1 shrink-0 shadow-2xs select-none">
+                                <span className="text-[11px]">★</span>
+                                <span>{Number(card.overallRating).toFixed(1)}</span>
+                              </div>
+                            </div>
+
+                            {/* Parameter Rating Badges Pill Row */}
+                            {card.parameterRatings && card.parameterRatings.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                                {card.parameterRatings.map((param, pIdx) => (
+                                  <div
+                                    key={pIdx}
+                                    className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/80 text-[11px] font-semibold text-slate-700 flex items-center gap-1.5 shadow-3xs"
+                                  >
+                                    <span className="text-slate-500 font-normal">{param.label}</span>
+                                    <span className="font-black text-slate-900 flex items-center gap-0.5">
+                                      <span className="text-amber-500 text-[10px]">★</span>
+                                      {param.rating.toFixed(1)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Review Title / Headline */}
+                            {card.title && (
+                              <h4 className="font-outfit font-bold text-sm sm:text-[15px] text-slate-900 leading-snug pt-1">
+                                "{card.title}"
+                              </h4>
+                            )}
+
+                            {/* Paragraphs Breakdown (Collapsed vs Expanded) */}
+                            {card.paragraphs && card.paragraphs.length > 0 && (
+                              <div className="space-y-2 text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal">
+                                {(!isExpanded ? card.paragraphs.slice(0, 2) : card.paragraphs).map((para, paraIdx) => (
+                                  <div key={paraIdx} className="space-y-0.5">
+                                    <span className="font-bold text-slate-800 text-xs block">
+                                      {para.heading}:
+                                    </span>
+                                    <p className="leading-relaxed text-slate-600">
+                                      {para.content}
+                                    </p>
+                                  </div>
+                                ))}
+
+                                {card.paragraphs.length > 2 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setExpandedReviewCardIds((prev) => ({
+                                        ...prev,
+                                        [card.id]: !prev[card.id],
+                                      }));
+                                    }}
+                                    className="text-blue-600 hover:text-blue-700 font-bold text-xs pt-1 hover:underline cursor-pointer block"
+                                  >
+                                    {isExpanded ? "Show Less" : `Read Full Review (+${card.paragraphs.length - 2} more sections)`}
+                                  </button>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Bottom Info Row: Date + Like/Dislike Buttons */}
+                            <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-400">
+                              <span>{card.reviewedDate || "Verified Student Review"}</span>
+
+                              <div className="flex items-center gap-3">
+                                {/* Like Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setReviewHelpfulVotes((prev) => ({
+                                      ...prev,
+                                      [card.id]: prev[card.id] === "up" ? null : "up",
+                                    }));
+                                  }}
+                                  className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                                    userVote === "up"
+                                      ? "text-emerald-600 bg-emerald-50 font-bold"
+                                      : "hover:text-slate-800 hover:bg-slate-100"
+                                  }`}
+                                >
+                                  <ThumbsUp className="w-3.5 h-3.5" />
+                                  <span>{(card.likesCount || 10) + (userVote === "up" ? 1 : 0)}</span>
+                                </button>
+
+                                {/* Dislike Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setReviewHelpfulVotes((prev) => ({
+                                      ...prev,
+                                      [card.id]: prev[card.id] === "down" ? null : "down",
+                                    }));
+                                  }}
+                                  className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                                    userVote === "down"
+                                      ? "text-red-600 bg-red-50 font-bold"
+                                      : "hover:text-slate-800 hover:bg-slate-100"
+                                  }`}
+                                >
+                                  <ThumbsDown className="w-3.5 h-3.5" />
+                                  <span>{(card.dislikesCount || 0) + (userVote === "down" ? 1 : 0)}</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           )}
 
@@ -17900,6 +18240,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     {activeMiniModal === "reviews" && "⭐ Edit Verified Reviews"}
                     {activeMiniModal === "admission" && "🎓 Edit Admission & Application Process"}
                     {activeMiniModal === "admission_faqs" && "❓ Edit Admission FAQs"}
+                    {activeMiniModal === "compare_faqs" && "❓ Edit Comparison FAQs"}
                   </h3>
                   <p className="text-xs text-purple-600 font-bold">
                     Editing: {collegeData.name} ({slug})
@@ -23571,6 +23912,126 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         });
                                       }}
                                       placeholder="e.g. Direct admission for regular full-time MTech..."
+                                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 resize-none leading-relaxed"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* MODAL: COLLEGE COMPARISON FAQS */}
+                {activeMiniModal === "compare_faqs" && (
+                  <div className="p-3.5 bg-gradient-to-br from-amber-50/60 via-white to-amber-50/30 border border-amber-200/80 rounded-2xl space-y-3.5">
+                    {(() => {
+                      const faqs = tempData.compareFaqs && tempData.compareFaqs.length > 0
+                        ? tempData.compareFaqs
+                        : getCollegeCompareFaqs(tempData);
+
+                      return (
+                        <>
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                              <span className="text-xs font-black text-amber-950 uppercase tracking-wide block">
+                                ❓ College Comparison FAQs
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-medium">
+                                Comparison FAQs list ({faqs.length} questions)
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = [
+                                  ...faqs,
+                                  {
+                                    question: "",
+                                    answer: "",
+                                  },
+                                ];
+                                setTempData({
+                                  ...tempData,
+                                  compareFaqs: updated,
+                                });
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                            >
+                              <Plus className="w-3 h-3" />
+                              <span>Add FAQ Item</span>
+                            </button>
+                          </div>
+
+                          {/* FAQ Questions List */}
+                          <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                            {faqs.map((faq, fIdx) => (
+                              <div
+                                key={fIdx}
+                                className="p-3 bg-white border border-slate-200/90 hover:border-amber-300 rounded-xl space-y-2.5 shadow-2xs relative transition-all"
+                              >
+                                <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                    <span className="text-amber-600 font-black">Q{fIdx + 1}:</span> {faq.question ? (faq.question.length > 50 ? `${faq.question.slice(0, 50)}...` : faq.question) : "Untitled Question"}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = faqs.filter((_, idx) => idx !== fIdx);
+                                      setTempData({
+                                        ...tempData,
+                                        compareFaqs: updated,
+                                      });
+                                    }}
+                                    className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                    title="Delete Question"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+
+                                <div className="space-y-2">
+                                  <div>
+                                    <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                      Question *
+                                    </label>
+                                    <input
+                                      type="text"
+                                      required
+                                      value={faq.question}
+                                      onChange={(e) => {
+                                        const updated = [...faqs];
+                                        updated[fIdx] = { ...updated[fIdx], question: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          compareFaqs: updated,
+                                        });
+                                      }}
+                                      placeholder="e.g. How does Think Your College compare two colleges side-by-side?"
+                                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                      Answer *
+                                    </label>
+                                    <textarea
+                                      rows={3}
+                                      required
+                                      value={faq.answer}
+                                      onChange={(e) => {
+                                        const updated = [...faqs];
+                                        updated[fIdx] = { ...updated[fIdx], answer: e.target.value };
+                                        setTempData({
+                                          ...tempData,
+                                          compareFaqs: updated,
+                                        });
+                                      }}
+                                      placeholder="e.g. Think Your College provides a data-backed..."
                                       className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 resize-none leading-relaxed"
                                     />
                                   </div>
