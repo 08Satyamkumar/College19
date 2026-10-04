@@ -1342,6 +1342,23 @@ interface AdmissionArticleData {
   faqs?: AdmissionFaqItem[];
 }
 
+interface NirfPlacementParticularItem {
+  particular: string;
+  statistic: string;
+}
+
+interface NirfPlacementRow {
+  course: string;
+  items: NirfPlacementParticularItem[];
+}
+
+interface NirfPlacementReleaseData {
+  title?: string;
+  introParagraph?: string;
+  tableCols?: string[];
+  rows?: NirfPlacementRow[];
+}
+
 interface PlacementsArticleData {
   title?: string;
   introParagraph?: string;
@@ -1361,6 +1378,7 @@ interface PlacementsArticleData {
   faqsHeading?: string;
   faqsSubtitle?: string;
   faqs?: FaqItem[];
+  nirfRelease?: NirfPlacementReleaseData;
 }
 
 interface FaqItem {
@@ -2518,6 +2536,7 @@ type MiniModalId =
   | "placements_recruiters"
   | "placements_insights"
   | "placements_faqs"
+  | "placements_nirf"
   | "admission"
   | "admission_faqs"
   | "cutoffs"
@@ -2811,7 +2830,7 @@ export default function CollegeDetailPage() {
   // Admin Session and In-Page Editing States
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeMiniModal, setActiveMiniModal] = useState<MiniModalId>(null);
-  const [placementsModalTab, setPlacementsModalTab] = useState<"article" | "stats" | "salary" | "recruiters" | "insights" | "faqs">("article");
+  const [placementsModalTab, setPlacementsModalTab] = useState<"article" | "stats" | "salary" | "recruiters" | "insights" | "faqs" | "nirf">("article");
   const [openPlacementsFaqIdx, setOpenPlacementsFaqIdx] = useState<number | null>(null);
   const [isAdmissionCardOpen, setIsAdmissionCardOpen] = useState(true);
   const [isAdmissionArticleExpanded, setIsAdmissionArticleExpanded] = useState(false);
@@ -3644,6 +3663,35 @@ export default function CollegeDetailPage() {
       },
     ];
 
+    const defaultNirfRelease: NirfPlacementReleaseData = {
+      title: `${shortName} Placements 2023: (NIRF 2024 Release)`,
+      introParagraph: `As per the NIRF 2024 report 676 UG (4-year) students, 92 UG (5-year) students and 432 PG students were recorded receiving placement offers at ${shortName}. The median salary package for BTech students at ${shortName} stood at Rs 20.00 LPA. The average salary package offered to MTech students was Rs 22 lakhs during 2023 ${shortName} placements. PG students had a median salary of Rs 17 lakhs.`,
+      tableCols: ["Course", "Particulars", "Statistics"],
+      rows: [
+        {
+          course: "UG (4 Years)",
+          items: [
+            { particular: "No. of Students Placed", statistic: "676" },
+            { particular: "Median Salary", statistic: "INR 20 LPA" },
+          ],
+        },
+        {
+          course: "UG (5 Years)",
+          items: [
+            { particular: "No. of Students Placed", statistic: "92" },
+            { particular: "Median Salary", statistic: "INR 22 LPA" },
+          ],
+        },
+        {
+          course: "PG (2 Years)",
+          items: [
+            { particular: "No. of Students Placed", statistic: "432" },
+            { particular: "Median Salary", statistic: "INR 17 LPA" },
+          ],
+        },
+      ],
+    };
+
     if (college.placementsArticle) {
       return {
         title: college.placementsArticle.title || `${shortName} Placements 2026`,
@@ -3684,6 +3732,7 @@ export default function CollegeDetailPage() {
           college.placementsArticle.faqs && college.placementsArticle.faqs.length > 0
             ? college.placementsArticle.faqs
             : defaultPlacementFaqs,
+        nirfRelease: college.placementsArticle.nirfRelease || defaultNirfRelease,
       };
     }
 
@@ -3706,6 +3755,7 @@ export default function CollegeDetailPage() {
       faqsHeading: "Commonly asked questions",
       faqsSubtitle: "On Placements",
       faqs: defaultPlacementFaqs,
+      nirfRelease: defaultNirfRelease,
     };
   };
 
@@ -12329,6 +12379,99 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   </div>
                 );
               })()}
+
+              {/* NIRF RELEASE PLACEMENTS SECTION (Placements Tab Only) */}
+              {(() => {
+                const plData = getCollegePlacementsArticle(collegeData);
+                const nirfData = plData.nirfRelease;
+                if (!nirfData) return null;
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+                const cols = nirfData.tableCols && nirfData.tableCols.length === 3 ? nirfData.tableCols : ["Course", "Particulars", "Statistics"];
+                const rows = nirfData.rows && nirfData.rows.length > 0 ? nirfData.rows : [];
+
+                return (
+                  <div
+                    id="placements-nirf-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20"
+                  >
+                    {/* Header Row */}
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                        {nirfData.title || `${collegeShortName} Placements 2023: (NIRF 2024 Release)`}
+                      </h3>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("placements_nirf")}
+                          className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit NIRF Placements</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Narrative Intro Paragraph */}
+                    {nirfData.introParagraph && (
+                      <div className="text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal mb-5 space-y-2">
+                        <p className="leading-relaxed">
+                          {renderFormattedText(nirfData.introParagraph)}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* NIRF Data Table */}
+                    {rows.length > 0 && (
+                      <div className="overflow-x-auto custom-scrollbar rounded-xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white w-full">
+                        <table className="w-full text-left border-collapse text-xs sm:text-[13.5px] min-w-max">
+                          <thead>
+                            <tr className="bg-[#eef4fc] text-slate-800 font-bold font-outfit text-xs sm:text-[13.5px]">
+                              {cols.map((colName, cIdx) => (
+                                <th
+                                  key={cIdx}
+                                  className={`py-3.5 px-4 sm:px-5 font-bold font-outfit text-slate-900 border-b border-slate-200/80 ${
+                                    cIdx < cols.length - 1 ? "border-r border-slate-200/70" : ""
+                                  } ${cIdx === 0 ? "min-w-[170px] sm:min-w-[200px]" : cIdx === 1 ? "min-w-[200px] sm:min-w-[250px]" : "min-w-[170px] sm:min-w-[220px]"}`}
+                                >
+                                  {colName}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-200/80 font-normal">
+                            {rows.map((rowGroup, gIdx) => {
+                              const items = rowGroup.items && rowGroup.items.length > 0 ? rowGroup.items : [{ particular: "-", statistic: "-" }];
+                              return (
+                                <React.Fragment key={gIdx}>
+                                  {items.map((item, itemIdx) => (
+                                    <tr key={`${gIdx}-${itemIdx}`} className="hover:bg-blue-50/20 transition-colors">
+                                      {itemIdx === 0 && (
+                                        <td
+                                          rowSpan={items.length}
+                                          className="py-3.5 px-4 sm:px-5 font-bold text-slate-900 bg-slate-50/50 border-r border-b border-slate-200/80 align-middle min-w-[170px] sm:min-w-[200px]"
+                                        >
+                                          {rowGroup.course}
+                                        </td>
+                                      )}
+                                      <td className="py-3.5 px-4 sm:px-5 font-normal sm:font-medium text-slate-800 border-r border-b border-slate-200/70 min-w-[200px] sm:min-w-[250px]">
+                                        {item.particular}
+                                      </td>
+                                      <td className="py-3.5 px-4 sm:px-5 font-bold text-indigo-950 border-b border-slate-200/70 min-w-[170px] sm:min-w-[220px]">
+                                        {item.statistic}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </React.Fragment>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           )}
 
@@ -15651,6 +15794,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     {activeMiniModal === "placements_recruiters" && "🏢 Edit Top Recruiters & Company Logos"}
                     {activeMiniModal === "placements_insights" && "💡 Edit Placement Student Insights"}
                     {activeMiniModal === "placements_faqs" && "❓ Edit Placement FAQs"}
+                    {activeMiniModal === "placements_nirf" && "🏛️ Edit NIRF Release Placements Table & Data"}
                     {activeMiniModal === "cutoffs" && "📈 Edit Cutoff Ranks Table"}
                     {activeMiniModal === "cutoff_comparison" && "📈 Edit Cutoff Round 3-Year Comparison Table"}
                     {activeMiniModal === "secondary_cutoff_comparison" && "📊 Edit Secondary Exam Cutoff Table (UCEED / Specialized)"}
@@ -19078,6 +19222,17 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                       >
                         💡 5. Student Insights
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => setPlacementsModalTab("nirf")}
+                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          placementsModalTab === "nirf"
+                            ? "bg-white text-indigo-900 shadow-2xs"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}
+                      >
+                        🏛️ 6. NIRF Release Table
+                      </button>
                     </div>
 
                     {/* Tab 1: Article Content */}
@@ -20068,6 +20223,302 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                         })()}
                       </div>
                     )}
+
+                    {/* Tab 6: NIRF Release Table */}
+                    {placementsModalTab === "nirf" && (
+                      <div className="p-3.5 bg-gradient-to-br from-indigo-50/50 via-white to-blue-50/40 border border-indigo-200/80 rounded-2xl space-y-3.5">
+                        {(() => {
+                          const curArticle = tempData.placementsArticle || getCollegePlacementsArticle(tempData);
+                          const nirfData = curArticle.nirfRelease || getCollegePlacementsArticle(tempData).nirfRelease || {
+                            title: `${tempData.name.split(" - ")[0]} Placements 2023: (NIRF 2024 Release)`,
+                            introParagraph: "",
+                            tableCols: ["Course", "Particulars", "Statistics"],
+                            rows: [],
+                          };
+                          const cols = nirfData.tableCols && nirfData.tableCols.length === 3 ? nirfData.tableCols : ["Course", "Particulars", "Statistics"];
+                          const rows = nirfData.rows || [];
+
+                          return (
+                            <>
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                  <span className="text-xs font-black text-indigo-950 uppercase tracking-wide block">
+                                    🏛️ NIRF Release Placements Table
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 font-medium">
+                                    Manage NIRF placement release title, narrative text, table columns, and dynamic course groups ({rows.length} course groups)
+                                  </span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedRows: NirfPlacementRow[] = [
+                                      ...rows,
+                                      {
+                                        course: "New Course (e.g. PG 2-Year)",
+                                        items: [
+                                          { particular: "No. of Students Placed", statistic: "0" },
+                                          { particular: "Median Salary", statistic: "INR 0 LPA" },
+                                        ],
+                                      },
+                                    ];
+                                    setTempData({
+                                      ...tempData,
+                                      placementsArticle: {
+                                        ...curArticle,
+                                        nirfRelease: {
+                                          ...nirfData,
+                                          rows: updatedRows,
+                                        },
+                                      },
+                                    });
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                                >
+                                  <Plus className="w-3 h-3" />
+                                  <span>Add Course Group</span>
+                                </button>
+                              </div>
+
+                              {/* Section Title & Intro Paragraph */}
+                              <div className="space-y-2.5">
+                                <div>
+                                  <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                    Section Title *
+                                  </label>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={nirfData.title || ""}
+                                    onChange={(e) => {
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          nirfRelease: { ...nirfData, title: e.target.value },
+                                        },
+                                      });
+                                    }}
+                                    placeholder="e.g. IIT Delhi Placements 2023: (NIRF 2024 Release)"
+                                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                    Narrative Intro Paragraph (Supports **bold**)
+                                  </label>
+                                  <textarea
+                                    rows={3}
+                                    value={nirfData.introParagraph || ""}
+                                    onChange={(e) => {
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          nirfRelease: { ...nirfData, introParagraph: e.target.value },
+                                        },
+                                      });
+                                    }}
+                                    placeholder="As per the NIRF 2024 report 676 UG (4-year) students..."
+                                    className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 resize-none"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Table Columns Customizer */}
+                              <div className="bg-white/80 p-2.5 rounded-xl border border-indigo-100 space-y-2">
+                                <span className="text-[10.5px] font-bold text-slate-700 block uppercase tracking-wider">
+                                  Table Column Headers (3 Columns)
+                                </span>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                  {cols.map((colName, cIdx) => (
+                                    <div key={cIdx} className="space-y-1">
+                                      <label className="text-[9.5px] font-bold text-slate-500 uppercase">
+                                        Col {cIdx + 1} ({cIdx === 0 ? "Course" : cIdx === 1 ? "Particulars" : "Statistics"})
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={colName}
+                                        onChange={(e) => {
+                                          const newCols = [...cols];
+                                          newCols[cIdx] = e.target.value;
+                                          setTempData({
+                                            ...tempData,
+                                            placementsArticle: {
+                                              ...curArticle,
+                                              nirfRelease: { ...nirfData, tableCols: newCols },
+                                            },
+                                          });
+                                        }}
+                                        placeholder={cIdx === 0 ? "Course" : cIdx === 1 ? "Particulars" : "Statistics"}
+                                        className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800"
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Course Groups List */}
+                              <div className="space-y-3 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                                {rows.map((group, gIdx) => (
+                                  <div
+                                    key={gIdx}
+                                    className="p-3 bg-white border border-slate-200/90 hover:border-indigo-300 rounded-xl space-y-2.5 shadow-2xs relative transition-all"
+                                  >
+                                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                                      <span className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                                        <span className="text-indigo-600 font-black">Group #{gIdx + 1}:</span> {group.course || "Unnamed Course"}
+                                      </span>
+                                      <div className="flex items-center gap-1.5">
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const updated = [...rows];
+                                            const curItems = updated[gIdx].items || [];
+                                            updated[gIdx] = {
+                                              ...updated[gIdx],
+                                              items: [
+                                                ...curItems,
+                                                { particular: "New Particular", statistic: "Stat Value" },
+                                              ],
+                                            };
+                                            setTempData({
+                                              ...tempData,
+                                              placementsArticle: {
+                                                ...curArticle,
+                                                nirfRelease: { ...nirfData, rows: updated },
+                                              },
+                                            });
+                                          }}
+                                          className="p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg cursor-pointer flex items-center gap-1 text-[10px] font-bold transition-colors"
+                                          title="Add Particular Row"
+                                        >
+                                          <Plus className="w-3 h-3" />
+                                          <span>Add Row</span>
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const updated = rows.filter((_, i) => i !== gIdx);
+                                            setTempData({
+                                              ...tempData,
+                                              placementsArticle: {
+                                                ...curArticle,
+                                                nirfRelease: { ...nirfData, rows: updated },
+                                              },
+                                            });
+                                          }}
+                                          className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer flex items-center gap-1 text-[10px] font-bold transition-colors"
+                                          title="Remove Course Group"
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                          <span>Remove Group</span>
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    <div>
+                                      <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                        Course Name / Label (e.g. UG (4 Years)) *
+                                      </label>
+                                      <input
+                                        type="text"
+                                        required
+                                        value={group.course}
+                                        onChange={(e) => {
+                                          const updated = [...rows];
+                                          updated[gIdx] = { ...updated[gIdx], course: e.target.value };
+                                          setTempData({
+                                            ...tempData,
+                                            placementsArticle: {
+                                              ...curArticle,
+                                              nirfRelease: { ...nirfData, rows: updated },
+                                            },
+                                          });
+                                        }}
+                                        placeholder="e.g. UG (4 Years)"
+                                        className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                                      />
+                                    </div>
+
+                                    {/* Items list for this group */}
+                                    <div className="space-y-1.5 pl-2 border-l-2 border-indigo-100">
+                                      <label className="text-[9.5px] font-bold text-slate-500 block uppercase">
+                                        Particulars & Statistics ({group.items?.length || 0} rows)
+                                      </label>
+                                      {(group.items || []).map((item, iIdx) => (
+                                        <div key={iIdx} className="flex items-center gap-2">
+                                          <input
+                                            type="text"
+                                            value={item.particular}
+                                            onChange={(e) => {
+                                              const updated = [...rows];
+                                              const curItems = [...(updated[gIdx].items || [])];
+                                              curItems[iIdx] = { ...curItems[iIdx], particular: e.target.value };
+                                              updated[gIdx] = { ...updated[gIdx], items: curItems };
+                                              setTempData({
+                                                ...tempData,
+                                                placementsArticle: {
+                                                  ...curArticle,
+                                                  nirfRelease: { ...nirfData, rows: updated },
+                                                },
+                                              });
+                                            }}
+                                            placeholder="e.g. No. of Students Placed / Median Salary"
+                                            className="flex-1 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800"
+                                          />
+                                          <input
+                                            type="text"
+                                            value={item.statistic}
+                                            onChange={(e) => {
+                                              const updated = [...rows];
+                                              const curItems = [...(updated[gIdx].items || [])];
+                                              curItems[iIdx] = { ...curItems[iIdx], statistic: e.target.value };
+                                              updated[gIdx] = { ...updated[gIdx], items: curItems };
+                                              setTempData({
+                                                ...tempData,
+                                                placementsArticle: {
+                                                  ...curArticle,
+                                                  nirfRelease: { ...nirfData, rows: updated },
+                                                },
+                                              });
+                                            }}
+                                            placeholder="e.g. 676 / INR 20 LPA"
+                                            className="w-36 sm:w-44 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-indigo-950"
+                                          />
+                                          {(group.items || []).length > 1 && (
+                                            <button
+                                              type="button"
+                                              onClick={() => {
+                                                const updated = [...rows];
+                                                const curItems = (updated[gIdx].items || []).filter((_, i) => i !== iIdx);
+                                                updated[gIdx] = { ...updated[gIdx], items: curItems };
+                                                setTempData({
+                                                  ...tempData,
+                                                  placementsArticle: {
+                                                    ...curArticle,
+                                                    nirfRelease: { ...nirfData, rows: updated },
+                                                  },
+                                                });
+                                              }}
+                                              className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer"
+                                              title="Delete Item"
+                                            >
+                                              <Trash2 className="w-3 h-3" />
+                                            </button>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -20565,6 +21016,302 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 resize-none leading-relaxed"
                                     />
                                   </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* MODAL: NIRF PLACEMENTS RELEASE TABLE (INDIVIDUAL) */}
+                {activeMiniModal === "placements_nirf" && (
+                  <div className="p-3.5 bg-gradient-to-br from-indigo-50/50 via-white to-blue-50/40 border border-indigo-200/80 rounded-2xl space-y-3.5">
+                    {(() => {
+                      const curArticle = tempData.placementsArticle || getCollegePlacementsArticle(tempData);
+                      const nirfData = curArticle.nirfRelease || getCollegePlacementsArticle(tempData).nirfRelease || {
+                        title: `${tempData.name.split(" - ")[0]} Placements 2023: (NIRF 2024 Release)`,
+                        introParagraph: "",
+                        tableCols: ["Course", "Particulars", "Statistics"],
+                        rows: [],
+                      };
+                      const cols = nirfData.tableCols && nirfData.tableCols.length === 3 ? nirfData.tableCols : ["Course", "Particulars", "Statistics"];
+                      const rows = nirfData.rows || [];
+
+                      return (
+                        <>
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                              <span className="text-xs font-black text-indigo-950 uppercase tracking-wide block">
+                                🏛️ NIRF Release Placements Table
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-medium">
+                                Manage NIRF placement release title, narrative text, table columns, and dynamic course groups ({rows.length} course groups)
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updatedRows: NirfPlacementRow[] = [
+                                  ...rows,
+                                  {
+                                    course: "New Course (e.g. PG 2-Year)",
+                                    items: [
+                                      { particular: "No. of Students Placed", statistic: "0" },
+                                      { particular: "Median Salary", statistic: "INR 0 LPA" },
+                                    ],
+                                  },
+                                ];
+                                setTempData({
+                                  ...tempData,
+                                  placementsArticle: {
+                                    ...curArticle,
+                                    nirfRelease: {
+                                      ...nirfData,
+                                      rows: updatedRows,
+                                    },
+                                  },
+                                });
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                            >
+                              <Plus className="w-3 h-3" />
+                              <span>Add Course Group</span>
+                            </button>
+                          </div>
+
+                          {/* Section Title & Intro Paragraph */}
+                          <div className="space-y-2.5">
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                Section Title *
+                              </label>
+                              <input
+                                type="text"
+                                required
+                                value={nirfData.title || ""}
+                                onChange={(e) => {
+                                  setTempData({
+                                    ...tempData,
+                                    placementsArticle: {
+                                      ...curArticle,
+                                      nirfRelease: { ...nirfData, title: e.target.value },
+                                    },
+                                  });
+                                }}
+                                placeholder="e.g. IIT Delhi Placements 2023: (NIRF 2024 Release)"
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">
+                                Narrative Intro Paragraph (Supports **bold**)
+                              </label>
+                              <textarea
+                                rows={3}
+                                value={nirfData.introParagraph || ""}
+                                onChange={(e) => {
+                                  setTempData({
+                                    ...tempData,
+                                    placementsArticle: {
+                                      ...curArticle,
+                                      nirfRelease: { ...nirfData, introParagraph: e.target.value },
+                                    },
+                                  });
+                                }}
+                                placeholder="As per the NIRF 2024 report 676 UG (4-year) students..."
+                                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 resize-none"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Table Columns Customizer */}
+                          <div className="bg-white/80 p-2.5 rounded-xl border border-indigo-100 space-y-2">
+                            <span className="text-[10.5px] font-bold text-slate-700 block uppercase tracking-wider">
+                              Table Column Headers (3 Columns)
+                            </span>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                              {cols.map((colName, cIdx) => (
+                                <div key={cIdx} className="space-y-1">
+                                  <label className="text-[9.5px] font-bold text-slate-500 uppercase">
+                                    Col {cIdx + 1} ({cIdx === 0 ? "Course" : cIdx === 1 ? "Particulars" : "Statistics"})
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={colName}
+                                    onChange={(e) => {
+                                      const newCols = [...cols];
+                                      newCols[cIdx] = e.target.value;
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          nirfRelease: { ...nirfData, tableCols: newCols },
+                                        },
+                                      });
+                                    }}
+                                    placeholder={cIdx === 0 ? "Course" : cIdx === 1 ? "Particulars" : "Statistics"}
+                                    className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Course Groups List */}
+                          <div className="space-y-3 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                            {rows.map((group, gIdx) => (
+                              <div
+                                key={gIdx}
+                                className="p-3 bg-white border border-slate-200/90 hover:border-indigo-300 rounded-xl space-y-2.5 shadow-2xs relative transition-all"
+                              >
+                                <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                                  <span className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                                    <span className="text-indigo-600 font-black">Group #{gIdx + 1}:</span> {group.course || "Unnamed Course"}
+                                  </span>
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updated = [...rows];
+                                        const curItems = updated[gIdx].items || [];
+                                        updated[gIdx] = {
+                                          ...updated[gIdx],
+                                          items: [
+                                            ...curItems,
+                                            { particular: "New Particular", statistic: "Stat Value" },
+                                          ],
+                                        };
+                                        setTempData({
+                                          ...tempData,
+                                          placementsArticle: {
+                                            ...curArticle,
+                                            nirfRelease: { ...nirfData, rows: updated },
+                                          },
+                                        });
+                                      }}
+                                      className="p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg cursor-pointer flex items-center gap-1 text-[10px] font-bold transition-colors"
+                                      title="Add Particular Row"
+                                    >
+                                      <Plus className="w-3 h-3" />
+                                      <span>Add Row</span>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updated = rows.filter((_, i) => i !== gIdx);
+                                        setTempData({
+                                          ...tempData,
+                                          placementsArticle: {
+                                            ...curArticle,
+                                            nirfRelease: { ...nirfData, rows: updated },
+                                          },
+                                        });
+                                      }}
+                                      className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer flex items-center gap-1 text-[10px] font-bold transition-colors"
+                                      title="Remove Course Group"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                      <span>Remove Group</span>
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label className="text-[9.5px] font-bold text-slate-600 block mb-0.5">
+                                    Course Name / Label (e.g. UG (4 Years)) *
+                                  </label>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={group.course}
+                                    onChange={(e) => {
+                                      const updated = [...rows];
+                                      updated[gIdx] = { ...updated[gIdx], course: e.target.value };
+                                      setTempData({
+                                        ...tempData,
+                                        placementsArticle: {
+                                          ...curArticle,
+                                          nirfRelease: { ...nirfData, rows: updated },
+                                        },
+                                      });
+                                    }}
+                                    placeholder="e.g. UG (4 Years)"
+                                    className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
+                                  />
+                                </div>
+
+                                {/* Items list for this group */}
+                                <div className="space-y-1.5 pl-2 border-l-2 border-indigo-100">
+                                  <label className="text-[9.5px] font-bold text-slate-500 block uppercase">
+                                    Particulars & Statistics ({group.items?.length || 0} rows)
+                                  </label>
+                                  {(group.items || []).map((item, iIdx) => (
+                                    <div key={iIdx} className="flex items-center gap-2">
+                                      <input
+                                        type="text"
+                                        value={item.particular}
+                                        onChange={(e) => {
+                                          const updated = [...rows];
+                                          const curItems = [...(updated[gIdx].items || [])];
+                                          curItems[iIdx] = { ...curItems[iIdx], particular: e.target.value };
+                                          updated[gIdx] = { ...updated[gIdx], items: curItems };
+                                          setTempData({
+                                            ...tempData,
+                                            placementsArticle: {
+                                              ...curArticle,
+                                              nirfRelease: { ...nirfData, rows: updated },
+                                            },
+                                          });
+                                        }}
+                                        placeholder="e.g. No. of Students Placed / Median Salary"
+                                        className="flex-1 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800"
+                                      />
+                                      <input
+                                        type="text"
+                                        value={item.statistic}
+                                        onChange={(e) => {
+                                          const updated = [...rows];
+                                          const curItems = [...(updated[gIdx].items || [])];
+                                          curItems[iIdx] = { ...curItems[iIdx], statistic: e.target.value };
+                                          updated[gIdx] = { ...updated[gIdx], items: curItems };
+                                          setTempData({
+                                            ...tempData,
+                                            placementsArticle: {
+                                              ...curArticle,
+                                              nirfRelease: { ...nirfData, rows: updated },
+                                            },
+                                          });
+                                        }}
+                                        placeholder="e.g. 676 / INR 20 LPA"
+                                        className="w-36 sm:w-44 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-indigo-950"
+                                      />
+                                      {(group.items || []).length > 1 && (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const updated = [...rows];
+                                            const curItems = (updated[gIdx].items || []).filter((_, i) => i !== iIdx);
+                                            updated[gIdx] = { ...updated[gIdx], items: curItems };
+                                            setTempData({
+                                              ...tempData,
+                                              placementsArticle: {
+                                                ...curArticle,
+                                                nirfRelease: { ...nirfData, rows: updated },
+                                              },
+                                            });
+                                          }}
+                                          className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer"
+                                          title="Delete Item"
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                        </button>
+                                      )}
+                                    </div>
+                                  ))}
                                 </div>
                               </div>
                             ))}
