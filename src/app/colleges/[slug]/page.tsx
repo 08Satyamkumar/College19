@@ -4984,12 +4984,12 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
           className={`group/banner relative w-full overflow-hidden bg-slate-950 border-t-2 border-orange-500/50 transition-all duration-500 ${
             isBannerScrolled
               ? "h-[58px] sm:h-[64px] px-4 sm:px-8 flex items-center justify-between shadow-xs"
-              : "h-[240px] xs:h-[280px] sm:h-[340px] md:h-[400px] lg:h-[460px] xl:h-[500px] 2xl:h-[540px]"
+              : "h-[260px] sm:h-[320px] md:h-[380px]"
           }`}
         >
           {/* Top Ambient Glow Sheen */}
           <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/90 to-transparent z-30 pointer-events-none" />
-          <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-black/50 via-black/20 to-transparent z-20 pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-12 bg-gradient-to-b from-black/45 to-transparent z-20 pointer-events-none" />
 
           {/* Background Cover Image Carousel with Multi-Device Auto-Fit & Crystal Clarity */}
           {(() => {
@@ -5010,24 +5010,24 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
             return (
               <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-950">
-                {/* Layer 1: Ambient Background Aura (Prevents empty/letterbox bars on ultra-wide screens) */}
+                {/* Layer 1: Ambient Background Aura (Smooth Blur Fill) */}
                 <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
                   <img
                     src={currentImg}
                     alt=""
                     aria-hidden="true"
-                    className="w-full h-full object-cover scale-110 blur-2xl opacity-40 brightness-75 contrast-125"
+                    className="w-full h-full object-cover scale-110 blur-xl opacity-35 brightness-75 contrast-110"
                   />
                 </div>
 
-                {/* Layer 2: Main High-Definition Hero Image (Zero distortion, perfectly centered across all devices) */}
+                {/* Layer 2: Main High-Definition Hero Image */}
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentImg + currentCoverIdx}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.45, ease: "easeInOut" }}
+                    transition={{ duration: 0.35, ease: "easeInOut" }}
                     className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden z-10"
                   >
                     <img
@@ -5048,8 +5048,8 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Ultra-Clean Bottom Gradient (Covers only lower 45% for high-contrast text while keeping 60% of center photo bright & clear) */}
-                <div className="absolute inset-x-0 bottom-0 h-44 sm:h-56 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent pointer-events-none z-20" />
+                {/* Compact Bottom Gradient */}
+                <div className="absolute inset-x-0 bottom-0 h-32 sm:h-36 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent pointer-events-none z-20" />
 
                 {/* Interactive Glassmorphism Navigation Controls (Prev / Next Buttons on Hover) */}
                 {activeImages.length > 1 && !isBannerScrolled && (
@@ -5118,12 +5118,12 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                     />
                   ) : (
                     <div className="w-full h-full rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 text-white font-black text-[10px] flex items-center justify-center">
-                      {collegeData.name ? collegeData.name.slice(0, 4).toUpperCase() : "IITD"}
+                      {collegeData.name ? collegeData.name.replace(/^\[|\]$/g, '').slice(0, 4).toUpperCase() : "IITD"}
                     </div>
                   )}
                 </div>
                 <h2 className="font-outfit font-black text-xs sm:text-sm md:text-base text-white tracking-tight truncate drop-shadow-md">
-                  {collegeData.fullName || collegeData.name}
+                  {(collegeData.fullName || collegeData.name || "").replace(/^\[|\]$/g, '')}
                 </h2>
               </div>
 
@@ -5139,11 +5139,11 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               )}
             </div>
           ) : (
-            <div className="relative h-full w-full max-w-[1440px] mx-auto px-4 sm:px-8 pb-6 z-20 flex flex-col justify-end">
+            <div className="relative h-full w-full max-w-[1440px] mx-auto px-4 sm:px-8 pb-4 sm:pb-5 z-20 flex flex-col justify-end">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="flex items-center gap-4 sm:gap-5">
                   {/* Clean Square Logo with Glassmorphic Border and Elevation */}
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-[0_12px_32px_rgba(0,0,0,0.35)] ring-2 ring-white/40 p-1.5 flex items-center justify-center overflow-hidden shrink-0 relative transition-transform duration-500 group-hover/banner:scale-105">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-2xl bg-white shadow-[0_12px_32px_rgba(0,0,0,0.35)] ring-2 ring-white/40 p-1.5 flex items-center justify-center overflow-hidden shrink-0 relative transition-transform duration-500 group-hover/banner:scale-105">
                     {collegeData.logo ? (
                       <img
                         src={collegeData.logo}
@@ -5155,7 +5155,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                       />
                     ) : (
                       <div className="w-full h-full rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white font-black text-xs flex items-center justify-center">
-                        {collegeData.name ? collegeData.name.slice(0, 4).toUpperCase() : "IITD"}
+                        {collegeData.name ? collegeData.name.replace(/^\[|\]$/g, '').slice(0, 4).toUpperCase() : "IITD"}
                       </div>
                     )}
                   </div>
@@ -5163,7 +5163,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   {/* College Name: Sleek, Ultra-Crisp Legibility */}
                   <div className="text-white pt-1">
                     <h1 className="font-outfit font-black text-base sm:text-xl md:text-2xl text-white tracking-tight leading-snug drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]">
-                      {collegeData.fullName || collegeData.name}
+                      {(collegeData.fullName || collegeData.name || "").replace(/^\[|\]$/g, '')}
                     </h1>
                   </div>
                 </div>
