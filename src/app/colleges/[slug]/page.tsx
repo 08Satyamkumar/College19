@@ -1265,6 +1265,92 @@ const DEFAULT_DETAILED_REVIEW_CARDS: DetailedReviewCard[] = [
     likesCount: 19,
     dislikesCount: 2,
   },
+  {
+    id: "rev-4",
+    authorName: "Sneha Mukherjee",
+    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80",
+    avatarInitial: "S",
+    avatarBgColor: "bg-teal-100 text-teal-800",
+    verified: true,
+    courseAndBatch: "B.Tech. in Biotechnology & Biochemical Engineering - Batch of 2027",
+    overallRating: 4.7,
+    parameterRatings: [
+      { label: "Placements", rating: 4.5 },
+      { label: "Infrastructure", rating: 4.8 },
+      { label: "Faculty", rating: 4.9 },
+      { label: "Crowd & Campus Life", rating: 4.6 },
+      { label: "Value for Money", rating: 4.8 },
+    ],
+    title: "State-of-the-art bioprocess research facilities and top faculty guidance.",
+    paragraphs: [
+      {
+        heading: "Placements",
+        content:
+          "Biotech students get excellent placement opportunities in top pharmaceutical giants, clinical research organizations, bio-analytics firms, and data consulting.",
+      },
+      {
+        heading: "Infrastructure",
+        content:
+          "Advanced DNA sequencing labs, cleanrooms, centralized analytical instrumentation facility (CAIF), and modern bioinformatics computing clusters.",
+      },
+      {
+        heading: "Faculty",
+        content:
+          "Faculty members are actively engaged in national healthcare research, cancer genetics studies, and global patent commercialization.",
+      },
+      {
+        heading: "Other",
+        content:
+          "Interdisciplinary electives allow students to take computer science and artificial intelligence minors alongside core biological engineering.",
+      },
+    ],
+    reviewedDate: "Reviewed on 19 Sep 2026",
+    likesCount: 22,
+    dislikesCount: 1,
+  },
+  {
+    id: "rev-5",
+    authorName: "Vikramaditya Rao",
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
+    avatarInitial: "V",
+    avatarBgColor: "bg-blue-100 text-blue-800",
+    verified: true,
+    courseAndBatch: "B.Tech. in Electrical Engineering - Batch of 2026",
+    overallRating: 4.6,
+    parameterRatings: [
+      { label: "Placements", rating: 5.0 },
+      { label: "Infrastructure", rating: 4.4 },
+      { label: "Faculty", rating: 4.6 },
+      { label: "Crowd & Campus Life", rating: 4.5 },
+      { label: "Value for Money", rating: 4.7 },
+    ],
+    title: "Rigorous academic curriculum with industry-recognized microelectronics labs.",
+    paragraphs: [
+      {
+        heading: "Placements",
+        content:
+          "Hardware semiconductor leaders like Nvidia, Qualcomm, Intel, Texas Instruments, and ARM recruit aggressively with packages starting from 25 LPA.",
+      },
+      {
+        heading: "Infrastructure",
+        content:
+          "VLSI design labs with latest Cadence & Synopsys software suites, power electronics facilities, and 24-hour Maker Spaces.",
+      },
+      {
+        heading: "Faculty",
+        content:
+          "Professors have decades of industry consulting experience and provide deep practical insights during lab sessions.",
+      },
+      {
+        heading: "Other",
+        content:
+          "Student robotics and satellite development teams offer invaluable hands-on engineering exposure.",
+      },
+    ],
+    reviewedDate: "Reviewed on 05 Aug 2026",
+    likesCount: 31,
+    dislikesCount: 1,
+  },
 ];
 
 const DEFAULT_STUDENT_FEEDBACK_CATEGORIES: StudentFeedbackCategory[] = [
@@ -10546,6 +10632,221 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                   );
                 })()}
 
+                {/* 5. STUDENT RATINGS & VERIFIED REVIEWS SECTION (HOSTEL & CAMPUS TAB) */}
+                {(() => {
+                  const revData = getCollegeReviewsArticle(collegeData);
+                  const cards = (revData.reviewCards && revData.reviewCards.length > 0)
+                    ? revData.reviewCards
+                    : DEFAULT_DETAILED_REVIEW_CARDS;
+                  const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+
+                  return (
+                    <div
+                      id="hostel-student-reviews-section"
+                      className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20 space-y-4"
+                    >
+                      {/* Top Header Row */}
+                      <div className="flex items-start justify-between gap-3 border-b border-slate-100/90 pb-3.5">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20">
+                            <Star className="w-5 h-5 fill-white" />
+                          </div>
+                          <div>
+                            <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                              {revData.title || `${collegeShortName} Student Ratings & Verified Reviews`}
+                            </h3>
+                            <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">
+                              Real experiences shared by students and alumni on faculty, placements, campus life, and infrastructure.
+                            </p>
+                          </div>
+                        </div>
+
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => openMiniModal("reviewCards")}
+                            className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit Reviews ({cards.length})</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Review Cards List */}
+                      <div className="space-y-4">
+                        {(cards || []).map((card: DetailedReviewCard, cIdx: number) => {
+                          const isExpanded = !!expandedReviewCardIds[card.id];
+                          const userVote = reviewHelpfulVotes[card.id];
+
+                          return (
+                            <div
+                              key={card.id || cIdx}
+                              className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 space-y-3.5"
+                            >
+                              {/* Top Row: Avatar + Author Info + Score Badge */}
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-center gap-3">
+                                  {/* Square/Rounded Avatar Box */}
+                                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs relative bg-slate-100 flex items-center justify-center">
+                                    {card.avatarUrl ? (
+                                      <img
+                                        src={card.avatarUrl}
+                                        alt={card.authorName}
+                                        className="w-full h-full object-cover object-center"
+                                        onError={(e) => {
+                                          (e.currentTarget as HTMLElement).style.display = "none";
+                                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                          if (fallback) fallback.style.display = "flex";
+                                        }}
+                                      />
+                                    ) : null}
+                                    <div
+                                      className={`w-full h-full flex items-center justify-center font-black text-lg sm:text-xl font-outfit ${
+                                        card.avatarBgColor || "bg-amber-100 text-amber-800"
+                                      } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                    >
+                                      {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                    </div>
+                                  </div>
+
+                                  {/* Name & Course */}
+                                  <div>
+                                    <div className="flex items-center gap-1.5">
+                                      <h4 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-snug">
+                                        {card.authorName}
+                                      </h4>
+                                      {card.verified && (
+                                        <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500 shrink-0" />
+                                      )}
+                                    </div>
+                                    <p className="text-xs text-slate-500 font-medium leading-tight pt-0.5">
+                                      {card.courseAndBatch}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* Overall Rating Badge */}
+                                <div className="px-2.5 py-1 rounded-md bg-[#00875a] text-white font-bold text-xs sm:text-[13px] flex items-center gap-1 shrink-0 shadow-2xs select-none">
+                                  <span className="text-[11px]">★</span>
+                                  <span>{Number(card.overallRating).toFixed(1)}</span>
+                                </div>
+                              </div>
+
+                              {/* Parameter Rating Badges Pill Row */}
+                              {card.parameterRatings && card.parameterRatings.length > 0 && (
+                                <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                                  {(card.parameterRatings || []).map((p: ReviewParameterBadge, pIdx: number) => {
+                                    const isLow = p.rating < 3.0;
+                                    return (
+                                      <div
+                                        key={pIdx}
+                                        className={`px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border ${
+                                          isLow
+                                            ? "bg-rose-50/70 border-rose-200 text-rose-700"
+                                            : "bg-white border-slate-200/90 text-slate-700 shadow-2xs"
+                                        }`}
+                                      >
+                                        <span className={isLow ? "text-rose-500 font-black" : "text-emerald-600 font-black"}>
+                                          ★
+                                        </span>
+                                        <span className="font-bold text-slate-900">{Number(p.rating).toFixed(1)}</span>
+                                        <span>{p.label}</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+
+                              {/* Title / Headline */}
+                              {card.title && (
+                                <h5 className="font-outfit font-bold text-sm sm:text-[15px] text-slate-900 leading-snug pt-0.5">
+                                  {card.title}
+                                </h5>
+                              )}
+
+                              {/* Review Category Paragraphs */}
+                              {card.paragraphs && card.paragraphs.length > 0 && (
+                                <div className="space-y-2 text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                                  {(isExpanded ? card.paragraphs : card.paragraphs.slice(0, 2)).map((par, parIdx) => (
+                                    <p key={parIdx} className="leading-relaxed">
+                                      <strong className="font-bold text-slate-900">{par.heading}: </strong>
+                                      {par.content}
+                                    </p>
+                                  ))}
+                                </div>
+                              )}
+
+                              {/* Footer: Date & Read More Toggle & Reactions */}
+                              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-xs text-slate-400 font-medium">
+                                    {card.reviewedDate || "Reviewed recently"}
+                                  </span>
+
+                                  {card.paragraphs && card.paragraphs.length > 2 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setExpandedReviewCardIds((prev) => ({
+                                          ...prev,
+                                          [card.id]: !prev[card.id],
+                                        }));
+                                      }}
+                                      className="text-[#1a73e8] hover:text-[#0b57d0] text-xs font-bold hover:underline cursor-pointer transition-colors select-none"
+                                    >
+                                      {isExpanded ? "Read Less" : "Read More"}
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Helpful Likes / Dislikes Action Buttons */}
+                                <div className="flex items-center gap-2 text-slate-500">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setReviewHelpfulVotes((prev) => ({
+                                        ...prev,
+                                        [card.id]: prev[card.id] === "up" ? null : "up",
+                                      }));
+                                    }}
+                                    className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                                      userVote === "up"
+                                        ? "text-emerald-700 bg-emerald-50 font-bold"
+                                        : "hover:text-slate-800 hover:bg-slate-100"
+                                    }`}
+                                  >
+                                    <ThumbsUp className="w-3.5 h-3.5" />
+                                    <span>{(card.likesCount || 0) + (userVote === "up" ? 1 : 0)}</span>
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setReviewHelpfulVotes((prev) => ({
+                                        ...prev,
+                                        [card.id]: prev[card.id] === "down" ? null : "down",
+                                      }));
+                                    }}
+                                    className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                                      userVote === "down"
+                                        ? "text-rose-600 bg-rose-50 font-bold"
+                                        : "hover:text-slate-800 hover:bg-slate-100"
+                                    }`}
+                                  >
+                                    <ThumbsDown className="w-3.5 h-3.5" />
+                                    <span>{(card.dislikesCount || 0) + (userVote === "down" ? 1 : 0)}</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+
             </div>
           )}
 
@@ -11260,6 +11561,221 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                         </motion.div>
                       )}
                     </AnimatePresence>
+                  </div>
+                );
+              })()}
+
+              {/* 5. STUDENT RATINGS & VERIFIED REVIEWS SECTION (CUT-OFFS TAB) */}
+              {(() => {
+                const revData = getCollegeReviewsArticle(collegeData);
+                const cards = (revData.reviewCards && revData.reviewCards.length > 0)
+                  ? revData.reviewCards
+                  : DEFAULT_DETAILED_REVIEW_CARDS;
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+
+                return (
+                  <div
+                    id="cutoffs-student-reviews-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20 space-y-4"
+                  >
+                    {/* Top Header Row */}
+                    <div className="flex items-start justify-between gap-3 border-b border-slate-100/90 pb-3.5">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20">
+                          <Star className="w-5 h-5 fill-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                            {revData.title || `${collegeShortName} Student Ratings & Verified Reviews`}
+                          </h3>
+                          <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">
+                            Real experiences shared by students and alumni on faculty, cutoffs, campus life, and infrastructure.
+                          </p>
+                        </div>
+                      </div>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("reviewCards")}
+                          className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit Reviews ({cards.length})</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Review Cards List */}
+                    <div className="space-y-4">
+                      {(cards || []).map((card: DetailedReviewCard, cIdx: number) => {
+                        const isExpanded = !!expandedReviewCardIds[card.id];
+                        const userVote = reviewHelpfulVotes[card.id];
+
+                        return (
+                          <div
+                            key={card.id || cIdx}
+                            className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 space-y-3.5"
+                          >
+                            {/* Top Row: Avatar + Author Info + Score Badge */}
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex items-center gap-3">
+                                {/* Square/Rounded Avatar Box */}
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs relative bg-slate-100 flex items-center justify-center">
+                                  {card.avatarUrl ? (
+                                    <img
+                                      src={card.avatarUrl}
+                                      alt={card.authorName}
+                                      className="w-full h-full object-cover object-center"
+                                      onError={(e) => {
+                                        (e.currentTarget as HTMLElement).style.display = "none";
+                                        const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                        if (fallback) fallback.style.display = "flex";
+                                      }}
+                                    />
+                                  ) : null}
+                                  <div
+                                    className={`w-full h-full flex items-center justify-center font-black text-lg sm:text-xl font-outfit ${
+                                      card.avatarBgColor || "bg-amber-100 text-amber-800"
+                                    } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                  >
+                                    {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                  </div>
+                                </div>
+
+                                {/* Name & Course */}
+                                <div>
+                                  <div className="flex items-center gap-1.5">
+                                    <h4 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-snug">
+                                      {card.authorName}
+                                    </h4>
+                                    {card.verified && (
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500 shrink-0" />
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-slate-500 font-medium leading-tight pt-0.5">
+                                    {card.courseAndBatch}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Overall Rating Badge */}
+                              <div className="px-2.5 py-1 rounded-md bg-[#00875a] text-white font-bold text-xs sm:text-[13px] flex items-center gap-1 shrink-0 shadow-2xs select-none">
+                                <span className="text-[11px]">★</span>
+                                <span>{Number(card.overallRating).toFixed(1)}</span>
+                              </div>
+                            </div>
+
+                            {/* Parameter Rating Badges Pill Row */}
+                            {card.parameterRatings && card.parameterRatings.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                                {(card.parameterRatings || []).map((p: ReviewParameterBadge, pIdx: number) => {
+                                  const isLow = p.rating < 3.0;
+                                  return (
+                                    <div
+                                      key={pIdx}
+                                      className={`px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border ${
+                                        isLow
+                                          ? "bg-rose-50/70 border-rose-200 text-rose-700"
+                                          : "bg-white border-slate-200/90 text-slate-700 shadow-2xs"
+                                      }`}
+                                    >
+                                      <span className={isLow ? "text-rose-500 font-black" : "text-emerald-600 font-black"}>
+                                        ★
+                                      </span>
+                                      <span className="font-bold text-slate-900">{Number(p.rating).toFixed(1)}</span>
+                                      <span>{p.label}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* Title / Headline */}
+                            {card.title && (
+                              <h5 className="font-outfit font-bold text-sm sm:text-[15px] text-slate-900 leading-snug pt-0.5">
+                                {card.title}
+                              </h5>
+                            )}
+
+                            {/* Review Category Paragraphs */}
+                            {card.paragraphs && card.paragraphs.length > 0 && (
+                              <div className="space-y-2 text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                                {(isExpanded ? card.paragraphs : card.paragraphs.slice(0, 2)).map((par, parIdx) => (
+                                  <p key={parIdx} className="leading-relaxed">
+                                    <strong className="font-bold text-slate-900">{par.heading}: </strong>
+                                    {par.content}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Footer: Date & Read More Toggle & Reactions */}
+                            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs text-slate-400 font-medium">
+                                  {card.reviewedDate || "Reviewed recently"}
+                                </span>
+
+                                {card.paragraphs && card.paragraphs.length > 2 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setExpandedReviewCardIds((prev) => ({
+                                        ...prev,
+                                        [card.id]: !prev[card.id],
+                                      }));
+                                    }}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] text-xs font-bold hover:underline cursor-pointer transition-colors select-none"
+                                  >
+                                    {isExpanded ? "Read Less" : "Read More"}
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* Helpful Likes / Dislikes Action Buttons */}
+                              <div className="flex items-center gap-2 text-slate-500">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setReviewHelpfulVotes((prev) => ({
+                                      ...prev,
+                                      [card.id]: prev[card.id] === "up" ? null : "up",
+                                    }));
+                                  }}
+                                  className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                                    userVote === "up"
+                                      ? "text-emerald-700 bg-emerald-50 font-bold"
+                                      : "hover:text-slate-800 hover:bg-slate-100"
+                                  }`}
+                                >
+                                  <ThumbsUp className="w-3.5 h-3.5" />
+                                  <span>{(card.likesCount || 0) + (userVote === "up" ? 1 : 0)}</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setReviewHelpfulVotes((prev) => ({
+                                      ...prev,
+                                      [card.id]: prev[card.id] === "down" ? null : "down",
+                                    }));
+                                  }}
+                                  className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                                    userVote === "down"
+                                      ? "text-rose-600 bg-rose-50 font-bold"
+                                      : "hover:text-slate-800 hover:bg-slate-100"
+                                  }`}
+                                >
+                                  <ThumbsDown className="w-3.5 h-3.5" />
+                                  <span>{(card.dislikesCount || 0) + (userVote === "down" ? 1 : 0)}</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               })()}
@@ -13041,6 +13557,221 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 </motion.div>
                               )}
                             </AnimatePresence>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 6. STUDENT RATINGS & VERIFIED REVIEWS SECTION (PLACEMENTS TAB) */}
+              {(() => {
+                const revData = getCollegeReviewsArticle(collegeData);
+                const cards = (revData.reviewCards && revData.reviewCards.length > 0)
+                  ? revData.reviewCards
+                  : DEFAULT_DETAILED_REVIEW_CARDS;
+                const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+
+                return (
+                  <div
+                    id="placements-student-reviews-section"
+                    className="group relative bg-white/95 backdrop-blur-sm border border-slate-200/90 hover:border-slate-300/90 rounded-2xl p-5 sm:p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_28px_-6px_rgba(15,23,42,0.08)] transition-all duration-300 scroll-mt-20 space-y-4"
+                  >
+                    {/* Top Header Row */}
+                    <div className="flex items-start justify-between gap-3 border-b border-slate-100/90 pb-3.5">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20">
+                          <Star className="w-5 h-5 fill-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-outfit font-black text-lg sm:text-xl text-[#2d114d] tracking-tight">
+                            {revData.title || `${collegeShortName} Student Ratings & Verified Reviews`}
+                          </h3>
+                          <p className="text-xs sm:text-[13px] text-slate-500 font-medium mt-0.5">
+                            Real experiences shared by students and alumni on faculty, placements, campus life, and infrastructure.
+                          </p>
+                        </div>
+                      </div>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => openMiniModal("reviewCards")}
+                          className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200/80 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span>Edit Reviews ({cards.length})</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Review Cards List */}
+                    <div className="space-y-4">
+                      {(cards || []).map((card: DetailedReviewCard, cIdx: number) => {
+                        const isExpanded = !!expandedReviewCardIds[card.id];
+                        const userVote = reviewHelpfulVotes[card.id];
+
+                        return (
+                          <div
+                            key={card.id || cIdx}
+                            className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all duration-300 space-y-3.5"
+                          >
+                            {/* Top Row: Avatar + Author Info + Score Badge */}
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex items-center gap-3">
+                                {/* Square/Rounded Avatar Box */}
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-2xs relative bg-slate-100 flex items-center justify-center">
+                                  {card.avatarUrl ? (
+                                    <img
+                                      src={card.avatarUrl}
+                                      alt={card.authorName}
+                                      className="w-full h-full object-cover object-center"
+                                      onError={(e) => {
+                                        (e.currentTarget as HTMLElement).style.display = "none";
+                                        const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                        if (fallback) fallback.style.display = "flex";
+                                      }}
+                                    />
+                                  ) : null}
+                                  <div
+                                    className={`w-full h-full flex items-center justify-center font-black text-lg sm:text-xl font-outfit ${
+                                      card.avatarBgColor || "bg-amber-100 text-amber-800"
+                                    } ${card.avatarUrl ? "hidden" : "flex"}`}
+                                  >
+                                    {card.avatarInitial || card.authorName.charAt(0).toUpperCase()}
+                                  </div>
+                                </div>
+
+                                {/* Name & Course */}
+                                <div>
+                                  <div className="flex items-center gap-1.5">
+                                    <h4 className="font-outfit font-bold text-sm sm:text-base text-slate-900 leading-snug">
+                                      {card.authorName}
+                                    </h4>
+                                    {card.verified && (
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500 shrink-0" />
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-slate-500 font-medium leading-tight pt-0.5">
+                                    {card.courseAndBatch}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Overall Rating Badge */}
+                              <div className="px-2.5 py-1 rounded-md bg-[#00875a] text-white font-bold text-xs sm:text-[13px] flex items-center gap-1 shrink-0 shadow-2xs select-none">
+                                <span className="text-[11px]">★</span>
+                                <span>{Number(card.overallRating).toFixed(1)}</span>
+                              </div>
+                            </div>
+
+                            {/* Parameter Rating Badges Pill Row */}
+                            {card.parameterRatings && card.parameterRatings.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                                {(card.parameterRatings || []).map((p: ReviewParameterBadge, pIdx: number) => {
+                                  const isLow = p.rating < 3.0;
+                                  return (
+                                    <div
+                                      key={pIdx}
+                                      className={`px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border ${
+                                        isLow
+                                          ? "bg-rose-50/70 border-rose-200 text-rose-700"
+                                          : "bg-white border-slate-200/90 text-slate-700 shadow-2xs"
+                                      }`}
+                                    >
+                                      <span className={isLow ? "text-rose-500 font-black" : "text-emerald-600 font-black"}>
+                                        ★
+                                      </span>
+                                      <span className="font-bold text-slate-900">{Number(p.rating).toFixed(1)}</span>
+                                      <span>{p.label}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* Title / Headline */}
+                            {card.title && (
+                              <h5 className="font-outfit font-bold text-sm sm:text-[15px] text-slate-900 leading-snug pt-0.5">
+                                {card.title}
+                              </h5>
+                            )}
+
+                            {/* Review Category Paragraphs */}
+                            {card.paragraphs && card.paragraphs.length > 0 && (
+                              <div className="space-y-2 text-xs sm:text-[13.5px] text-slate-700 leading-relaxed font-normal">
+                                {(isExpanded ? card.paragraphs : card.paragraphs.slice(0, 2)).map((par, parIdx) => (
+                                  <p key={parIdx} className="leading-relaxed">
+                                    <strong className="font-bold text-slate-900">{par.heading}: </strong>
+                                    {par.content}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Footer: Date & Read More Toggle & Reactions */}
+                            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs text-slate-400 font-medium">
+                                  {card.reviewedDate || "Reviewed recently"}
+                                </span>
+
+                                {card.paragraphs && card.paragraphs.length > 2 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setExpandedReviewCardIds((prev) => ({
+                                        ...prev,
+                                        [card.id]: !prev[card.id],
+                                      }));
+                                    }}
+                                    className="text-[#1a73e8] hover:text-[#0b57d0] text-xs font-bold hover:underline cursor-pointer transition-colors select-none"
+                                  >
+                                    {isExpanded ? "Read Less" : "Read More"}
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* Helpful Likes / Dislikes Action Buttons */}
+                              <div className="flex items-center gap-2 text-slate-500">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setReviewHelpfulVotes((prev) => ({
+                                      ...prev,
+                                      [card.id]: prev[card.id] === "up" ? null : "up",
+                                    }));
+                                  }}
+                                  className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                                    userVote === "up"
+                                      ? "text-emerald-700 bg-emerald-50 font-bold"
+                                      : "hover:text-slate-800 hover:bg-slate-100"
+                                  }`}
+                                >
+                                  <ThumbsUp className="w-3.5 h-3.5" />
+                                  <span>{(card.likesCount || 0) + (userVote === "up" ? 1 : 0)}</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setReviewHelpfulVotes((prev) => ({
+                                      ...prev,
+                                      [card.id]: prev[card.id] === "down" ? null : "down",
+                                    }));
+                                  }}
+                                  className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                                    userVote === "down"
+                                      ? "text-rose-600 bg-rose-50 font-bold"
+                                      : "hover:text-slate-800 hover:bg-slate-100"
+                                  }`}
+                                >
+                                  <ThumbsDown className="w-3.5 h-3.5" />
+                                  <span>{(card.dislikesCount || 0) + (userVote === "down" ? 1 : 0)}</span>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         );
                       })}
