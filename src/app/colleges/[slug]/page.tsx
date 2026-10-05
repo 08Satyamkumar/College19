@@ -13141,15 +13141,15 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                 </div>
 
                                 {/* Authentic High-Precision Table matching Image 1 & 2 */}
-                                <div className="w-full overflow-hidden border border-[#3b82f6] shadow-2xs rounded-xs">
+                                <div className="w-full overflow-hidden border border-slate-300 shadow-2xs rounded-xl">
                                   <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse min-w-[620px]">
                                       <thead>
-                                        <tr className="bg-[#3b82f6] text-white">
-                                          <th className="w-[24%] py-3.5 px-4 text-center font-bold text-xs sm:text-sm tracking-wide border-r border-blue-400/40 uppercase sm:normal-case">
+                                        <tr className="bg-[#f0f5ff] text-slate-800 border-b border-slate-300">
+                                          <th className="w-[24%] py-3.5 px-4 text-center font-bold text-xs sm:text-sm tracking-wide border-r border-slate-300 uppercase sm:normal-case">
                                             Course
                                           </th>
-                                          <th className="w-[18%] py-3.5 px-4 text-center font-bold text-xs sm:text-sm tracking-wide border-r border-blue-400/40 uppercase sm:normal-case">
+                                          <th className="w-[18%] py-3.5 px-4 text-center font-bold text-xs sm:text-sm tracking-wide border-r border-slate-300 uppercase sm:normal-case">
                                             Duration
                                           </th>
                                           <th className="w-[58%] py-3.5 px-5 text-left font-bold text-xs sm:text-sm tracking-wide uppercase sm:normal-case">
