@@ -654,108 +654,178 @@ interface CollegeGalleryData {
 
 const DEFAULT_COLLEGE_GALLERY_DATA: CollegeGalleryData = {
   title: "IIT Delhi Campus & Academic Infrastructure Gallery",
-  subtitle: "Official visual archive of lecture theatres, high-performance computing labs, robotics cleanrooms, student residences, and vibrant campus life.",
-  categories: ["Academic", "Campus & Hostels", "Events & Fest", "Sports & Life"],
+  subtitle: "Official visual archive of smart classrooms, advanced laboratories, central library, auditoriums, student hostels, and campus life.",
+  categories: ["Classroom", "Laboratory", "Library", "Auditorium", "Campus & Hostels", "Events & Fest", "Sports & Life"],
   items: [
-    // 1. ACADEMIC SECTION (Images & Video Reels)
+    // 1. CLASSROOM SECTION (Smart Classrooms & Lecture Theatres)
     {
-      id: "acad-img-1",
-      type: "image",
-      url: "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=85",
-      caption: "Central Air-Conditioned Digital Library (3 Lakh+ Resources & Silent Zones)",
-      category: "Academic",
-      tag: "Central Library",
-    },
-    {
-      id: "acad-img-2",
-      type: "image",
-      url: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&auto=format&fit=crop&q=85",
-      caption: "Advanced Robotics & AI Research Studio with Autonomous Drones",
-      category: "Academic",
-      tag: "AI & Robotics Lab",
-    },
-    {
-      id: "acad-img-3",
+      id: "cls-img-1",
       type: "image",
       url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&auto=format&fit=crop&q=85",
       caption: "Multi-Tier Smart Lecture Theatre & Interactive Projection Amphitheatre",
-      category: "Academic",
-      tag: "Smart Classrooms",
+      category: "Classroom",
+      tag: "Smart Classroom",
     },
     {
-      id: "acad-img-4",
-      type: "image",
-      url: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&auto=format&fit=crop&q=85",
-      caption: "High-Performance Supercomputing & Cloud Neural Network Hub",
-      category: "Academic",
-      tag: "Supercomputing",
-    },
-    {
-      id: "acad-img-5",
-      type: "image",
-      url: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=1200&auto=format&fit=crop&q=85",
-      caption: "Semiconductor Cleanroom VLSI Design & Nanotech Prototyping Center",
-      category: "Academic",
-      tag: "VLSI Cleanroom",
-    },
-    {
-      id: "acad-img-6",
+      id: "cls-img-2",
       type: "image",
       url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&auto=format&fit=crop&q=85",
-      caption: "Departmental Conference Auditorium & Research Paper Colloquium Pods",
-      category: "Academic",
-      tag: "Auditorium",
+      caption: "Modern Hybrid Seminar Lecture Hall with Ergonomic Seating",
+      category: "Classroom",
+      tag: "Lecture Theatre",
     },
     {
-      id: "acad-vid-1",
+      id: "cls-img-3",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&auto=format&fit=crop&q=85",
+      caption: "Computer-Aided Design & Simulation Tutorial Classroom Studio",
+      category: "Classroom",
+      tag: "CAD Studio",
+    },
+    {
+      id: "cls-vid-1",
       type: "video",
       url: "https://www.w3schools.com/html/mov_bbb.mp4",
-      title: "Inside India's Smartest Lecture Halls #academic #iitdelhi",
-      caption: "A 360-degree tour inside the newly upgraded digital lecture theatres.",
-      category: "Academic",
+      title: "Inside India's Smartest Digital Lecture Theatres #classroom #iitdelhi",
+      caption: "A 360-degree walkthrough of the newly upgraded smart classrooms.",
+      category: "Classroom",
       duration: "00:45",
       authorName: "Karan Verma",
       thumbnailUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&auto=format&fit=crop&q=80",
-      tag: "Lecture Hall Tour",
+      tag: "Classroom Tour",
     },
     {
-      id: "acad-vid-2",
+      id: "cls-vid-2",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Live Computational Neural Networks Class Demo #techclass",
+      caption: "Interactive teaching demonstration using digital board projection.",
+      category: "Classroom",
+      duration: "01:05",
+      authorName: "Prof. S. R. Sarangi",
+      thumbnailUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&auto=format&fit=crop&q=80",
+      tag: "Lecture Demo",
+    },
+
+    // 2. LABORATORY SECTION (Advanced Research & Computational Labs)
+    {
+      id: "lab-img-1",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&auto=format&fit=crop&q=85",
+      caption: "Advanced Robotics & AI Autonomous Systems Prototyping Studio",
+      category: "Laboratory",
+      tag: "Robotics Lab",
+    },
+    {
+      id: "lab-img-2",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&auto=format&fit=crop&q=85",
+      caption: "High-Performance Cloud Supercomputing & Deep Learning GPU Hub",
+      category: "Laboratory",
+      tag: "Supercomputing",
+    },
+    {
+      id: "lab-img-3",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=1200&auto=format&fit=crop&q=85",
+      caption: "Semiconductor Cleanroom VLSI Design & Nanotechnology Fabrication Center",
+      category: "Laboratory",
+      tag: "VLSI Cleanroom",
+    },
+    {
+      id: "lab-vid-1",
       type: "video",
       url: "https://www.w3schools.com/html/mov_bbb.mp4",
       title: "Exploring the 24/7 Supercomputer Research Lab #ai #coding",
       caption: "Live computational deep learning demonstration on high-performance GPU clusters.",
-      category: "Academic",
+      category: "Laboratory",
       duration: "01:10",
       authorName: "Ananya Sen",
       thumbnailUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&auto=format&fit=crop&q=80",
       tag: "Supercomputing",
     },
     {
-      id: "acad-vid-3",
-      type: "video",
-      url: "https://www.w3schools.com/html/mov_bbb.mp4",
-      title: "Central Library Silent Study Vlog & Digital Archives #studygram",
-      caption: "Late night peaceful study sessions in the central air-conditioned library.",
-      category: "Academic",
-      duration: "00:55",
-      authorName: "Rohit Mehta",
-      thumbnailUrl: "https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=80",
-      tag: "Library Vlog",
-    },
-    {
-      id: "acad-vid-4",
+      id: "lab-vid-2",
       type: "video",
       url: "https://www.w3schools.com/html/mov_bbb.mp4",
       title: "Hands-on Microelectronics VLSI Cleanroom Demo #engineering",
       caption: "Precision fabrication processes demonstrated by postgraduate researchers.",
-      category: "Academic",
+      category: "Laboratory",
       duration: "01:25",
       authorName: "Pooja Singh",
       thumbnailUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80",
       tag: "Lab Reel",
     },
 
-    // 2. CAMPUS & HOSTELS SECTION (Images & Video Reels)
+    // 3. LIBRARY SECTION (Central Digital Library & Archives)
+    {
+      id: "lib-img-1",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=85",
+      caption: "Central Air-Conditioned Digital Library (3 Lakh+ Resources & Silent Zones)",
+      category: "Library",
+      tag: "Central Library",
+    },
+    {
+      id: "lib-img-2",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1200&auto=format&fit=crop&q=85",
+      caption: "Rare Manuscripts, Archival Collections & Dissertation Research Pods",
+      category: "Library",
+      tag: "Archives",
+    },
+    {
+      id: "lib-img-3",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=1200&auto=format&fit=crop&q=85",
+      caption: "24/7 Cyber Workstations & IEEE E-Journal Research Terminal",
+      category: "Library",
+      tag: "E-Library",
+    },
+    {
+      id: "lib-vid-1",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Central Library Silent Late Night Study Vlog #studygram",
+      caption: "Late night peaceful study sessions in the central air-conditioned library.",
+      category: "Library",
+      duration: "00:55",
+      authorName: "Rohit Mehta",
+      thumbnailUrl: "https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=80",
+      tag: "Library Vlog",
+    },
+
+    // 4. AUDITORIUM SECTION (Seminar Halls & Convocation Arena)
+    {
+      id: "aud-img-1",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&auto=format&fit=crop&q=85",
+      caption: "Grand Golden Jubilee Convocation Auditorium (2,500+ Seating Capacity)",
+      category: "Auditorium",
+      tag: "Main Auditorium",
+    },
+    {
+      id: "aud-img-2",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&auto=format&fit=crop&q=85",
+      caption: "Departmental Conference Auditorium & Research Colloquium Amphitheatre",
+      category: "Auditorium",
+      tag: "Colloquium Pods",
+    },
+    {
+      id: "aud-vid-1",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Annual Convocation Ceremony & Graduation Walk Highlights",
+      caption: "Golden jubilee convocation ceremony inside the main auditorium.",
+      category: "Auditorium",
+      duration: "01:20",
+      authorName: "Media Council",
+      thumbnailUrl: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&auto=format&fit=crop&q=80",
+      tag: "Convocation",
+    },
+
+    // 5. CAMPUS & HOSTELS SECTION
     {
       id: "camp-img-1",
       type: "image",
@@ -813,7 +883,7 @@ const DEFAULT_COLLEGE_GALLERY_DATA: CollegeGalleryData = {
       tag: "Night Canteen",
     },
 
-    // 3. EVENTS & FEST SECTION (Images & Video Reels)
+    // 6. EVENTS & FEST SECTION
     {
       id: "evt-img-1",
       type: "image",
@@ -863,7 +933,7 @@ const DEFAULT_COLLEGE_GALLERY_DATA: CollegeGalleryData = {
       tag: "Robowars",
     },
 
-    // 4. SPORTS & LIFE SECTION (Images & Video Reels)
+    // 7. SPORTS & LIFE SECTION
     {
       id: "spt-img-1",
       type: "image",
@@ -903,6 +973,19 @@ const DEFAULT_COLLEGE_GALLERY_DATA: CollegeGalleryData = {
   ],
 };
 
+const getGalleryCategoryIcon = (category: string): string => {
+  const c = category.toLowerCase();
+  if (c.includes("classroom") || c.includes("class")) return "🏫";
+  if (c.includes("laboratory") || c.includes("lab")) return "🔬";
+  if (c.includes("library") || c.includes("book")) return "📖";
+  if (c.includes("auditorium") || c.includes("hall") || c.includes("theatre")) return "🎭";
+  if (c.includes("hostel") || c.includes("campus")) return "🏢";
+  if (c.includes("event") || c.includes("fest")) return "✨";
+  if (c.includes("sport") || c.includes("gym")) return "🏅";
+  if (c.includes("academic")) return "🎓";
+  return "📷";
+};
+
 const getCollegeGalleryData = (college?: Partial<CollegeDetail>): CollegeGalleryData => {
   if (college?.galleryData && college.galleryData.items && college.galleryData.items.length > 0) {
     return college.galleryData;
@@ -914,13 +997,13 @@ const getCollegeGalleryData = (college?: Partial<CollegeDetail>): CollegeGallery
       type: "image",
       url: g.url,
       caption: g.caption || "Campus Photograph",
-      category: g.category || "Academic",
+      category: g.category || "Campus & Hostels",
       tag: g.category || "Photo",
     }));
     return {
       title: `${colName} Campus & Academic Infrastructure Gallery`,
-      subtitle: `Official visual archive of lecture theatres, high-performance computing labs, robotics cleanrooms, student residences, and vibrant campus life.`,
-      categories: ["Academic", "Campus & Hostels", "Events & Fest", "Sports & Life"],
+      subtitle: `Official visual archive of smart classrooms, advanced laboratories, central library, auditoriums, student hostels, and campus life.`,
+      categories: ["Classroom", "Laboratory", "Library", "Auditorium", "Campus & Hostels", "Events & Fest", "Sports & Life"],
       items: [
         ...legacyItems,
         ...DEFAULT_COLLEGE_GALLERY_DATA.items.filter((item) => !legacyItems.some((l) => l.url === item.url)),
@@ -18484,7 +18567,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     : "bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 shadow-3xs"
                                 }`}
                               >
-                                <span>{cat === "Academic" ? "🎓" : cat.includes("Hostel") || cat.includes("Campus") ? "🏢" : cat.includes("Event") || cat.includes("Fest") ? "✨" : "🏅"}</span>
+                                <span>{getGalleryCategoryIcon(cat)}</span>
                                 <span>{cat}</span>
                                 <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold ${isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600 border border-slate-200/60"}`}>
                                   {count}
@@ -18508,7 +18591,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                       </div>
                     </div>
 
-                    {/* RENDER CATEGORY SECTIONS (ACADEMIC FIRST, THEN HOSTELS, EVENTS, SPORTS) */}
+                    {/* RENDER CATEGORY SECTIONS (CLASSROOM, LABORATORY, LIBRARY, AUDITORIUM, HOSTELS, EVENTS, SPORTS) */}
                     <div className="space-y-7">
                       {filteredCategories.map((categoryName, catIdx) => {
                         const catItems = allItems.filter((i) => i.category.toLowerCase() === categoryName.toLowerCase());
@@ -18529,7 +18612,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
                               <div className="flex items-center gap-2.5">
                                 <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-800 flex items-center justify-center font-bold text-base shadow-3xs">
-                                  {categoryName === "Academic" ? "🎓" : categoryName.includes("Hostel") || categoryName.includes("Campus") ? "🏢" : categoryName.includes("Event") || categoryName.includes("Fest") ? "✨" : "🏅"}
+                                  {getGalleryCategoryIcon(categoryName)}
                                 </div>
                                 <div>
                                   <h3 className="font-outfit font-bold text-lg sm:text-xl text-slate-900 tracking-tight">
@@ -31050,7 +31133,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     }
                                   }
                                 }}
-                                className="text-xs text-purple-600 font-bold hover:underline cursor-pointer flex items-center gap-1"
+                                className="text-xs text-slate-700 hover:text-slate-900 font-bold hover:underline cursor-pointer flex items-center gap-1"
                               >
                                 <Plus className="w-3.5 h-3.5" />
                                 <span>Add New Category</span>
@@ -31067,15 +31150,15 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     key={cIdx}
                                     type="button"
                                     onClick={() => setGalleryModalCategoryTab(cat)}
-                                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 border ${
                                       isSelected
-                                        ? "bg-purple-600 text-white shadow-sm ring-2 ring-purple-300"
-                                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                        ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                                        : "bg-slate-100 text-slate-700 border-slate-200/80 hover:bg-slate-200"
                                     }`}
                                   >
-                                    <span>{cat === "Academic" ? "🎓" : cat.includes("Hostel") || cat.includes("Campus") ? "🏢" : cat.includes("Event") || cat.includes("Fest") ? "✨" : "🏅"}</span>
+                                    <span>{getGalleryCategoryIcon(cat)}</span>
                                     <span>{cat}</span>
-                                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"}`}>
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold ${isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"}`}>
                                       {catCount}
                                     </span>
                                   </button>
@@ -31089,10 +31172,10 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             <button
                               type="button"
                               onClick={() => setGalleryModalMediaSubTab("images")}
-                              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer border ${
                                 galleryModalMediaSubTab === "images"
-                                  ? "bg-blue-600 text-white shadow-xs"
-                                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                  ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                                  : "bg-slate-100 text-slate-700 border-slate-200/80 hover:bg-slate-200"
                               }`}
                             >
                               <ImageIcon className="w-3.5 h-3.5" />
@@ -31102,10 +31185,10 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                             <button
                               type="button"
                               onClick={() => setGalleryModalMediaSubTab("videos")}
-                              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer border ${
                                 galleryModalMediaSubTab === "videos"
-                                  ? "bg-pink-600 text-white shadow-xs"
-                                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                  ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                                  : "bg-slate-100 text-slate-700 border-slate-200/80 hover:bg-slate-200"
                               }`}
                             >
                               <Film className="w-3.5 h-3.5" />
@@ -31133,7 +31216,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     };
                                     updateGalleryItems([...allItems, newPhoto]);
                                   }}
-                                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
+                                  className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
                                 >
                                   <Plus className="w-3.5 h-3.5" />
                                   <span>+ Add Photo Box</span>
