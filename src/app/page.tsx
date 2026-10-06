@@ -1527,9 +1527,12 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Bottom Centered Glassmorphic Panel (Woxsen style overlay with Saffron highlights) */}
+        {/* Bottom Centered Liquid Water Glassmorphic Panel (Crystal Clear Water Look) */}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[1080px] px-4 sm:px-6 z-20">
-          <div className="grid grid-cols-3 bg-slate-900/40 backdrop-blur-md rounded-t-[32px] border-t border-x border-orange-500/25 overflow-hidden shadow-[0_-15px_35px_rgba(0,0,0,0.2)] select-none">
+          <div className="relative grid grid-cols-3 bg-white/[0.07] backdrop-blur-[4px] backdrop-saturate-[180%] rounded-t-[32px] border-t border-x border-white/40 overflow-hidden shadow-[0_-12px_35px_rgba(0,0,0,0.2),inset_0_1.5px_2px_0_rgba(255,255,255,0.45),inset_0_-1px_2px_0_rgba(0,0,0,0.1)] select-none">
+            {/* Liquid Surface Sheen Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-white/[0.03] to-transparent pointer-events-none" />
+
             {/* Tab 1: Top Cities */}
             <button
               onClick={(e) => {
@@ -1539,10 +1542,10 @@ export default function HomePage() {
                   .getElementById("explore-hub-section")
                   ?.scrollIntoView({ behavior: "smooth", block: "center" });
               }}
-              className="flex flex-col items-center justify-center py-5 px-2 hover:bg-white/10 transition-all text-center border-b-[3px] border-transparent hover:border-orange-500 group border-r border-white/15 cursor-pointer"
+              className="relative flex flex-col items-center justify-center py-5 px-2 hover:bg-white/[0.12] active:bg-white/[0.18] transition-all text-center border-b-[3px] border-transparent hover:border-orange-400 group border-r border-white/20 cursor-pointer"
             >
-              <MapPin className="w-5 h-5 md:w-6 md:h-6 text-orange-400 group-hover:scale-110 transition-transform duration-300" />
-              <span className="mt-2 font-outfit font-black text-[9px] md:text-[10.5px] text-white uppercase tracking-widest">
+              <MapPin className="w-5 h-5 md:w-6 md:h-6 text-orange-400 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] group-hover:scale-110 group-hover:text-orange-300 transition-all duration-300" />
+              <span className="mt-2 font-outfit font-black text-[9.5px] md:text-[11px] text-white uppercase tracking-widest drop-shadow-[0_1.5px_4px_rgba(0,0,0,0.9)]">
                 Top Cities
               </span>
             </button>
@@ -1556,10 +1559,10 @@ export default function HomePage() {
                   .getElementById("explore-hub-section")
                   ?.scrollIntoView({ behavior: "smooth", block: "center" });
               }}
-              className="flex flex-col items-center justify-center py-5 px-2 hover:bg-white/10 transition-all text-center border-b-[3px] border-transparent hover:border-orange-500 group border-r border-white/15 cursor-pointer"
+              className="relative flex flex-col items-center justify-center py-5 px-2 hover:bg-white/[0.12] active:bg-white/[0.18] transition-all text-center border-b-[3px] border-transparent hover:border-orange-400 group border-r border-white/20 cursor-pointer"
             >
-              <Award className="w-5 h-5 md:w-6 md:h-6 text-orange-400 group-hover:scale-110 transition-transform duration-300" />
-              <span className="mt-2 font-outfit font-black text-[9px] md:text-[10.5px] text-white uppercase tracking-widest">
+              <Award className="w-5 h-5 md:w-6 md:h-6 text-orange-400 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] group-hover:scale-110 group-hover:text-orange-300 transition-all duration-300" />
+              <span className="mt-2 font-outfit font-black text-[9.5px] md:text-[11px] text-white uppercase tracking-widest drop-shadow-[0_1.5px_4px_rgba(0,0,0,0.9)]">
                 Top Exams
               </span>
             </button>
@@ -1573,10 +1576,10 @@ export default function HomePage() {
                   .getElementById("explore-hub-section")
                   ?.scrollIntoView({ behavior: "smooth", block: "center" });
               }}
-              className="flex flex-col items-center justify-center py-5 px-2 hover:bg-white/10 transition-all text-center border-b-[3px] border-transparent hover:border-orange-500 group cursor-pointer"
+              className="relative flex flex-col items-center justify-center py-5 px-2 hover:bg-white/[0.12] active:bg-white/[0.18] transition-all text-center border-b-[3px] border-transparent hover:border-orange-400 group cursor-pointer"
             >
-              <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-orange-400 group-hover:scale-110 transition-transform duration-300" />
-              <span className="mt-2 font-outfit font-black text-[9px] md:text-[10.5px] text-white uppercase tracking-widest">
+              <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-orange-400 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] group-hover:scale-110 group-hover:text-orange-300 transition-all duration-300" />
+              <span className="mt-2 font-outfit font-black text-[9.5px] md:text-[11px] text-white uppercase tracking-widest drop-shadow-[0_1.5px_4px_rgba(0,0,0,0.9)]">
                 Top Courses
               </span>
             </button>
