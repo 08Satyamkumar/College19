@@ -654,10 +654,60 @@ interface CollegeGalleryData {
 
 const DEFAULT_COLLEGE_GALLERY_DATA: CollegeGalleryData = {
   title: "IIT Delhi Campus & Academic Infrastructure Gallery",
-  subtitle: "Official visual archive of smart classrooms, advanced laboratories, central library, auditoriums, student hostels, and campus life.",
-  categories: ["Classroom", "Laboratory", "Library", "Auditorium", "Campus & Hostels", "Events & Fest", "Sports & Life"],
+  subtitle: "Official visual archive of academic departments, smart classrooms, advanced laboratories, central library, auditoriums, student hostels, and campus life.",
+  categories: ["Academic", "Classroom", "Laboratory", "Library", "Auditorium", "Campus & Hostels", "Events & Fest", "Sports & Life"],
   items: [
-    // 1. CLASSROOM SECTION (Smart Classrooms & Lecture Theatres)
+    // 1. ACADEMIC SECTION (Main Academic Blocks, Dogra Hall, Research Complex)
+    {
+      id: "acad-img-1",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=85",
+      caption: "Iconic Senate Building & Central Academic Administration Block",
+      category: "Academic",
+      tag: "Academic Complex",
+    },
+    {
+      id: "acad-img-2",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=85",
+      caption: "Dogra Hall, Deanery Offices & Interdisciplinary Research Wing",
+      category: "Academic",
+      tag: "Dogra Hall",
+    },
+    {
+      id: "acad-img-3",
+      type: "image",
+      url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&auto=format&fit=crop&q=85",
+      caption: "Bharti School of Telecommunication Technology & Advanced Analytics Center",
+      category: "Academic",
+      tag: "Bharti School",
+    },
+    {
+      id: "acad-vid-1",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Walkthrough of Academic Heritage Quad & Dogra Hall #iitdelhi",
+      caption: "A cinematic campus walk through the main academic corridor and heritage departments.",
+      category: "Academic",
+      duration: "01:10",
+      authorName: "Ananya Gupta",
+      thumbnailUrl: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80",
+      tag: "Academic Tour",
+    },
+    {
+      id: "acad-vid-2",
+      type: "video",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      title: "Interdisciplinary Research Centers & Innovation Hubs Overview",
+      caption: "Overview of advanced academic facilities fostering interdisciplinary sciences.",
+      category: "Academic",
+      duration: "00:52",
+      authorName: "Prof. Rangan Banerjee",
+      thumbnailUrl: "https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=80",
+      tag: "Research Hub",
+    },
+
+    // 2. CLASSROOM SECTION (Smart Classrooms & Lecture Theatres)
     {
       id: "cls-img-1",
       type: "image",
@@ -975,6 +1025,7 @@ const DEFAULT_COLLEGE_GALLERY_DATA: CollegeGalleryData = {
 
 const getGalleryCategoryIcon = (category: string): string => {
   const c = category.toLowerCase();
+  if (c.includes("academic") || c.includes("acad")) return "🎓";
   if (c.includes("classroom") || c.includes("class")) return "🏫";
   if (c.includes("laboratory") || c.includes("lab")) return "🔬";
   if (c.includes("library") || c.includes("book")) return "📖";
@@ -982,7 +1033,6 @@ const getGalleryCategoryIcon = (category: string): string => {
   if (c.includes("hostel") || c.includes("campus")) return "🏢";
   if (c.includes("event") || c.includes("fest")) return "✨";
   if (c.includes("sport") || c.includes("gym")) return "🏅";
-  if (c.includes("academic")) return "🎓";
   return "📷";
 };
 
@@ -997,13 +1047,13 @@ const getCollegeGalleryData = (college?: Partial<CollegeDetail>): CollegeGallery
       type: "image",
       url: g.url,
       caption: g.caption || "Campus Photograph",
-      category: g.category || "Campus & Hostels",
+      category: g.category || "Academic",
       tag: g.category || "Photo",
     }));
     return {
       title: `${colName} Campus & Academic Infrastructure Gallery`,
-      subtitle: `Official visual archive of smart classrooms, advanced laboratories, central library, auditoriums, student hostels, and campus life.`,
-      categories: ["Classroom", "Laboratory", "Library", "Auditorium", "Campus & Hostels", "Events & Fest", "Sports & Life"],
+      subtitle: `Official visual archive of academic departments, smart classrooms, advanced laboratories, central library, auditoriums, student hostels, and campus life.`,
+      categories: ["Academic", "Classroom", "Laboratory", "Library", "Auditorium", "Campus & Hostels", "Events & Fest", "Sports & Life"],
       items: [
         ...legacyItems,
         ...DEFAULT_COLLEGE_GALLERY_DATA.items.filter((item) => !legacyItems.some((l) => l.url === item.url)),
@@ -31387,7 +31437,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     };
                                     updateGalleryItems([...allItems, newVideo]);
                                   }}
-                                  className="px-3 py-1.5 bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
+                                  className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
                                 >
                                   <Plus className="w-3.5 h-3.5" />
                                   <span>+ Add Video / Reel Box</span>
@@ -31406,7 +31456,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     >
                                       <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
                                         <div className="flex items-center gap-2">
-                                          <span className="w-5 h-5 rounded-full bg-pink-100 text-pink-800 text-[10px] font-black flex items-center justify-center">
+                                          <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-800 text-[10px] font-black flex items-center justify-center">
                                             {vIdx + 1}
                                           </span>
                                           <span className="text-xs font-bold text-slate-900">
