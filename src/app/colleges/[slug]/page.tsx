@@ -7080,7 +7080,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   </p>
                                 )}
 
-                                {/* Table 2: Popular Courses & Total Tuition Fees Table (Image 3) */}
+                                {/* Table 2: Popular Courses & One Year Fee Table (Image 3) */}
                                 {cfData.popularCourses && cfData.popularCourses.length > 0 && (
                                   <div className="overflow-x-auto custom-scrollbar rounded-2xl border border-slate-300 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
                                     <table className="w-full text-left border-collapse text-xs sm:text-[13px] min-w-[500px]">
@@ -7090,7 +7090,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                             Course
                                           </th>
                                           <th className="py-3 px-4 sm:px-5 font-bold font-outfit text-slate-900 border-r border-slate-300">
-                                            Total Tuition Fees
+                                            One Year Fee
                                           </th>
                                           <th className="py-3 px-4 sm:px-5 font-bold font-outfit text-slate-900">
                                             Total Fees
@@ -12858,7 +12858,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   </p>
                                 )}
 
-                                {/* Table 2: Popular Courses & Total Tuition Fees Table (Image 3) */}
+                                {/* Table 2: Popular Courses & One Year Fee Table (Image 3) */}
                                 {cfData.popularCourses && cfData.popularCourses.length > 0 && (
                                   <div className="overflow-x-auto custom-scrollbar rounded-2xl border border-slate-300 shadow-[0_1px_4px_rgba(0,0,0,0.02)] bg-white">
                                     <table className="w-full text-left border-collapse text-xs sm:text-[13px] min-w-[500px]">
@@ -12868,7 +12868,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                             Course
                                           </th>
                                           <th className="py-3 px-4 sm:px-5 font-bold font-outfit text-slate-900 border-r border-slate-300">
-                                            Total Tuition Fees
+                                            One Year Fee
                                           </th>
                                           <th className="py-3 px-4 sm:px-5 font-bold font-outfit text-slate-900">
                                             Total Fees
@@ -20324,7 +20324,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                             <div className="grid grid-cols-2 gap-2">
                               <div>
-                                <label className="text-[10px] font-bold text-slate-500 block mb-0.5">Total Tuition Fees</label>
+                                <label className="text-[10px] font-bold text-slate-500 block mb-0.5">One Year Fee</label>
                                 <input
                                   type="text"
                                   value={row.tuitionFees}
