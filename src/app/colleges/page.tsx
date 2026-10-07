@@ -8671,13 +8671,13 @@ function CollegesListContent() {
 
         {/* MAIN CONTAINER */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {/* LEFT SIDEBAR: FILTERS CARD (Visible at the bottom on mobile using order classes) */}
-          <aside className="order-2 lg:order-1 lg:col-span-3 bg-white border border-slate-300 lg:border-slate-200 hover:border-orange-500/20 rounded-3xl p-5 shadow-[0_10px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_20px_40px_rgba(249,115,22,0.05)] transition-all duration-350 space-y-5 select-none">
+          {/* LEFT SIDEBAR: FILTERS CARD (Visible only on desktop/laptop, mobile uses floating drawer button) */}
+          <aside className="hidden lg:block lg:col-span-3 bg-white border border-slate-200 hover:border-orange-500/20 rounded-3xl p-5 shadow-[0_10px_30px_rgba(0,0,0,0.015)] hover:shadow-[0_20px_40px_rgba(249,115,22,0.05)] transition-all duration-350 space-y-5 select-none">
             {renderFilterContent()}
           </aside>
 
-          {/* RIGHT SIDE: COLLEGES CARDS LIST (Loads first on mobile) */}
-          <main className="order-1 lg:order-2 lg:col-span-9 lg:h-[3200px] lg:overflow-y-auto lg:pr-4 custom-filter-scrollbar space-y-6">
+          {/* RIGHT SIDE: COLLEGES CARDS LIST */}
+          <main className="col-span-1 lg:col-span-9 lg:h-[3200px] lg:overflow-y-auto lg:pr-4 custom-filter-scrollbar space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               {/* Colleges cards list (Takes 8 cols) */}
               <div className="lg:col-span-8 space-y-6">
@@ -9240,10 +9240,10 @@ function CollegesListContent() {
       </div>
 
       {/* MOBILE FLOATING FILTER TOGGLE BUTTON */}
-      <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-40 md:hidden">
+      <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-40 lg:hidden">
         <button
           onClick={() => setIsMobileFilterOpen(true)}
-          className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-xs uppercase tracking-wider rounded-full shadow-lg shadow-orange-500/25 active:scale-95 transition-all duration-200"
+          className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-xs uppercase tracking-wider rounded-full shadow-lg shadow-orange-500/25 active:scale-95 transition-all duration-200 cursor-pointer"
         >
           <Filter className="w-4 h-4" />
           Filters & Search
@@ -9253,7 +9253,7 @@ function CollegesListContent() {
       {/* MOBILE COLLAPSIBLE DRAWER FOR FILTERS */}
       <AnimatePresence>
         {isMobileFilterOpen && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] md:hidden flex flex-col justify-end">
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] lg:hidden flex flex-col justify-end">
             <div
               className="absolute inset-0"
               onClick={() => setIsMobileFilterOpen(false)}
