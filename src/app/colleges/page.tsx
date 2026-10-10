@@ -7287,6 +7287,8 @@ function CollegesListContent() {
               .toUpperCase();
             let displayDesc = c.description || "";
             let displayAccreditation = "AICTE Approved";
+            let displayLogoUrl = c.logo_url || "";
+            let displayCoverUrl = c.image_url || "";
             if (
               displayDesc.trim().startsWith("{") &&
               displayDesc.trim().endsWith("}")
@@ -7298,7 +7300,19 @@ function CollegesListContent() {
                   parsed.accreditation ||
                   parsed.accreditation_details ||
                   "AICTE Approved";
+                if (parsed.logo) {
+                  displayLogoUrl = parsed.logo;
+                }
+                if (parsed.coverImages && parsed.coverImages.length > 0) {
+                  displayCoverUrl = parsed.coverImages[0];
+                } else if (parsed.image) {
+                  displayCoverUrl = parsed.image;
+                }
               } catch (e) {}
+            }
+
+            if (!displayLogoUrl && c.image_url && c.image_url.toLowerCase().includes("logo")) {
+              displayLogoUrl = c.image_url;
             }
 
             return {
@@ -7323,7 +7337,9 @@ function CollegesListContent() {
               logoText: logo || "COL",
               slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
               accreditation: displayAccreditation,
-              image_url: c.image_url || "",
+              logo_url: displayLogoUrl,
+              logo: displayLogoUrl,
+              image_url: displayCoverUrl,
             };
           });
           setCollegesList(mapped);
@@ -8740,13 +8756,13 @@ function CollegesListContent() {
                               {/* Logo and Ranking Group */}
                               <div className="flex items-center lg:flex-col gap-3 lg:gap-2.5 text-center">
                                 {/* Logo Box */}
-                                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200/60 flex items-center justify-center text-xl lg:text-2xl font-black text-slate-800 uppercase tracking-widest shadow-sm group-hover:scale-105 group-hover:shadow-md group-hover:border-orange-500/30 group-hover:from-orange-50/40 group-hover:to-orange-100/10 transition-all duration-300 overflow-hidden relative flex-shrink-0">
-                                  {college.image_url ? (
+                                <div className="w-24 h-24 rounded-2xl bg-white border border-slate-200/80 p-2 flex items-center justify-center text-xl lg:text-2xl font-black text-slate-800 uppercase tracking-widest shadow-sm group-hover:scale-105 group-hover:shadow-md group-hover:border-orange-500/30 transition-all duration-300 overflow-hidden relative flex-shrink-0">
+                                  {college.logo || college.logo_url || (college.image_url && (college.image_url.includes("logo") || (!college.image_url.includes("real") && !college.image_url.includes("unsplash")))) ? (
                                     <>
                                       <img
-                                        src={college.image_url}
-                                        alt={college.name}
-                                        className="w-full h-full object-contain p-0.5 bg-white absolute inset-0"
+                                        src={college.logo || college.logo_url || college.image_url}
+                                        alt={`${college.name} logo`}
+                                        className="w-full h-full object-contain bg-white"
                                         id={`img-${college.id}`}
                                         onError={(e) => {
                                           e.currentTarget.style.display =
@@ -8754,18 +8770,21 @@ function CollegesListContent() {
                                           const txt = document.getElementById(
                                             `txt-${college.id}`,
                                           );
-                                          if (txt) txt.style.display = "block";
+                                          if (txt) txt.style.display = "flex";
                                         }}
                                       />
-                                      <span
+                                      <div
                                         id={`txt-${college.id}`}
                                         style={{ display: "none" }}
+                                        className="w-full h-full rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-200/60 text-orange-600 font-black text-sm items-center justify-center text-center uppercase tracking-wider"
                                       >
                                         {college.logoText}
-                                      </span>
+                                      </div>
                                     </>
                                   ) : (
-                                    college.logoText
+                                    <div className="w-full h-full rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-200/60 text-orange-600 font-black text-sm flex items-center justify-center text-center uppercase tracking-wider">
+                                      {college.logoText}
+                                    </div>
                                   )}
                                 </div>
 

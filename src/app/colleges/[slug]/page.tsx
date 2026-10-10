@@ -5534,6 +5534,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               updatedData.image ||
               (updatedData.coverImages && updatedData.coverImages[0]) ||
               "/images/iitdelhi_real.jpg",
+            logo_url: updatedData.logo || "",
             description: JSON.stringify(updatedData),
           },
         }),
