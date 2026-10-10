@@ -3125,7 +3125,7 @@ export default function LayoutWrapper({
         </div>
 
         {/* ── MEGA LINK COLUMNS (Row 2) ── */}
-        <div className="border-t border-[#0a3a6b] max-w-[1440px] mx-auto px-6 md:px-12 py-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="border-t border-[#0a3a6b] max-w-[1440px] mx-auto px-6 md:px-12 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Resources */}
           <div className="space-y-2.5">
             <h4 className="font-black text-white text-sm tracking-wide mb-4">
@@ -3173,32 +3173,6 @@ export default function LayoutWrapper({
               <Link
                 key={l}
                 href="/predictor"
-                className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
-              >
-                {l}
-              </Link>
-            ))}
-          </div>
-
-          {/* Study Abroad */}
-          <div className="space-y-2.5">
-            <h4 className="font-black text-white text-sm tracking-wide mb-4">
-              Study Abroad
-            </h4>
-            {[
-              "Study Abroad Home",
-              "BTech abroad",
-              "MBA abroad",
-              "MS abroad",
-              "GRE",
-              "GMAT",
-              "SAT",
-              "IELTS",
-              "TOEFL",
-            ].map((l) => (
-              <Link
-                key={l}
-                href="/colleges"
                 className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
               >
                 {l}
