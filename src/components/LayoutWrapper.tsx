@@ -3234,7 +3234,7 @@ export default function LayoutWrapper({
             {/* Left: Logo (Pure White Brand Logo) */}
             <div className="flex flex-col items-start select-none py-1 shrink-0">
               <img
-                src="/logo-white.png?v=4"
+                src="/logo-white.png?v=5"
                 alt="College 19"
                 className="h-10 md:h-11 w-auto object-contain"
               />
