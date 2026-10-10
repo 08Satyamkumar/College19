@@ -3257,17 +3257,30 @@ export default function LayoutWrapper({
         {/* ── BOTTOM BAR ── */}
         <div className="border-t border-[#0a3a6b] bg-[#021f3d]">
           <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-            {/* Logo (Official Brand Logo) */}
-            <div className="flex flex-col items-start select-none py-1">
+            {/* Left: Logo (Pure White Brand Logo) */}
+            <div className="flex flex-col items-start select-none py-1 shrink-0">
               <img
-                src="/logo-footer.png?v=3"
+                src="/logo-white.png?v=4"
                 alt="College 19"
-                className="h-11 md:h-12 w-auto object-contain"
+                className="h-10 md:h-11 w-auto object-contain"
               />
             </div>
 
-            {/* Bottom Links */}
-            <div className="flex flex-wrap justify-center gap-4 text-[10px] text-slate-400">
+            {/* Middle: Copyright & Developed By */}
+            <p className="text-[11px] text-slate-300 text-center">
+              © 2026 College 19. All Rights Reserved. Developed By{" "}
+              <a
+                href="https://vecttor.world"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-orange-400 font-semibold transition-colors underline-offset-2 hover:underline"
+              >
+                [Vecttor.world]
+              </a>
+            </p>
+
+            {/* Right: Bottom Links */}
+            <div className="flex flex-wrap justify-center md:justify-end gap-4 text-[10px] text-slate-400 shrink-0">
               {[
                 "Grievances",
                 "Notices / Summons",
@@ -3284,11 +3297,6 @@ export default function LayoutWrapper({
                 </Link>
               ))}
             </div>
-
-            {/* Copyright */}
-            <p className="text-[10px] text-slate-400 text-right">
-              © 2026 College 19. All rights reserved.
-            </p>
           </div>
         </div>
       </footer>
