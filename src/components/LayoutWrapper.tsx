@@ -2961,9 +2961,9 @@ export default function LayoutWrapper({
       {/* ══════════════════════════════════════════
            MEGA FOOTER
          ══════════════════════════════════════════ */}
-      <footer className="mt-16 border-t border-border bg-slate-900 dark:bg-slate-950 text-slate-300 text-[12px]">
+      <footer className="mt-16 border-t border-[#093c70] bg-[#032b53] text-slate-200 text-[12px]">
         {/* ── ASK QUESTION BANNER ── */}
-        <div className="bg-slate-800 dark:bg-slate-900 border-b border-slate-700">
+        <div className="bg-[#022244] border-b border-[#0a3a6b]">
           <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-6 flex flex-col md:flex-row items-center gap-4">
             <p className="font-bold text-white text-sm md:text-base shrink-0">
               Get our experts to answer your questions within 24 Hrs
@@ -2972,7 +2972,7 @@ export default function LayoutWrapper({
               <input
                 type="text"
                 placeholder="Write your questions here"
-                className="flex-1 px-4 py-2.5 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-white text-sm outline-none border border-slate-200 dark:border-slate-600 focus:border-orange-400 transition-colors placeholder:text-slate-400"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-white/10 text-white text-sm outline-none border border-white/20 focus:border-orange-400 transition-colors placeholder:text-slate-300"
               />
               <motion.button
                 whileHover={{
@@ -3009,7 +3009,7 @@ export default function LayoutWrapper({
               <Link
                 key={l}
                 href="/colleges"
-                className="block text-slate-400 hover:text-orange-400 transition-colors leading-snug"
+                className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
               >
                 {l}
               </Link>
@@ -3035,7 +3035,7 @@ export default function LayoutWrapper({
               <Link
                 key={l}
                 href="/colleges"
-                className="block text-slate-400 hover:text-orange-400 transition-colors leading-snug"
+                className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
               >
                 {l}
               </Link>
@@ -3062,7 +3062,7 @@ export default function LayoutWrapper({
               <Link
                 key={l}
                 href="/colleges"
-                className="block text-slate-400 hover:text-orange-400 transition-colors leading-snug"
+                className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
               >
                 {l}
               </Link>
@@ -3089,7 +3089,7 @@ export default function LayoutWrapper({
               <Link
                 key={l}
                 href="/colleges"
-                className="block text-slate-400 hover:text-orange-400 transition-colors leading-snug"
+                className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
               >
                 {l}
               </Link>
@@ -3116,7 +3116,7 @@ export default function LayoutWrapper({
               <Link
                 key={l}
                 href="/colleges"
-                className="block text-slate-400 hover:text-orange-400 transition-colors leading-snug"
+                className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
               >
                 {l}
               </Link>
@@ -3125,7 +3125,7 @@ export default function LayoutWrapper({
         </div>
 
         {/* ── MEGA LINK COLUMNS (Row 2) ── */}
-        <div className="border-t border-slate-800 max-w-[1440px] mx-auto px-6 md:px-12 py-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="border-t border-[#0a3a6b] max-w-[1440px] mx-auto px-6 md:px-12 py-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {/* Resources */}
           <div className="space-y-2.5">
             <h4 className="font-black text-white text-sm tracking-wide mb-4">
@@ -3146,7 +3146,7 @@ export default function LayoutWrapper({
               <Link
                 key={l}
                 href="/contact"
-                className="block text-slate-400 hover:text-orange-400 transition-colors leading-snug"
+                className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
               >
                 {l}
               </Link>
@@ -3173,7 +3173,7 @@ export default function LayoutWrapper({
               <Link
                 key={l}
                 href="/predictor"
-                className="block text-slate-400 hover:text-orange-400 transition-colors leading-snug"
+                className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
               >
                 {l}
               </Link>
@@ -3199,7 +3199,7 @@ export default function LayoutWrapper({
               <Link
                 key={l}
                 href="/colleges"
-                className="block text-slate-400 hover:text-orange-400 transition-colors leading-snug"
+                className="block text-slate-300 hover:text-orange-400 transition-colors leading-snug"
               >
                 {l}
               </Link>
@@ -3215,7 +3215,7 @@ export default function LayoutWrapper({
               href="#"
               whileHover={{ scale: 1.04, x: 3 }}
               whileTap={{ scale: 0.97 }}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-600 hover:border-orange-500 bg-slate-800 hover:bg-slate-700 transition-all group"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl border border-[#0a3a6b] hover:border-orange-500 bg-[#022244] hover:bg-[#043361] transition-all group"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -3225,7 +3225,7 @@ export default function LayoutWrapper({
                 <path d="M3.18 23.76c.3.17.64.24.99.21l12.6-12.6-3.03-3.03L3.18 23.76zM.73 2.36C.28 2.8 0 3.5 0 4.44v15.12c0 .94.28 1.64.74 2.08l.11.1L8.5 14.1v-.2L.84 2.26l-.11.1zM20.08 10.3l-2.28-1.32-3.27 3.27 3.27 3.27 2.3-1.33c.66-.38.66-1.01 0-1.39l-.02-.5zM4.17.26L16.77 12.86l-3.03 3.03L1.18.49C1.52.15 1.94.01 2.4.01c.63 0 1.23.26 1.77.25z" />
               </svg>
               <div>
-                <p className="text-[9px] text-slate-400">GET IT ON</p>
+                <p className="text-[9px] text-slate-300">GET IT ON</p>
                 <p className="font-black text-white text-sm leading-tight">
                   Google Play
                 </p>
@@ -3235,7 +3235,7 @@ export default function LayoutWrapper({
               href="#"
               whileHover={{ scale: 1.04, x: 3 }}
               whileTap={{ scale: 0.97 }}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-600 hover:border-orange-500 bg-slate-800 hover:bg-slate-700 transition-all group"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl border border-[#0a3a6b] hover:border-orange-500 bg-[#022244] hover:bg-[#043361] transition-all group"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -3245,7 +3245,7 @@ export default function LayoutWrapper({
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
               </svg>
               <div>
-                <p className="text-[9px] text-slate-400">DOWNLOAD ON THE</p>
+                <p className="text-[9px] text-slate-300">DOWNLOAD ON THE</p>
                 <p className="font-black text-white text-sm leading-tight">
                   App Store
                 </p>
@@ -3254,135 +3254,8 @@ export default function LayoutWrapper({
           </div>
         </div>
 
-        {/* ── ABOUT / GROUP / ENTERPRISE STRIP ── */}
-        <div className="border-t border-slate-800">
-          <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {/* About TYC */}
-            <div className="space-y-2.5">
-              <h4 className="font-black text-white text-sm tracking-wide mb-4">
-                About College 19
-              </h4>
-              {[
-                "About Us",
-                "Management Team",
-                "Careers",
-                "TYC Authors",
-                "FAQs",
-                "Contact Us",
-              ].map((l) => (
-                <Link
-                  key={l}
-                  href="/contact"
-                  className="block text-slate-400 hover:text-orange-400 transition-colors"
-                >
-                  {l}
-                </Link>
-              ))}
-            </div>
-
-            {/* Our Group */}
-            <div className="space-y-2.5">
-              <h4 className="font-black text-white text-sm tracking-wide mb-4">
-                Our Group
-              </h4>
-              {[
-                "Careers Portal",
-                "Jobs Platform",
-                "Resume Builder",
-                "Internships",
-                "99acres.com",
-                "AmbitionBox.com",
-                "TYC Abroad",
-                "Job Portal",
-              ].map((l) => (
-                <Link
-                  key={l}
-                  href="#"
-                  className="block text-slate-400 hover:text-orange-400 transition-colors"
-                >
-                  {l}
-                </Link>
-              ))}
-            </div>
-
-            {/* Enterprise */}
-            <div className="space-y-2.5">
-              <h4 className="font-black text-white text-sm tracking-wide mb-4">
-                Enterprise
-              </h4>
-              {[
-                "Client Login",
-                "Advertising / Sales Enquiries",
-                "Add Colleges",
-                "Partner With Us",
-                "Bulk Counseling",
-              ].map((l) => (
-                <Link
-                  key={l}
-                  href="/contact"
-                  className="block text-slate-400 hover:text-orange-400 transition-colors"
-                >
-                  {l}
-                </Link>
-              ))}
-            </div>
-
-            {/* Contact + Social */}
-            <div className="space-y-5">
-              <div>
-                <h4 className="font-black text-white text-sm tracking-wide mb-3">
-                  Get in Touch
-                </h4>
-                <motion.a
-                  href="tel:+918585951111"
-                  whileHover={{ x: 3 }}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-700 hover:border-orange-500 text-slate-300 hover:text-orange-400 transition-all text-xs font-bold"
-                >
-                  📱 +91 8585951111
-                </motion.a>
-              </div>
-              <div>
-                <h4 className="font-black text-white text-sm tracking-wide mb-3">
-                  Contribute
-                </h4>
-                <motion.a
-                  href="/contact"
-                  whileHover={{ x: 3 }}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-700 hover:border-orange-500 text-slate-300 hover:text-orange-400 transition-all text-xs font-bold"
-                >
-                  ✏️ Write Review
-                </motion.a>
-              </div>
-              <div>
-                <h4 className="font-black text-white text-sm tracking-wide mb-3">
-                  Follow Us
-                </h4>
-                <div className="flex gap-2">
-                  {[
-                    { label: "Instagram", icon: "📸" },
-                    { label: "YouTube", icon: "▶️" },
-                    { label: "Facebook", icon: "👤" },
-                    { label: "Twitter", icon: "🐦" },
-                  ].map((s) => (
-                    <motion.a
-                      key={s.label}
-                      href="#"
-                      whileHover={{ scale: 1.15, y: -2 }}
-                      whileTap={{ scale: 0.9 }}
-                      title={s.label}
-                      className="w-9 h-9 flex items-center justify-center rounded-xl border border-slate-700 hover:border-orange-500 bg-slate-800 hover:bg-slate-700 transition-all text-base"
-                    >
-                      {s.icon}
-                    </motion.a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* ── BOTTOM BAR ── */}
-        <div className="border-t border-slate-800 bg-slate-950">
+        <div className="border-t border-[#0a3a6b] bg-[#021f3d]">
           <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Logo (Official Brand Logo) */}
             <div className="flex flex-col items-start select-none py-1">
@@ -3394,7 +3267,7 @@ export default function LayoutWrapper({
             </div>
 
             {/* Bottom Links */}
-            <div className="flex flex-wrap justify-center gap-4 text-[10px] text-slate-500">
+            <div className="flex flex-wrap justify-center gap-4 text-[10px] text-slate-400">
               {[
                 "Grievances",
                 "Notices / Summons",
@@ -3413,7 +3286,7 @@ export default function LayoutWrapper({
             </div>
 
             {/* Copyright */}
-            <p className="text-[10px] text-slate-600 text-right">
+            <p className="text-[10px] text-slate-400 text-right">
               © 2026 College 19. All rights reserved.
             </p>
           </div>
