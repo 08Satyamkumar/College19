@@ -114,6 +114,7 @@ interface HighlightsArticleData {
   offeredCourses?: OfferedCourseRow[];
   feesEligibilityHeading?: string;
   feesEligibilityRows?: FeesEligibilityRow[];
+  reviewCards?: DetailedReviewCard[];
 }
 
 interface CutoffArticleData {
@@ -125,6 +126,7 @@ interface CutoffArticleData {
   afterCalloutParagraphs?: string[];
   footerNote?: string;
   faqs?: FaqItem[];
+  reviewCards?: DetailedReviewCard[];
 }
 
 interface SpecialisationCategoryRow {
@@ -198,6 +200,7 @@ interface CoursesFeesArticleData {
   offeredCourses?: OfferedCourseRow[];
   feesEligibilityHeading?: string;
   feesEligibilityRows?: FeesEligibilityRow[];
+  reviewCards?: DetailedReviewCard[];
 }
 
 interface PlacementSubSection {
@@ -556,6 +559,7 @@ interface CampusFacilitiesArticleData {
   insightsHeading?: string;
   insightsSubtitle?: string;
   insightsCards?: InfrastructureInsightCard[];
+  reviewCards?: DetailedReviewCard[];
 }
 
 interface CourseRankingBoxItem {
@@ -1866,6 +1870,7 @@ interface AdmissionArticleData {
   faqsSubtitle?: string;
   faqsButtonText?: string;
   faqs?: AdmissionFaqItem[];
+  reviewCards?: DetailedReviewCard[];
 }
 
 interface NirfPlacementParticularItem {
@@ -1932,6 +1937,7 @@ interface PlacementsArticleData {
   nirfRelease?: NirfPlacementReleaseData;
   sectorReport?: PlacementSectorReportData;
   mbaSectorReport?: MbaPlacementSectorReportData;
+  reviewCards?: DetailedReviewCard[];
 }
 
 interface FaqItem {
@@ -2082,6 +2088,9 @@ interface CollegeDetail {
   rankingsArticle?: RankingsArticleData;
   reviewsArticle?: ReviewsArticleData;
   campusFacilitiesArticle?: CampusFacilitiesArticleData;
+  hostelArticle?: any;
+  scholarshipArticle?: any;
+  scholarshipsArticle?: any;
   facultyDetails?: CollegeFacultySectionData;
   alumniArticle?: AlumniArticleData;
   faqsArticle?: CollegeFaqsArticleData;
@@ -5058,6 +5067,158 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
         items: defaultCollegeMedia,
       },
       moreReviewCards: DEFAULT_MORE_REVIEW_CARDS,
+    };
+  };
+
+  const getTabReviewCards = (college: CollegeDetail, tab: string): DetailedReviewCard[] => {
+    if (!college) return DEFAULT_DETAILED_REVIEW_CARDS;
+    if (tab === "admissions" || tab === "admission") {
+      if (college.admissionArticle?.reviewCards && college.admissionArticle.reviewCards.length > 0) {
+        return college.admissionArticle.reviewCards;
+      }
+      return DEFAULT_DETAILED_REVIEW_CARDS.map((c) => ({ ...c, id: `adm-${c.id}` }));
+    }
+    if (tab === "placements") {
+      if (college.placementsArticle?.reviewCards && college.placementsArticle.reviewCards.length > 0) {
+        return college.placementsArticle.reviewCards;
+      }
+      return DEFAULT_DETAILED_REVIEW_CARDS.map((c) => ({ ...c, id: `plc-${c.id}` }));
+    }
+    if (tab === "cutoffs") {
+      if (college.cutoffArticle?.reviewCards && college.cutoffArticle.reviewCards.length > 0) {
+        return college.cutoffArticle.reviewCards;
+      }
+      return DEFAULT_DETAILED_REVIEW_CARDS.map((c) => ({ ...c, id: `cut-${c.id}` }));
+    }
+    if (tab === "hostel" || tab === "campus_facilities") {
+      if (college.campusFacilitiesArticle?.reviewCards && college.campusFacilitiesArticle.reviewCards.length > 0) {
+        return college.campusFacilitiesArticle.reviewCards;
+      }
+      if (college.hostelArticle?.reviewCards && college.hostelArticle.reviewCards.length > 0) {
+        return college.hostelArticle.reviewCards;
+      }
+      return DEFAULT_DETAILED_REVIEW_CARDS.map((c) => ({ ...c, id: `hst-${c.id}` }));
+    }
+    if (tab === "scholarships") {
+      if (college.scholarshipArticle?.reviewCards && college.scholarshipArticle.reviewCards.length > 0) {
+        return college.scholarshipArticle.reviewCards;
+      }
+      if (college.scholarshipsArticle?.reviewCards && college.scholarshipsArticle.reviewCards.length > 0) {
+        return college.scholarshipsArticle.reviewCards;
+      }
+      return DEFAULT_DETAILED_REVIEW_CARDS.map((c) => ({ ...c, id: `sch-${c.id}` }));
+    }
+    if (tab === "courses") {
+      if (college.coursesFeesArticle?.reviewCards && college.coursesFeesArticle.reviewCards.length > 0) {
+        return college.coursesFeesArticle.reviewCards;
+      }
+      return DEFAULT_DETAILED_REVIEW_CARDS.map((c) => ({ ...c, id: `crs-${c.id}` }));
+    }
+    if (tab === "info") {
+      if (college.highlightsArticle?.reviewCards && college.highlightsArticle.reviewCards.length > 0) {
+        return college.highlightsArticle.reviewCards;
+      }
+      return DEFAULT_DETAILED_REVIEW_CARDS.map((c) => ({ ...c, id: `inf-${c.id}` }));
+    }
+    if (tab === "compare") {
+      if (college.compareReviews && college.compareReviews.length > 0) {
+        return college.compareReviews;
+      }
+      return DEFAULT_DETAILED_REVIEW_CARDS.map((c) => ({ ...c, id: `cmp-${c.id}` }));
+    }
+    // Default Reviews tab:
+    if (college.reviewsArticle?.reviewCards && college.reviewsArticle.reviewCards.length > 0) {
+      return college.reviewsArticle.reviewCards;
+    }
+    return DEFAULT_DETAILED_REVIEW_CARDS;
+  };
+
+  const updateTabReviewCards = (data: CollegeDetail, tab: string, updatedCards: DetailedReviewCard[]): CollegeDetail => {
+    if (tab === "admissions" || tab === "admission") {
+      return {
+        ...data,
+        admissionArticle: {
+          ...(data.admissionArticle || {}),
+          reviewCards: updatedCards,
+        },
+      };
+    }
+    if (tab === "placements") {
+      return {
+        ...data,
+        placementsArticle: {
+          ...(data.placementsArticle || {}),
+          reviewCards: updatedCards,
+        },
+      };
+    }
+    if (tab === "cutoffs") {
+      return {
+        ...data,
+        cutoffArticle: {
+          ...(data.cutoffArticle || {}),
+          reviewCards: updatedCards,
+        },
+      };
+    }
+    if (tab === "hostel" || tab === "campus_facilities") {
+      return {
+        ...data,
+        campusFacilitiesArticle: {
+          ...(data.campusFacilitiesArticle || {}),
+          reviewCards: updatedCards,
+        },
+        hostelArticle: {
+          ...(data.hostelArticle || {}),
+          reviewCards: updatedCards,
+        },
+      };
+    }
+    if (tab === "scholarships") {
+      return {
+        ...data,
+        scholarshipArticle: {
+          ...(data.scholarshipArticle || {}),
+          reviewCards: updatedCards,
+        },
+        scholarshipsArticle: {
+          ...(data.scholarshipsArticle || {}),
+          reviewCards: updatedCards,
+        },
+      };
+    }
+    if (tab === "courses") {
+      return {
+        ...data,
+        coursesFeesArticle: {
+          ...(data.coursesFeesArticle || {}),
+          reviewCards: updatedCards,
+        },
+      };
+    }
+    if (tab === "info") {
+      return {
+        ...data,
+        highlightsArticle: {
+          ...(data.highlightsArticle || {}),
+          reviewCards: updatedCards,
+        },
+      };
+    }
+    if (tab === "compare") {
+      return {
+        ...data,
+        compareReviews: updatedCards,
+      };
+    }
+    // Reviews tab:
+    const curRev = data.reviewsArticle || getCollegeReviewsArticle(data);
+    return {
+      ...data,
+      reviewsArticle: {
+        ...curRev,
+        reviewCards: updatedCards,
+      },
     };
   };
 
@@ -9259,9 +9420,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                     {/* DETAILED STUDENT REVIEW CARDS (INDIVIDUAL BOXES WITH READ MORE/LESS & RATINGS) */}
                     {(() => {
-                      const cards = (revData.reviewCards && revData.reviewCards.length > 0)
-                        ? revData.reviewCards
-                        : DEFAULT_DETAILED_REVIEW_CARDS;
+                      const cards = getTabReviewCards(collegeData, "reviews");
 
                       return (
                         <div className="p-4 sm:p-7 pt-2 space-y-4 sm:space-y-5">
@@ -11566,9 +11725,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                 {/* 5. STUDENT RATINGS & VERIFIED REVIEWS SECTION (HOSTEL & CAMPUS TAB) */}
                 {(() => {
                   const revData = getCollegeReviewsArticle(collegeData);
-                  const cards = (revData.reviewCards && revData.reviewCards.length > 0)
-                    ? revData.reviewCards
-                    : DEFAULT_DETAILED_REVIEW_CARDS;
+                  const cards = getTabReviewCards(collegeData, "hostel");
                   const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                   return (
@@ -12499,9 +12656,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 5. STUDENT RATINGS & VERIFIED REVIEWS SECTION (CUT-OFFS TAB) */}
               {(() => {
                 const revData = getCollegeReviewsArticle(collegeData);
-                const cards = (revData.reviewCards && revData.reviewCards.length > 0)
-                  ? revData.reviewCards
-                  : DEFAULT_DETAILED_REVIEW_CARDS;
+                const cards = getTabReviewCards(collegeData, "cutoffs");
                 const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
@@ -14499,9 +14654,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 6. STUDENT RATINGS & VERIFIED REVIEWS SECTION (PLACEMENTS TAB) */}
               {(() => {
                 const revData = getCollegeReviewsArticle(collegeData);
-                const cards = (revData.reviewCards && revData.reviewCards.length > 0)
-                  ? revData.reviewCards
-                  : DEFAULT_DETAILED_REVIEW_CARDS;
+                const cards = getTabReviewCards(collegeData, "placements");
                 const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
@@ -16015,9 +16168,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                     {/* DETAILED STUDENT REVIEW CARDS */}
                     {(() => {
-                      const cards = (revData.reviewCards && revData.reviewCards.length > 0)
-                        ? revData.reviewCards
-                        : DEFAULT_DETAILED_REVIEW_CARDS;
+                      const cards = getTabReviewCards(collegeData, "scholarships");
 
                       return (
                         <div className="p-4 sm:p-7 pt-2 space-y-4 sm:space-y-5">
@@ -17219,9 +17370,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
 
                     {/* DETAILED STUDENT REVIEW CARDS (INDIVIDUAL BOXES WITH READ MORE/LESS & RATINGS) */}
                     {(() => {
-                      const cards = (revData.reviewCards && revData.reviewCards.length > 0)
-                        ? revData.reviewCards
-                        : DEFAULT_DETAILED_REVIEW_CARDS;
+                      const cards = getTabReviewCards(collegeData, "admissions");
 
                       return (
                         <div className="p-4 sm:p-7 pt-2 space-y-4 sm:space-y-5">
@@ -18322,11 +18471,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
               {/* 3. STUDENT RATINGS & VERIFIED REVIEWS SECTION (COMPARE TAB) */}
               {(() => {
                 const revData = getCollegeReviewsArticle(collegeData);
-                const cards = (collegeData.compareReviews && collegeData.compareReviews.length > 0)
-                  ? collegeData.compareReviews
-                  : (revData.reviewCards && revData.reviewCards.length > 0
-                    ? revData.reviewCards
-                    : DEFAULT_DETAILED_REVIEW_CARDS);
+                const cards = getTabReviewCards(collegeData, "compare");
                 const collegeShortName = (collegeData?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
 
                 return (
@@ -29181,22 +29326,19 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                 {activeMiniModal === "reviewCards" && (
                   <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
                     {(() => {
-                      const curRev = tempData.reviewsArticle || getCollegeReviewsArticle(tempData);
-                      const cards = (curRev.reviewCards && curRev.reviewCards.length > 0)
-                        ? curRev.reviewCards
-                        : DEFAULT_DETAILED_REVIEW_CARDS;
+                      const cards = getTabReviewCards(tempData, activeTab);
 
                       return (
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
-                              Detailed Student Review Cards ({cards.length})
+                              Detailed Student Review Cards ({cards.length}) - {activeTab.toUpperCase()} TAB
                             </span>
                             <button
                               type="button"
                               onClick={() => {
                                 const newCard: DetailedReviewCard = {
-                                  id: `rev-${Date.now()}`,
+                                  id: `${activeTab}-rev-${Date.now()}`,
                                   authorName: "New Student",
                                   avatarInitial: "N",
                                   avatarBgColor: "bg-emerald-100 text-emerald-800",
@@ -29234,13 +29376,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                   dislikesCount: 0,
                                 };
                                 const updated = [...cards, newCard];
-                                setTempData({
-                                  ...tempData,
-                                  reviewsArticle: {
-                                    ...curRev,
-                                    reviewCards: updated,
-                                  },
-                                });
+                                setTempData(updateTabReviewCards(tempData, activeTab, updated));
                               }}
                               className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-200 flex items-center gap-1"
                             >
@@ -29265,13 +29401,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       type="button"
                                       onClick={() => {
                                         const updated = cards.filter((_: any, i: number) => i !== cIdx);
-                                        setTempData({
-                                          ...tempData,
-                                          reviewsArticle: {
-                                            ...curRev,
-                                            reviewCards: updated,
-                                          },
-                                        });
+                                        setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                       }}
                                       className="p-1 text-red-500 hover:bg-red-50 rounded-lg text-xs flex items-center gap-1"
                                     >
@@ -29291,10 +29421,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       onChange={(e) => {
                                         const updated = [...cards];
                                         updated[cIdx] = { ...updated[cIdx], authorName: e.target.value };
-                                        setTempData({
-                                          ...tempData,
-                                          reviewsArticle: { ...curRev, reviewCards: updated },
-                                        });
+                                        setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                       }}
                                       className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold"
                                     />
@@ -29309,10 +29436,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       onChange={(e) => {
                                         const updated = [...cards];
                                         updated[cIdx] = { ...updated[cIdx], avatarInitial: e.target.value };
-                                        setTempData({
-                                          ...tempData,
-                                          reviewsArticle: { ...curRev, reviewCards: updated },
-                                        });
+                                        setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                       }}
                                       className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold"
                                     />
@@ -29329,10 +29453,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       onChange={(e) => {
                                         const updated = [...cards];
                                         updated[cIdx] = { ...updated[cIdx], overallRating: parseFloat(e.target.value) || 4.5 };
-                                        setTempData({
-                                          ...tempData,
-                                          reviewsArticle: { ...curRev, reviewCards: updated },
-                                        });
+                                        setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                       }}
                                       className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-emerald-700"
                                     />
@@ -29352,10 +29473,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         onClick={() => {
                                           const updated = [...cards];
                                           updated[cIdx] = { ...updated[cIdx], avatarUrl: "" };
-                                          setTempData({
-                                            ...tempData,
-                                            reviewsArticle: { ...curRev, reviewCards: updated },
-                                          });
+                                          setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                         }}
                                         className="text-[10.5px] text-red-500 hover:text-red-700 font-semibold"
                                       >
@@ -29395,10 +29513,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           onChange={(e) => {
                                             const updated = [...cards];
                                             updated[cIdx] = { ...updated[cIdx], avatarUrl: e.target.value };
-                                            setTempData({
-                                              ...tempData,
-                                              reviewsArticle: { ...curRev, reviewCards: updated },
-                                            });
+                                            setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                           }}
                                           className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-slate-800"
                                         />
@@ -29418,10 +29533,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                   if (result) {
                                                     const updated = [...cards];
                                                     updated[cIdx] = { ...updated[cIdx], avatarUrl: result };
-                                                    setTempData({
-                                                      ...tempData,
-                                                      reviewsArticle: { ...curRev, reviewCards: updated },
-                                                    });
+                                                    setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                                   }
                                                 };
                                                 reader.readAsDataURL(file);
@@ -29446,10 +29558,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     onChange={(e) => {
                                       const updated = [...cards];
                                       updated[cIdx] = { ...updated[cIdx], courseAndBatch: e.target.value };
-                                      setTempData({
-                                        ...tempData,
-                                        reviewsArticle: { ...curRev, reviewCards: updated },
-                                      });
+                                      setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                     }}
                                     className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium"
                                   />
@@ -29464,10 +29573,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                     onChange={(e) => {
                                       const updated = [...cards];
                                       updated[cIdx] = { ...updated[cIdx], title: e.target.value };
-                                      setTempData({
-                                        ...tempData,
-                                        reviewsArticle: { ...curRev, reviewCards: updated },
-                                      });
+                                      setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                     }}
                                     className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
                                   />
@@ -29489,10 +29595,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                             const params = [...updated[cIdx].parameterRatings];
                                             params[pIdx] = { ...params[pIdx], label: e.target.value };
                                             updated[cIdx] = { ...updated[cIdx], parameterRatings: params };
-                                            setTempData({
-                                              ...tempData,
-                                              reviewsArticle: { ...curRev, reviewCards: updated },
-                                            });
+                                            setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                           }}
                                           className="w-full px-1 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-bold"
                                         />
@@ -29507,10 +29610,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                             const params = [...updated[cIdx].parameterRatings];
                                             params[pIdx] = { ...params[pIdx], rating: parseFloat(e.target.value) || 4.0 };
                                             updated[cIdx] = { ...updated[cIdx], parameterRatings: params };
-                                            setTempData({
-                                              ...tempData,
-                                              reviewsArticle: { ...curRev, reviewCards: updated },
-                                            });
+                                            setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                           }}
                                           className="w-full px-1 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-bold text-center"
                                         />
@@ -29534,10 +29634,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           { heading: "Section", content: "Review content..." },
                                         ];
                                         updated[cIdx] = { ...updated[cIdx], paragraphs: paras };
-                                        setTempData({
-                                          ...tempData,
-                                          reviewsArticle: { ...curRev, reviewCards: updated },
-                                        });
+                                        setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                       }}
                                       className="text-[10.5px] font-bold text-indigo-600 hover:underline"
                                     >
@@ -29557,10 +29654,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                               const paras = [...updated[cIdx].paragraphs];
                                               paras[paraIdx] = { ...paras[paraIdx], heading: e.target.value };
                                               updated[cIdx] = { ...updated[cIdx], paragraphs: paras };
-                                              setTempData({
-                                                ...tempData,
-                                                reviewsArticle: { ...curRev, reviewCards: updated },
-                                              });
+                                              setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                             }}
                                             placeholder="Heading (e.g. Placements, Infrastructure)"
                                             className="w-1/2 px-2 py-0.5 bg-white border border-slate-200 rounded text-xs font-bold text-slate-800"
@@ -29572,10 +29666,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                                 const updated = [...cards];
                                                 const paras = updated[cIdx].paragraphs.filter((_: any, i: number) => i !== paraIdx);
                                                 updated[cIdx] = { ...updated[cIdx], paragraphs: paras };
-                                                setTempData({
-                                                  ...tempData,
-                                                  reviewsArticle: { ...curRev, reviewCards: updated },
-                                                });
+                                                setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                               }}
                                               className="text-red-500 hover:text-red-700 p-0.5"
                                             >
@@ -29591,10 +29682,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                             const paras = [...updated[cIdx].paragraphs];
                                             paras[paraIdx] = { ...paras[paraIdx], content: e.target.value };
                                             updated[cIdx] = { ...updated[cIdx], paragraphs: paras };
-                                            setTempData({
-                                              ...tempData,
-                                              reviewsArticle: { ...curRev, reviewCards: updated },
-                                            });
+                                            setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                           }}
                                           placeholder="Review content details..."
                                           className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs font-normal"
@@ -29614,10 +29702,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                       onChange={(e) => {
                                         const updated = [...cards];
                                         updated[cIdx] = { ...updated[cIdx], reviewedDate: e.target.value };
-                                        setTempData({
-                                          ...tempData,
-                                          reviewsArticle: { ...curRev, reviewCards: updated },
-                                        });
+                                        setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                       }}
                                       className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-medium"
                                     />
@@ -29632,10 +29717,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         onChange={(e) => {
                                           const updated = [...cards];
                                           updated[cIdx] = { ...updated[cIdx], likesCount: parseInt(e.target.value) || 0 };
-                                          setTempData({
-                                            ...tempData,
-                                            reviewsArticle: { ...curRev, reviewCards: updated },
-                                          });
+                                          setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                         }}
                                         className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-bold text-center"
                                       />
@@ -29649,10 +29731,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                         onChange={(e) => {
                                           const updated = [...cards];
                                           updated[cIdx] = { ...updated[cIdx], dislikesCount: parseInt(e.target.value) || 0 };
-                                          setTempData({
-                                            ...tempData,
-                                            reviewsArticle: { ...curRev, reviewCards: updated },
-                                          });
+                                          setTempData(updateTabReviewCards(tempData, activeTab, updated));
                                         }}
                                         className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-bold text-center"
                                       />
