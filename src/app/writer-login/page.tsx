@@ -44,19 +44,10 @@ export default function WriterLoginPage() {
     fetch("/api/auth/check")
       .then((res) => res.json())
       .then((data) => {
-        if (data.isAuthenticated) {
-          setIsLoggedIn(true);
-          if (typeof window !== "undefined") {
-            localStorage.setItem("think_college_admin", "true");
-          }
-        } else if (typeof window !== "undefined" && localStorage.getItem("think_college_admin") === "true") {
-          setIsLoggedIn(true);
-        }
+        setIsLoggedIn(!!data.isAuthenticated);
       })
       .catch(() => {
-        if (typeof window !== "undefined" && localStorage.getItem("think_college_admin") === "true") {
-          setIsLoggedIn(true);
-        }
+        setIsLoggedIn(false);
       });
   }, []);
 
@@ -75,9 +66,6 @@ export default function WriterLoginPage() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        if (typeof window !== "undefined") {
-          localStorage.setItem("think_college_admin", "true");
-        }
         setIsLoggedIn(true);
         setError("");
       } else {

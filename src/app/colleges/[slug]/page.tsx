@@ -3488,9 +3488,15 @@ export default function CollegeDetailPage() {
   const [tempData, setTempData] = useState<CollegeDetail>(IIT_DELHI_MASTER_DATA);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsAdmin(localStorage.getItem("think_college_admin") === "true");
-    }
+    // Securely verify admin session with server
+    fetch("/api/auth/check")
+      .then((res) => res.json())
+      .then((data) => {
+        setIsAdmin(!!data.isAuthenticated);
+      })
+      .catch(() => {
+        setIsAdmin(false);
+      });
   }, []);
 
   // Fetch college details from Supabase (or load master data)

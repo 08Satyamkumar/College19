@@ -1097,11 +1097,17 @@ export default function HomePage() {
 
   // Sync admin and stored homepage colleges from Supabase cloud database & localStorage
   useEffect(() => {
+    // Securely verify admin session with server
+    fetch("/api/auth/check")
+      .then((res) => res.json())
+      .then((data) => {
+        setIsAdmin(!!data.isAuthenticated);
+      })
+      .catch(() => {
+        setIsAdmin(false);
+      });
+
     if (typeof window !== "undefined") {
-      const savedAdmin = localStorage.getItem("think_college_admin");
-      if (savedAdmin === "true") {
-        setIsAdmin(true);
-      }
       const savedTrending = localStorage.getItem("tyc_homepage_trending_colleges");
       if (savedTrending) {
         try {
@@ -1172,9 +1178,6 @@ export default function HomePage() {
       const data = await res.json();
       if (res.ok && data.success) {
         setIsAdmin(true);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("think_college_admin", "true");
-        }
         setShowAdminLoginModal(false);
         setAdminError("");
         setAdminUser("");

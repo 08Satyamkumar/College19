@@ -740,14 +740,16 @@ function CollegesListContent() {
     }
   };
 
-  // Initialize Admin State from localStorage
+  // Securely verify admin session with server
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedAdmin = localStorage.getItem("think_college_admin");
-      if (savedAdmin === "true") {
-        setIsAdmin(true);
-      }
-    }
+    fetch("/api/auth/check")
+      .then((res) => res.json())
+      .then((data) => {
+        setIsAdmin(!!data.isAuthenticated);
+      })
+      .catch(() => {
+        setIsAdmin(false);
+      });
   }, []);
 
   const handleAdminLogin = async (e: React.FormEvent) => {
@@ -761,9 +763,6 @@ function CollegesListContent() {
       const data = await res.json();
       if (res.ok && data.success) {
         setIsAdmin(true);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("think_college_admin", "true");
-        }
         setShowAdminLogin(false);
         setAdminError("");
         setAdminUser("");
