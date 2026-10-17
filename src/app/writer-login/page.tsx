@@ -37,32 +37,65 @@ export default function WriterLoginPage() {
     { name: "AIIMS Delhi", slug: "aiims-delhi", location: "New Delhi", nirf: "NIRF #1" },
   ];
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const auth = localStorage.getItem("think_college_admin");
-      if (auth === "true") {
-        setIsLoggedIn(true);
-      }
-    }
+    // Check with server if session is already active
+    fetch("/api/auth/check")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.isAuthenticated) {
+          setIsLoggedIn(true);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("think_college_admin", "true");
+          }
+        } else if (typeof window !== "undefined" && localStorage.getItem("think_college_admin") === "true") {
+          setIsLoggedIn(true);
+        }
+      })
+      .catch(() => {
+        if (typeof window !== "undefined" && localStorage.getItem("think_college_admin") === "true") {
+          setIsLoggedIn(true);
+        }
+      });
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      (username === "Samrat1311" && password === "1311161161") ||
-      (username.toLowerCase() === "writer" && password === "Writer2026")
-    ) {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("think_college_admin", "true");
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("think_college_admin", "true");
+        }
+        setIsLoggedIn(true);
+        setError("");
+      } else {
+        setError(data.error || "Invalid Writer Username or Passcode. Please contact the Editor-in-Chief.");
       }
-      setIsLoggedIn(true);
-      setError("");
-    } else {
-      setError("Invalid Writer Username or Passcode. Please contact the Editor-in-Chief.");
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore
+    }
     if (typeof window !== "undefined") {
       localStorage.removeItem("think_college_admin");
     }
@@ -103,7 +136,7 @@ export default function WriterLoginPage() {
                     </span>
                   </div>
                   <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                    Think Your College Editorial CMS Dashboard
+                    College 19 Editorial CMS Dashboard
                   </p>
                 </div>
               </div>
@@ -225,7 +258,7 @@ export default function WriterLoginPage() {
                   <input
                     required
                     type="text"
-                    placeholder="Enter username (e.g. Samrat1311)"
+                    placeholder="Enter writer username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-purple-500 transition-colors"
@@ -252,16 +285,17 @@ export default function WriterLoginPage() {
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs shadow-md shadow-purple-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                disabled={isSubmitting}
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs shadow-md shadow-purple-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
-                <span>Login as Content Writer</span>
+                <span>{isSubmitting ? "Authenticating..." : "Login as Content Writer"}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </form>
 
             <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-[11px] text-slate-500 font-semibold">
               <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              <span>Secure Editorial CMS • Think Your College</span>
+              <span>Secure Editorial CMS • College 19</span>
             </div>
           </div>
         )}

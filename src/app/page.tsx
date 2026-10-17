@@ -1150,8 +1150,6 @@ export default function HomePage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  username: "Samrat1311",
-                  password: "1311161161",
                   trending: localTrending,
                   featured: localFeatured,
                 }),
@@ -1163,23 +1161,36 @@ export default function HomePage() {
     }
   }, []);
 
-  const handleAdminLogin = (e: React.FormEvent) => {
+  const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminUser === "Samrat1311" && adminPass === "1311161161") {
-      setIsAdmin(true);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("think_college_admin", "true");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: adminUser, password: adminPass }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setIsAdmin(true);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("think_college_admin", "true");
+        }
+        setShowAdminLoginModal(false);
+        setAdminError("");
+        setAdminUser("");
+        setAdminPass("");
+      } else {
+        setAdminError(data.error || "Invalid Username or Password.");
       }
-      setShowAdminLoginModal(false);
-      setAdminError("");
-      setAdminUser("");
-      setAdminPass("");
-    } else {
-      setAdminError("Invalid Username or Password.");
+    } catch {
+      setAdminError("Network error. Please try again.");
     }
   };
 
-  const handleAdminLogout = () => {
+  const handleAdminLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {}
     setIsAdmin(false);
     if (typeof window !== "undefined") {
       localStorage.removeItem("think_college_admin");
@@ -1193,8 +1204,6 @@ export default function HomePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: "Samrat1311",
-          password: "1311161161",
           trending: newTrending,
           featured: newFeatured,
         }),

@@ -5363,8 +5363,8 @@ const getCollegeCompareFaqs = (college: CollegeDetail): FaqItem[] => {
   const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
   return [
     {
-      question: `How does Think Your College compare ${shortName} with other premier institutes?`,
-      answer: `Think Your College provides a data-backed, head-to-head comparison evaluating official NIRF rankings, highest & average placement packages, verified median CTC, tuition fees, course eligibility, faculty-to-student ratios, and accredited campus infrastructure metrics to help you make an informed decision.`,
+      question: `How does College 19 compare ${shortName} with other premier institutes?`,
+      answer: `College 19 provides a data-backed, head-to-head comparison evaluating official NIRF rankings, highest & average placement packages, verified median CTC, tuition fees, course eligibility, faculty-to-student ratios, and accredited campus infrastructure metrics to help you make an informed decision.`,
     },
     {
       question: `Which parameters are most critical when comparing ${shortName} side-by-side?`,
@@ -5679,8 +5679,6 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: "Samrat1311",
-          password: "1311161161",
           slug: cleanSlug,
           updatedFields: {
             name: updatedData.name,
@@ -24985,7 +24983,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           compareFaqs: updated,
                                         });
                                       }}
-                                      placeholder="e.g. How does Think Your College compare two colleges side-by-side?"
+                                      placeholder="e.g. How does College 19 compare two colleges side-by-side?"
                                       className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900"
                                     />
                                   </div>
@@ -25006,7 +25004,7 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                                           compareFaqs: updated,
                                         });
                                       }}
-                                      placeholder="e.g. Think Your College provides a data-backed..."
+                                      placeholder="e.g. College 19 provides a data-backed..."
                                       className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 resize-none leading-relaxed"
                                     />
                                   </div>
@@ -32423,8 +32421,6 @@ const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                          username: "Samrat1311",
-                          password: "1311161161",
                           slug: cleanSlug,
                           updatedFields: {
                             description: JSON.stringify(updatedCollegeData),

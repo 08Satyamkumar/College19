@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin, supabase } from "@/lib/supabase";
+import { isRequestAuthorized } from "@/lib/auth";
 
 const dbClient = supabaseAdmin || supabase;
 const HOMEPAGE_CONFIG_ID = "00000000-0000-0000-0000-000000000001";
@@ -44,10 +45,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { username, password, trending, featured } = body;
 
-    // Verify admin/writer credentials
-    const isAuthorized =
-      (username === "Samrat1311" && password === "1311161161") ||
-      (username?.toLowerCase() === "writer" && password === "Writer2026");
+    // Verify admin/writer credentials via session cookie or server-side env
+    const isAuthorized = await isRequestAuthorized(request, { username, password });
 
     if (!isAuthorized) {
       return NextResponse.json(
