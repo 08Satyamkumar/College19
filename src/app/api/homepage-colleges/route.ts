@@ -24,8 +24,8 @@ export async function GET() {
         if (parsed && (parsed.trending || parsed.featured)) {
           return NextResponse.json({
             success: true,
-            trending: parsed.trending || null,
-            featured: parsed.featured || null,
+            trending: Array.isArray(parsed.trending) ? parsed.trending : null,
+            featured: Array.isArray(parsed.featured) ? parsed.featured : null,
           });
         }
       } catch (e) {
@@ -42,24 +42,28 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { username, password, trending, featured } = body;
-
-    // Verify admin/writer credentials via session cookie or server-side env
-    const isAuthorized = await isRequestAuthorized(request, { username, password });
+    // 1. Verify admin/writer credentials strictly via signed session token
+    const isAuthorized = await isRequestAuthorized(request);
 
     if (!isAuthorized) {
       return NextResponse.json(
-        { error: "Unauthorized access. Please login with valid credentials." },
+        { error: "Unauthorized access. Valid administrator session required." },
         { status: 401 }
       );
     }
 
+    const body = await request.json().catch(() => ({}));
+    const { trending, featured } = body;
+
+    // Validate that if trending or featured are passed, they are arrays
+    const sanitizedTrending = Array.isArray(trending) ? trending.slice(0, 50) : [];
+    const sanitizedFeatured = Array.isArray(featured) ? featured.slice(0, 50) : [];
+
     const payload = JSON.stringify({
       version: 1,
       updated_at: new Date().toISOString(),
-      trending: trending || [],
-      featured: featured || [],
+      trending: sanitizedTrending,
+      featured: sanitizedFeatured,
     });
 
     const record = {
@@ -79,7 +83,7 @@ export async function POST(request: Request) {
       image_url: "none",
     };
 
-    const { data, error } = await dbClient
+    const { error } = await dbClient
       .from("colleges")
       .upsert(record, { onConflict: "id" })
       .select();

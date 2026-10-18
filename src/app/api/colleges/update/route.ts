@@ -3,23 +3,24 @@ import { supabaseAdmin, supabase } from "@/lib/supabase";
 import { isRequestAuthorized } from "@/lib/auth";
 
 const dbClient = supabaseAdmin || supabase;
+const PROTECTED_SLUGS = ["__homepage_colleges_config__"];
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { username, password, slug, updatedFields } = body;
-
-    // Verify admin/writer credentials via session cookie or server-side env
-    const isAuthorized = await isRequestAuthorized(request, { username, password });
+    // 1. Verify admin/writer credentials strictly via signed session token
+    const isAuthorized = await isRequestAuthorized(request);
 
     if (!isAuthorized) {
       return NextResponse.json(
-        { error: "Unauthorized access. Please login with valid credentials." },
+        { error: "Unauthorized access. Valid administrator session required." },
         { status: 401 }
       );
     }
 
-    if (!slug) {
+    const body = await request.json().catch(() => ({}));
+    const { slug, updatedFields } = body;
+
+    if (!slug || typeof slug !== "string") {
       return NextResponse.json(
         { error: "College slug is required to identify the record." },
         { status: 400 }
@@ -27,6 +28,29 @@ export async function POST(request: Request) {
     }
 
     const cleanSlug = decodeURIComponent(slug).trim().toLowerCase();
+
+    // Prevent direct editing of system configuration records via college update API
+    if (PROTECTED_SLUGS.includes(cleanSlug)) {
+      return NextResponse.json(
+        { error: "Protected system configuration cannot be modified via college update API." },
+        { status: 403 }
+      );
+    }
+
+    // Validate slug format
+    if (!/^[a-z0-9-]+$/.test(cleanSlug)) {
+      return NextResponse.json(
+        { error: "Invalid slug format. Slugs may only contain lowercase letters, numbers, and hyphens." },
+        { status: 400 }
+      );
+    }
+
+    if (!updatedFields || typeof updatedFields !== "object" || Array.isArray(updatedFields)) {
+      return NextResponse.json(
+        { error: "Invalid updatedFields payload." },
+        { status: 400 }
+      );
+    }
 
     // 1. Check if a record already exists with this slug (exact or case-insensitive)
     let { data: existingRows, error: findError } = await dbClient
@@ -62,7 +86,7 @@ export async function POST(request: Request) {
     }
 
     const collegeName =
-      updatedFields?.name ||
+      (typeof updatedFields?.name === "string" && updatedFields.name.trim()) ||
       parsedDesc.name ||
       parsedDesc.fullName ||
       cleanSlug
@@ -96,10 +120,11 @@ export async function POST(request: Request) {
       "/images/iitdelhi_real.jpg";
 
     // Ensure all custom objects (articles, arrays, coverImages, etc.) are safely packed inside the description JSON
+    // Protect against prototype pollution
     let completeDescriptionObj: any = { ...parsedDesc };
     if (updatedFields) {
       Object.keys(updatedFields).forEach((key) => {
-        if (!["id", "slug", "created_at"].includes(key)) {
+        if (!["id", "slug", "created_at", "__proto__", "constructor", "prototype"].includes(key)) {
           if (key === "description" && typeof updatedFields[key] === "string") {
             try {
               const innerParsed = JSON.parse(updatedFields[key]);
