@@ -294,17 +294,15 @@ export default function LayoutWrapper({
     setIsAlertSubscribed(true);
   };
 
-  // Auto-reopen alert popup if closed and not subscribed (disabled during development/staging)
-  /*
+  // Auto-open admission alert popup after 15 seconds if closed and not subscribed
   useEffect(() => {
     if (!isAlertOpen && !isAlertSubscribed) {
       const timer = setTimeout(() => {
         setIsAlertOpen(true);
-      }, 20000);
+      }, 15000);
       return () => clearTimeout(timer);
     }
   }, [isAlertOpen, isAlertSubscribed]);
-  */
 
   // MBA Mega Menu Sub-tabs structure matching screenshot (nested for multi-column grids)
   const mbaTabs: Record<string, MegaSubCategory[]> = {
