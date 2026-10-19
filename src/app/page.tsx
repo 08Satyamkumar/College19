@@ -3420,33 +3420,42 @@ export default function HomePage() {
 
           <div className="flex flex-col gap-3.5 max-w-md">
             {/* Admissions Helpline */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200/50 rounded-full shadow-sm hover:scale-[1.01] hover:border-orange-400 transition-all duration-200">
+            <a
+              href="tel:+918434555577"
+              className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200/50 rounded-full shadow-sm hover:scale-[1.01] hover:border-orange-400 transition-all duration-200 cursor-pointer no-underline"
+            >
               <div className="w-8 h-8 rounded-full bg-[#032b53] flex items-center justify-center text-white shrink-0">
                 <Phone className="w-4 h-4" />
               </div>
               <span className="text-xs sm:text-sm font-black text-slate-800 tracking-wide">
                 Admissions Helpline:{" "}
                 <span className="text-orange-500 font-sans">
-                  +91-9973798413
+                  +91-8434555577
                 </span>
               </span>
-            </div>
+            </a>
 
             {/* Student Support */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200/50 rounded-full shadow-sm hover:scale-[1.01] hover:border-orange-400 transition-all duration-200">
+            <a
+              href="tel:+918434555599"
+              className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200/50 rounded-full shadow-sm hover:scale-[1.01] hover:border-orange-400 transition-all duration-200 cursor-pointer no-underline"
+            >
               <div className="w-8 h-8 rounded-full bg-[#032b53] flex items-center justify-center text-white shrink-0">
                 <PhoneCall className="w-4 h-4" />
               </div>
               <span className="text-xs sm:text-sm font-black text-slate-800 tracking-wide">
                 Student Support:{" "}
                 <span className="text-orange-500 font-sans">
-                  +91-9973798413
+                  +91-8434555599
                 </span>
               </span>
-            </div>
+            </a>
 
             {/* Email */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200/50 rounded-full shadow-sm hover:scale-[1.01] hover:border-orange-400 transition-all duration-200">
+            <a
+              href="mailto:info@thinkyourcollege.com"
+              className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200/50 rounded-full shadow-sm hover:scale-[1.01] hover:border-orange-400 transition-all duration-200 cursor-pointer no-underline"
+            >
               <div className="w-8 h-8 rounded-full bg-[#032b53] flex items-center justify-center text-white shrink-0">
                 <Mail className="w-4 h-4" />
               </div>
@@ -3456,7 +3465,7 @@ export default function HomePage() {
                   info@thinkyourcollege.com
                 </span>
               </span>
-            </div>
+            </a>
 
 
             {/* Address 2 - Greater Noida */}
