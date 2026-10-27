@@ -1576,6 +1576,7 @@ export default function LayoutWrapper({
 
   // Categories for Row 2 (Dropdown Items)
   const categories = [
+    "PGDM",
     "MBA",
     "ENGINEERING",
     "MEDICAL",
@@ -2033,6 +2034,46 @@ export default function LayoutWrapper({
           className="relative max-w-[1440px] mx-auto"
           onMouseLeave={handleMenuMouseLeave}
         >
+          {/* MEGA MENU DROPDOWN PANEL FOR PGDM */}
+          <AnimatePresence>
+            {activeMegaMenu === "PGDM" && (
+              <div
+                className="absolute top-1 left-1/2 -translate-x-1/2 w-[94vw] md:w-[1020px] z-50 pointer-events-auto"
+                onMouseEnter={() => setActiveMegaMenu("PGDM")}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 15, scale: 0.95, rotateX: -6 }}
+                  animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+                  exit={{
+                    opacity: 0,
+                    y: 10,
+                    scale: 0.97,
+                    transition: { duration: 0.15 },
+                  }}
+                  transition={{ type: "spring", stiffness: 380, damping: 26 }}
+                  style={{ transformOrigin: "top center", perspective: 1000 }}
+                  className="w-full bg-white/95 backdrop-blur-xl border border-orange-100/40 rounded-2xl shadow-[0_20px_50px_rgba(249,115,22,0.15)] p-5 md:p-8 text-text_primary overflow-hidden max-h-[75vh] md:max-h-none overflow-y-auto md:overflow-visible relative"
+                >
+                  {/* Top Glowing Gradient Accent */}
+                  <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600 shadow-[0_1px_10px_rgba(249,115,22,0.5)] z-20" />
+
+                  {/* Header */}
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 relative z-10">
+                    <h3 className="font-outfit font-black text-sm md:text-base text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-orange-500" />
+                      <span>PGDM Colleges & Admissions Guide</span>
+                    </h3>
+                  </div>
+
+                  {/* Clean Placeholder awaiting user's content specifications */}
+                  <div className="py-8 text-center text-slate-400 text-xs font-semibold relative z-10">
+                    PGDM section is ready. Share your college links, specializations, and details to display here.
+                  </div>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
+
           {/* MEGA MENU DROPDOWN PANEL FOR MBA */}
           <AnimatePresence>
             {activeMegaMenu === "MBA" && (
@@ -2723,6 +2764,7 @@ export default function LayoutWrapper({
           {/* MEGA MENU DROPDOWN PANEL FOR OTHER CHANNELS */}
           <AnimatePresence>
             {activeMegaMenu !== null &&
+              activeMegaMenu !== "PGDM" &&
               activeMegaMenu !== "MBA" &&
               activeMegaMenu !== "ENGINEERING" &&
               activeMegaMenu !== "MEDICAL" &&
