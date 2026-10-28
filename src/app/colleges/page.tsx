@@ -580,6 +580,7 @@ function CollegesListContent() {
   const [editAccreditation, setEditAccreditation] = useState("");
   const [editHighestPackage, setEditHighestPackage] = useState("");
   const [editAveragePackage, setEditAveragePackage] = useState("");
+  const [editFeaturedPgdm, setEditFeaturedPgdm] = useState(false);
 
   const [isUpdatingCollege, setIsUpdatingCollege] = useState(false);
 
@@ -592,7 +593,7 @@ function CollegesListContent() {
   const [addOwnership, setAddOwnership] = useState("Private");
   const [addRating, setAddRating] = useState("4.0");
   const [addNIRFRank, setAddNIRFRank] = useState("");
-  const [addCoursesCount, setAddCoursesCount] = useState("1 Courses");
+  const [addCoursesCount, setAddCoursesCount] = useState("PGDM");
   const [addExamsAccepted, setAddExamsAccepted] = useState("None");
   const [addTuitionFees, setAddTuitionFees] = useState("-/-");
   const [addImageUrl, setAddImageUrl] = useState("");
@@ -600,6 +601,7 @@ function CollegesListContent() {
   const [addAccreditation, setAddAccreditation] = useState("AICTE Approved");
   const [addHighestPackage, setAddHighestPackage] = useState("");
   const [addAveragePackage, setAddAveragePackage] = useState("");
+  const [addFeaturedPgdm, setAddFeaturedPgdm] = useState(true);
   const [isAddingCollege, setIsAddingCollege] = useState(false);
   const [hiddenAds, setHiddenAds] = useState<number[]>([]);
   const [closedGoogleAds, setClosedGoogleAds] = useState<number[]>([]);
@@ -657,6 +659,7 @@ function CollegesListContent() {
       averagePackage: addAveragePackage,
       highest_package: addHighestPackage,
       average_package: addAveragePackage,
+      is_featured_pgdm: addFeaturedPgdm,
     });
 
     try {
@@ -825,6 +828,17 @@ function CollegesListContent() {
     setEditAccreditation(college.accreditation || "AICTE Approved");
     setEditHighestPackage(college.highest_package || "");
     setEditAveragePackage(college.average_package || "");
+    let isFeat = false;
+    if (college.description) {
+      try {
+        const p = JSON.parse(college.description);
+        isFeat = !!p.is_featured_pgdm;
+      } catch (e) {}
+    }
+    if (!isFeat && (college.name || "").toUpperCase().includes("GIMS")) {
+      isFeat = true;
+    }
+    setEditFeaturedPgdm(isFeat);
   };
 
   const handleSaveChanges = async (e: React.FormEvent) => {
@@ -845,6 +859,7 @@ function CollegesListContent() {
         averagePackage: editAveragePackage,
         highest_package: editHighestPackage,
         average_package: editAveragePackage,
+        is_featured_pgdm: editFeaturedPgdm,
       });
 
       const res = await fetch("/api/colleges/update", {
@@ -7467,25 +7482,9 @@ function CollegesListContent() {
 
   // Define filteredColleges alias for zero-break compatibility with existing template code
   const filteredColleges = useMemo(() => {
-    let result = collegesList;
-    if (selectedStreams.length > 0) {
-      result = result.filter((c) => selectedStreams.includes(c.stream));
-    }
-    if (selectedCourses.length > 0) {
-      result = result.filter((c) => {
-        return selectedCourses.some((courseName) => {
-          const lowerCourse = courseName.toLowerCase();
-          const inCourses = (c.courses || []).some((cr: string) =>
-            cr.toLowerCase().includes(lowerCourse)
-          );
-          const inDesc = (c.description || "").toLowerCase().includes(lowerCourse);
-          const inName = (c.name || "").toLowerCase().includes(lowerCourse);
-          return inCourses || inDesc || inName;
-        });
-      });
-    }
-    return result;
-  }, [collegesList, selectedStreams, selectedCourses]);
+    if (selectedStreams.length === 0) return collegesList;
+    return collegesList.filter((c) => selectedStreams.includes(c.stream));
+  }, [collegesList, selectedStreams]);
 
   // Read More inline toggle helper
   const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>(
@@ -9721,11 +9720,12 @@ function CollegesListContent() {
 
                   <div>
                     <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
-                      Courses Count
+                      Courses Offered / Count *
                     </label>
                     <input
+                      required
                       type="text"
-                      placeholder="e.g. 6 Courses"
+                      placeholder="e.g. PGDM or PGDM, MBA"
                       value={addCoursesCount}
                       onChange={(e) => setAddCoursesCount(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
@@ -9815,6 +9815,23 @@ function CollegesListContent() {
                     className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500 resize-none"
                   />
                 </div>
+
+                <label className="flex items-center gap-2.5 p-3 bg-orange-50 border border-orange-200 rounded-2xl cursor-pointer select-none hover:bg-orange-100/50 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={addFeaturedPgdm}
+                    onChange={(e) => setAddFeaturedPgdm(e.target.checked)}
+                    className="accent-orange-500 w-4 h-4 rounded cursor-pointer"
+                  />
+                  <div className="flex-1">
+                    <span className="text-xs font-black text-orange-700 block">
+                      Feature in PGDM Navbar Dropdown (Top 5)
+                    </span>
+                    <span className="text-[10px] text-orange-600/90 font-medium block">
+                      Enable this so this college appears directly in the top PGDM navbar dropdown cards.
+                    </span>
+                  </div>
+                </label>
 
                 <div className="pt-2 flex justify-end gap-3">
                   <button
@@ -9989,11 +10006,12 @@ function CollegesListContent() {
 
                   <div>
                     <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
-                      Courses Count
+                      Courses Offered / Count *
                     </label>
                     <input
+                      required
                       type="text"
-                      placeholder="e.g. 5 Courses"
+                      placeholder="e.g. PGDM or PGDM, MBA"
                       value={editCoursesCount}
                       onChange={(e) => setEditCoursesCount(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
@@ -10082,6 +10100,23 @@ function CollegesListContent() {
                     className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500 resize-none"
                   />
                 </div>
+
+                <label className="flex items-center gap-2.5 p-3 bg-orange-50 border border-orange-200 rounded-2xl cursor-pointer select-none hover:bg-orange-100/50 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={editFeaturedPgdm}
+                    onChange={(e) => setEditFeaturedPgdm(e.target.checked)}
+                    className="accent-orange-500 w-4 h-4 rounded cursor-pointer"
+                  />
+                  <div className="flex-1">
+                    <span className="text-xs font-black text-orange-700 block">
+                      Feature in PGDM Navbar Dropdown (Top 5)
+                    </span>
+                    <span className="text-[10px] text-orange-600/90 font-medium block">
+                      Enable this so this college appears directly in the top PGDM navbar dropdown cards.
+                    </span>
+                  </div>
+                </label>
 
                 <div className="pt-2 flex justify-end gap-3">
                   <button

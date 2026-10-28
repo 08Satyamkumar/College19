@@ -55,6 +55,25 @@ export async function GET(request: Request) {
     const city = searchParams.get("city") || "";
     const ownership = searchParams.get("ownership") || "";
     const exam = searchParams.get("exam") || "";
+    const featuredPgdm = searchParams.get("featured_pgdm") === "true";
+
+    if (featuredPgdm) {
+      const { data: featuredData, error: featErr } = await supabase
+        .from("colleges")
+        .select("*")
+        .or('description.ilike.%"is_featured_pgdm":true%,name.ilike.%GIMS%')
+        .order("created_at", { ascending: false })
+        .limit(limit);
+
+      if (featErr) throw featErr;
+      return NextResponse.json({
+        colleges: featuredData || [],
+        total: (featuredData || []).length,
+        page: 1,
+        limit,
+        pages: 1,
+      });
+    }
 
     const offset = (page - 1) * limit;
 

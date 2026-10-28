@@ -312,7 +312,7 @@ export default function LayoutWrapper({
     const fetchPgdmColleges = async () => {
       try {
         setIsPgdmLoading(true);
-        const res = await fetch("/api/colleges?course=PGDM&limit=5");
+        const res = await fetch("/api/colleges?featured_pgdm=true&limit=5");
         if (res.ok) {
           const data = await res.json();
           if (isMounted && data.colleges) {
