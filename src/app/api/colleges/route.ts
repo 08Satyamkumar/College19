@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-function applyFilters(query: any, { search, state, city, ownership, exam }: any) {
+function applyFilters(query: any, { search, course, state, city, ownership, exam }: any) {
   if (search) {
-    query = query.or(`name.ilike.%${search}%,city.ilike.%${search}%,description.ilike.%${search}%`);
+    query = query.or(`name.ilike.%${search}%,city.ilike.%${search}%,description.ilike.%${search}%,courses_count.ilike.%${search}%`);
+  }
+  if (course) {
+    const courseList = course.split(",").map((c: string) => c.trim()).filter(Boolean);
+    if (courseList.length > 0) {
+      const courseFilters = courseList
+        .map((c: string) => `courses_count.ilike.%${c}%,description.ilike.%${c}%,name.ilike.%${c}%`)
+        .join(",");
+      query = query.or(courseFilters);
+    }
   }
   if (state) {
     query = query.in("state", state.split(","));
@@ -41,6 +50,7 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "12", 10);
     const search = searchParams.get("search") || "";
+    const course = searchParams.get("course") || "";
     const state = searchParams.get("state") || "";
     const city = searchParams.get("city") || "";
     const ownership = searchParams.get("ownership") || "";
@@ -53,12 +63,12 @@ export async function GET(request: Request) {
 
     // Check if no state/city filters are active to prioritize Delhi NCR
     if (!state && !city) {
-      // 1. Get count of Delhi colleges matching active search, ownership, exam filters
+      // 1. Get count of Delhi colleges matching active search, course, ownership, exam filters
       let delhiCountQuery = supabase
         .from("colleges")
         .select("id", { count: "exact", head: true })
         .or("state.ilike.%Delhi%,city.ilike.%Delhi%,location.ilike.%Delhi%");
-      delhiCountQuery = applyFilters(delhiCountQuery, { search, ownership, exam });
+      delhiCountQuery = applyFilters(delhiCountQuery, { search, course, ownership, exam });
       const { count: delhiCount, error: dCountErr } = await delhiCountQuery;
       if (dCountErr) throw dCountErr;
       const dCount = delhiCount || 0;
@@ -67,7 +77,7 @@ export async function GET(request: Request) {
       if (offset < dCount) {
         // Query Delhi colleges first
         let delhiQuery = supabase.from("colleges").select("*");
-        delhiQuery = applyFilters(delhiQuery, { search, ownership, exam })
+        delhiQuery = applyFilters(delhiQuery, { search, course, ownership, exam })
           .or("state.ilike.%Delhi%,city.ilike.%Delhi%,location.ilike.%Delhi%");
         delhiQuery = delhiQuery
           .order("rating", { ascending: false, nullsFirst: false })
@@ -85,7 +95,7 @@ export async function GET(request: Request) {
             .not("state", "ilike", "%Delhi%")
             .not("city", "ilike", "%Delhi%")
             .not("location", "ilike", "%Delhi%");
-          otherQuery = applyFilters(otherQuery, { search, ownership, exam });
+          otherQuery = applyFilters(otherQuery, { search, course, ownership, exam });
           otherQuery = otherQuery
             .order("rating", { ascending: false, nullsFirst: false })
             .range(0, needed - 1);
@@ -102,7 +112,7 @@ export async function GET(request: Request) {
           .not("state", "ilike", "%Delhi%")
           .not("city", "ilike", "%Delhi%")
           .not("location", "ilike", "%Delhi%");
-        otherQuery = applyFilters(otherQuery, { search, ownership, exam });
+        otherQuery = applyFilters(otherQuery, { search, course, ownership, exam });
         otherQuery = otherQuery
           .order("rating", { ascending: false, nullsFirst: false })
           .range(otherOffset, otherOffset + limit - 1);
@@ -113,14 +123,14 @@ export async function GET(request: Request) {
 
       // 3. Get total count of all colleges matching filters
       let totalQuery = supabase.from("colleges").select("id", { count: "exact", head: true });
-      totalQuery = applyFilters(totalQuery, { search, ownership, exam });
+      totalQuery = applyFilters(totalQuery, { search, course, ownership, exam });
       const { count: total, error: tErr } = await totalQuery;
       if (tErr) throw tErr;
       count = total || 0;
     } else {
       // Normal query logic (when specific state/city filters are selected)
       let query = supabase.from("colleges").select("*", { count: "exact" });
-      query = applyFilters(query, { search, state, city, ownership, exam });
+      query = applyFilters(query, { search, course, state, city, ownership, exam });
       query = query
         .order("rating", { ascending: false, nullsFirst: false })
         .range(offset, offset + limit - 1);

@@ -74,6 +74,8 @@ export default function LayoutWrapper({
     "Top Ranked Colleges",
   );
   const [activeMoreTab, setActiveMoreTab] = useState("Paramedical");
+  const [pgdmColleges, setPgdmColleges] = useState<any[]>([]);
+  const [isPgdmLoading, setIsPgdmLoading] = useState(false);
   const [isSearchOverlayOpen, setIsSearchOverlayOpen] = useState(false);
   const [authModal, setAuthModal] = useState<{
     open: boolean;
@@ -303,6 +305,39 @@ export default function LayoutWrapper({
       return () => clearTimeout(timer);
     }
   }, [isAlertOpen, isAlertSubscribed]);
+
+  // Fetch top PGDM colleges dynamically for the PGDM mega menu dropdown
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPgdmColleges = async () => {
+      try {
+        setIsPgdmLoading(true);
+        const res = await fetch("/api/colleges?course=PGDM&limit=5");
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.colleges) {
+            setPgdmColleges(data.colleges);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch PGDM colleges:", err);
+      } finally {
+        if (isMounted) setIsPgdmLoading(false);
+      }
+    };
+
+    fetchPgdmColleges();
+
+    const handleCollegesUpdated = () => {
+      fetchPgdmColleges();
+    };
+
+    window.addEventListener("colleges-updated", handleCollegesUpdated);
+    return () => {
+      isMounted = false;
+      window.removeEventListener("colleges-updated", handleCollegesUpdated);
+    };
+  }, []);
 
   // MBA Mega Menu Sub-tabs structure matching screenshot (nested for multi-column grids)
   const mbaTabs: Record<string, MegaSubCategory[]> = {
@@ -1588,6 +1623,7 @@ export default function LayoutWrapper({
   // Mobile Navigation Links
   const mobileLinks = [
     { name: "Home", href: "/" },
+    { name: "PGDM Colleges", href: "/colleges?course=PGDM" },
     { name: "All Colleges", href: "/colleges" },
     { name: "Compare Colleges", href: "/compare" },
     { name: "College Predictor", href: "/predictor" },
@@ -2038,7 +2074,7 @@ export default function LayoutWrapper({
           <AnimatePresence>
             {activeMegaMenu === "PGDM" && (
               <div
-                className="absolute top-1 left-1/2 -translate-x-1/2 w-[94vw] md:w-[1020px] z-50 pointer-events-auto"
+                className="absolute top-1 left-1/2 -translate-x-1/2 w-[96vw] max-w-[1240px] z-50 pointer-events-auto"
                 onMouseEnter={() => setActiveMegaMenu("PGDM")}
               >
                 <motion.div
@@ -2052,23 +2088,288 @@ export default function LayoutWrapper({
                   }}
                   transition={{ type: "spring", stiffness: 380, damping: 26 }}
                   style={{ transformOrigin: "top center", perspective: 1000 }}
-                  className="w-full bg-white/95 backdrop-blur-xl border border-orange-100/40 rounded-2xl shadow-[0_20px_50px_rgba(249,115,22,0.15)] p-5 md:p-8 text-text_primary overflow-hidden max-h-[75vh] md:max-h-none overflow-y-auto md:overflow-visible relative"
+                  className="w-full bg-white/98 backdrop-blur-xl border border-orange-100 rounded-2xl shadow-[0_20px_50px_rgba(249,115,22,0.18)] p-4 sm:p-6 text-text_primary overflow-hidden max-h-[85vh] md:max-h-none overflow-y-auto md:overflow-visible relative"
                 >
                   {/* Top Glowing Gradient Accent */}
                   <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600 shadow-[0_1px_10px_rgba(249,115,22,0.5)] z-20" />
 
-                  {/* Header */}
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 relative z-10">
-                    <h3 className="font-outfit font-black text-sm md:text-base text-slate-800 uppercase tracking-wide flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-orange-500" />
-                      <span>PGDM Colleges & Admissions Guide</span>
-                    </h3>
+                  {/* Header Row */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-slate-100 gap-2 relative z-10">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-orange-500/10 text-orange-600">
+                        <Sparkles className="w-4 h-4" />
+                      </span>
+                      <div>
+                        <h3 className="font-outfit font-black text-xs sm:text-sm md:text-base text-slate-800 tracking-wide flex items-center gap-2">
+                          <span>TOP PGDM COLLEGES IN INDIA</span>
+                          <span className="bg-orange-100 text-orange-600 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            2026 Admissions
+                          </span>
+                        </h3>
+                        <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium hidden sm:block">
+                          Compare top PGDM business schools, packages, fees &amp; eligibility
+                        </p>
+                      </div>
+                    </div>
+
+                    <Link
+                      href="/colleges?course=PGDM"
+                      onClick={() => setActiveMegaMenu(null)}
+                      className="inline-flex items-center gap-1.5 text-xs font-black text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100/80 px-3.5 py-1.5 rounded-xl border border-orange-200 transition-all group self-start sm:self-auto shadow-sm active:scale-95"
+                    >
+                      <span>View All PGDM Colleges</span>
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
                   </div>
 
-                  {/* Clean Placeholder awaiting user's content specifications */}
-                  <div className="py-8 text-center text-slate-400 text-xs font-semibold relative z-10">
-                    PGDM section is ready. Share your college links, specializations, and details to display here.
-                  </div>
+                  {/* Cards Area */}
+                  {isPgdmLoading && pgdmColleges.length === 0 ? (
+                    <div className="flex md:grid md:grid-cols-5 gap-3.5 overflow-x-auto pb-3 pt-1 px-1 snap-x snap-mandatory no-scrollbar relative z-10">
+                      {[1, 2, 3, 4, 5].map((idx) => (
+                        <div
+                          key={idx}
+                          className="w-[240px] sm:w-[260px] md:w-auto flex-shrink-0 snap-start bg-slate-50 border border-slate-200 rounded-2xl p-4 animate-pulse h-64 flex flex-col justify-between"
+                        >
+                          <div className="h-28 bg-slate-200 rounded-xl mb-3" />
+                          <div className="h-4 bg-slate-200 rounded w-3/4 mb-2" />
+                          <div className="h-3 bg-slate-200 rounded w-1/2 mb-3" />
+                          <div className="h-10 bg-slate-200 rounded-xl" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : pgdmColleges.length > 0 ? (
+                    <div className="flex md:grid md:grid-cols-5 gap-3.5 overflow-x-auto pb-3 pt-1 px-1 snap-x snap-mandatory no-scrollbar relative z-10">
+                      {pgdmColleges.slice(0, 5).map((col: any) => {
+                        let parsedDesc: any = {};
+                        if (
+                          typeof col.description === "string" &&
+                          col.description.trim().startsWith("{")
+                        ) {
+                          try {
+                            parsedDesc = JSON.parse(col.description);
+                          } catch (e) {}
+                        }
+
+                        const coverImg =
+                          col.image_url ||
+                          parsedDesc.image ||
+                          (parsedDesc.coverImages && parsedDesc.coverImages[0]) ||
+                          "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=60";
+
+                        const logoUrl =
+                          parsedDesc.logo ||
+                          (col.image_url && col.image_url.toLowerCase().includes("logo")
+                            ? col.image_url
+                            : "");
+
+                        const nirfNumber =
+                          col.nirf_rank && col.nirf_rank !== "N/A"
+                            ? col.nirf_rank.replace(/[^0-9]/g, "")
+                            : (parsedDesc.nirfRank || "");
+                        const ratingValue = col.rating || parsedDesc.rating || "4.3";
+                        const ownershipType =
+                          col.ownership || col.type || parsedDesc.type || "Private";
+
+                        const locationText =
+                          col.location ||
+                          (col.city ? `${col.city}, ${col.state || "India"}` : "India");
+
+                        const rawHighest =
+                          parsedDesc.highestPackage ||
+                          parsedDesc.highest_package ||
+                          col.highest_package ||
+                          "";
+                        const rawAvg =
+                          parsedDesc.averagePackage ||
+                          parsedDesc.average_package ||
+                          col.average_package ||
+                          "";
+                        const rawFees =
+                          col.tuition_fees || parsedDesc.totalFees || "—";
+
+                        const cleanPackage = (val: string) => {
+                          if (!val || val === "—" || val === "N/A" || val === "-/-")
+                            return "—";
+                          let c = val.split("/")[0].trim();
+                          c = c.replace(/\(Domestic\)/gi, "").replace(/PA/gi, "").trim();
+                          return c || val;
+                        };
+
+                        const highestText = cleanPackage(rawHighest);
+                        const avgText = cleanPackage(rawAvg);
+                        const feesText = cleanPackage(rawFees);
+
+                        const initials = col.name
+                          ? col.name
+                              .split(" ")
+                              .map((w: string) => w[0])
+                              .join("")
+                              .substring(0, 3)
+                              .toUpperCase()
+                          : "COL";
+
+                        return (
+                          <div
+                            key={col.id || col.slug}
+                            className="w-[245px] sm:w-[260px] md:w-auto flex-shrink-0 snap-start bg-white rounded-2xl border border-slate-200/90 hover:border-orange-400 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group"
+                          >
+                            {/* Campus Banner Image */}
+                            <div className="relative h-28 sm:h-32 w-full bg-slate-100 overflow-hidden">
+                              <img
+                                src={coverImg}
+                                alt={col.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src =
+                                    "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=60";
+                                }}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+
+                              {/* Top-left: NIRF Badge */}
+                              {nirfNumber ? (
+                                <div className="absolute top-2 left-2 bg-[#F05A28] text-white font-extrabold text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                                  <Award className="w-2.5 h-2.5" />
+                                  <span>NIRF #{nirfNumber}</span>
+                                </div>
+                              ) : null}
+
+                              {/* Top-right: Rating Badge */}
+                              <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm text-slate-800 font-extrabold text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
+                                <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                <span>{ratingValue}</span>
+                              </div>
+
+                              {/* Bottom-right: Ownership & PGDM Pill */}
+                              <div className="absolute bottom-2 right-2 flex flex-col items-end gap-1">
+                                <span className="bg-slate-900/90 text-white text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">
+                                  {ownershipType}
+                                </span>
+                                <span className="bg-white/95 text-orange-600 border border-orange-200 text-[8px] sm:text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
+                                  PGDM
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Info & Stats */}
+                            <div className="px-3 pt-0 pb-3 flex flex-col flex-1">
+                              {/* Logo overlapping banner */}
+                              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white shadow-md p-1 border border-slate-100 flex items-center justify-center -mt-5 sm:-mt-6 ml-1 relative z-10 flex-shrink-0">
+                                {logoUrl ? (
+                                  <img
+                                    src={logoUrl}
+                                    alt={col.name}
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                      (e.target as HTMLElement).style.display = "none";
+                                    }}
+                                  />
+                                ) : (
+                                  <span className="font-black text-orange-600 text-[11px] sm:text-xs">
+                                    {initials}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* College Name */}
+                              <Link
+                                href={`/colleges/${col.slug}`}
+                                onClick={() => setActiveMegaMenu(null)}
+                                className="font-outfit font-black text-xs sm:text-sm text-orange-600 hover:text-orange-700 transition-colors line-clamp-1 mt-1.5 leading-snug"
+                                title={col.name}
+                              >
+                                {col.name}
+                              </Link>
+
+                              {/* Location */}
+                              <div className="flex items-center gap-1 text-slate-500 text-[10px] sm:text-[11px] mt-0.5 font-medium line-clamp-1">
+                                <MapPin className="w-2.5 h-2.5 text-slate-400 flex-shrink-0" />
+                                <span>{locationText}</span>
+                              </div>
+
+                              {/* 3-stat Container matching Image 2 */}
+                              <div className="my-2.5 p-1.5 sm:p-2 bg-sky-50/70 rounded-xl border border-sky-100/70 grid grid-cols-3 text-center divide-x divide-sky-100">
+                                <div className="px-0.5">
+                                  <div className="text-[7.5px] sm:text-[8px] font-extrabold uppercase tracking-wider text-slate-400">
+                                    HIGHEST
+                                  </div>
+                                  <div
+                                    className="text-emerald-600 font-black text-[10px] sm:text-[11px] line-clamp-1"
+                                    title={rawHighest || highestText}
+                                  >
+                                    {highestText}
+                                  </div>
+                                </div>
+                                <div className="px-0.5">
+                                  <div className="text-[7.5px] sm:text-[8px] font-extrabold uppercase tracking-wider text-slate-400">
+                                    AVERAGE
+                                  </div>
+                                  <div
+                                    className="text-orange-600 font-black text-[10px] sm:text-[11px] line-clamp-1"
+                                    title={rawAvg || avgText}
+                                  >
+                                    {avgText}
+                                  </div>
+                                </div>
+                                <div className="px-0.5">
+                                  <div className="text-[7.5px] sm:text-[8px] font-extrabold uppercase tracking-wider text-slate-400">
+                                    FEES
+                                  </div>
+                                  <div
+                                    className="text-slate-800 font-black text-[10px] sm:text-[11px] line-clamp-1"
+                                    title={rawFees || feesText}
+                                  >
+                                    {feesText}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className="grid grid-cols-2 gap-1.5 mt-auto pt-1">
+                                <Link
+                                  href={`/colleges/${col.slug}`}
+                                  onClick={() => setActiveMegaMenu(null)}
+                                  className="py-1.5 px-1 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-[10px] text-center transition-colors flex items-center justify-center"
+                                >
+                                  View Details
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setActiveMegaMenu(null);
+                                    setIsAlertOpen(true);
+                                  }}
+                                  className="py-1.5 px-1 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-[10px] text-center transition-all shadow-sm active:scale-95 flex items-center justify-center"
+                                >
+                                  Apply Now
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    /* Fallback when 0 PGDM colleges are added yet */
+                    <div className="py-10 text-center relative z-10 flex flex-col items-center justify-center">
+                      <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center mb-3">
+                        <GraduationCap className="w-6 h-6" />
+                      </div>
+                      <h4 className="font-outfit font-black text-sm text-slate-700">
+                        No PGDM Colleges Added Yet
+                      </h4>
+                      <p className="text-xs text-slate-400 max-w-md mt-1 mb-4">
+                        Colleges added with course &ldquo;PGDM&rdquo; in the admin panel will automatically appear here.
+                      </p>
+                      <Link
+                        href="/colleges"
+                        onClick={() => setActiveMegaMenu(null)}
+                        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-bold rounded-xl shadow-sm hover:opacity-95"
+                      >
+                        + Add New College via Colleges Page
+                      </Link>
+                    </div>
+                  )}
                 </motion.div>
               </div>
             )}

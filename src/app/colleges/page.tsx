@@ -57,6 +57,8 @@ interface College {
   courseTypes: string[]; // Bachelors / Masters / Doctorate / Postgraduate Diploma
   affiliation: string; // University name
   approvals: string[]; // AICTE / UGC / PCI / MHRD
+  highest_package?: string;
+  average_package?: string;
 }
 
 const mockColleges: College[] = [
@@ -576,6 +578,8 @@ function CollegesListContent() {
   const [editImageUrl, setEditImageUrl] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editAccreditation, setEditAccreditation] = useState("");
+  const [editHighestPackage, setEditHighestPackage] = useState("");
+  const [editAveragePackage, setEditAveragePackage] = useState("");
 
   const [isUpdatingCollege, setIsUpdatingCollege] = useState(false);
 
@@ -594,6 +598,8 @@ function CollegesListContent() {
   const [addImageUrl, setAddImageUrl] = useState("");
   const [addDescription, setAddDescription] = useState("");
   const [addAccreditation, setAddAccreditation] = useState("AICTE Approved");
+  const [addHighestPackage, setAddHighestPackage] = useState("");
+  const [addAveragePackage, setAddAveragePackage] = useState("");
   const [isAddingCollege, setIsAddingCollege] = useState(false);
   const [hiddenAds, setHiddenAds] = useState<number[]>([]);
   const [closedGoogleAds, setClosedGoogleAds] = useState<number[]>([]);
@@ -643,10 +649,14 @@ function CollegesListContent() {
     // Generate slug
     const slug = formattedName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-    // Serialize description and accreditation
+    // Serialize description, accreditation, and package stats
     const serializedDesc = JSON.stringify({
       description: addDescription,
       accreditation: addAccreditation,
+      highestPackage: addHighestPackage,
+      averagePackage: addAveragePackage,
+      highest_package: addHighestPackage,
+      average_package: addAveragePackage,
     });
 
     try {
@@ -708,6 +718,8 @@ function CollegesListContent() {
               slug: slug,
               accreditation: addAccreditation,
               image_url: addImageUrl,
+              highest_package: addHighestPackage,
+              average_package: addAveragePackage,
             },
             ...prev,
           ]);
@@ -728,6 +740,11 @@ function CollegesListContent() {
         setAddImageUrl("");
         setAddDescription("");
         setAddAccreditation("AICTE Approved");
+        setAddHighestPackage("");
+        setAddAveragePackage("");
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("colleges-updated"));
+        }
       } else {
         const err = await res.json();
         alert(err.error || "Failed to add college.");
@@ -806,6 +823,8 @@ function CollegesListContent() {
     setEditImageUrl(college.image_url || "");
     setEditDescription(college.description || "");
     setEditAccreditation(college.accreditation || "AICTE Approved");
+    setEditHighestPackage(college.highest_package || "");
+    setEditAveragePackage(college.average_package || "");
   };
 
   const handleSaveChanges = async (e: React.FormEvent) => {
@@ -822,6 +841,10 @@ function CollegesListContent() {
       const serializedDesc = JSON.stringify({
         description: editDescription,
         accreditation: editAccreditation,
+        highestPackage: editHighestPackage,
+        averagePackage: editAveragePackage,
+        highest_package: editHighestPackage,
+        average_package: editAveragePackage,
       });
 
       const res = await fetch("/api/colleges/update", {
@@ -871,12 +894,17 @@ function CollegesListContent() {
                 image_url: editImageUrl,
                 description: editDescription,
                 accreditation: editAccreditation,
+                highest_package: editHighestPackage,
+                average_package: editAveragePackage,
               };
             }
             return c;
           }),
         );
         setEditingCollege(null);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("colleges-updated"));
+        }
       } else {
         const errData = await res.json();
         alert(errData.error || "Failed to update college details.");
@@ -1669,6 +1697,7 @@ function CollegesListContent() {
   }, [discoveredStreams]);
 
   const courseOptions = [
+    { name: "PGDM", count: 2450 },
     { name: "MBA", count: 3635 },
     { name: "BSc", count: 3580 },
     { name: "BTech", count: 3170 },
@@ -7220,11 +7249,13 @@ function CollegesListContent() {
     const stateParam = searchParams.get("state");
     const cityParam = searchParams.get("city");
     const searchParam = searchParams.get("search");
+    const courseParam = searchParams.get("course");
 
     if (streamParam) setSelectedStreams([streamParam]);
     if (stateParam) setSelectedStates([stateParam.replace("-", " ")]);
     if (cityParam) setSelectedCities([cityParam]);
     if (searchParam) setSearchTerm(searchParam);
+    if (courseParam) setSelectedCourses([courseParam]);
   }, [searchParams]);
 
   // Extract unique filter options from mockup database
@@ -7267,6 +7298,8 @@ function CollegesListContent() {
         queryParams.append("page", page.toString());
         queryParams.append("limit", "12");
         if (searchTerm.trim()) queryParams.append("search", searchTerm);
+        if (selectedCourses.length > 0)
+          queryParams.append("course", selectedCourses.join(","));
         if (selectedStates.length > 0)
           queryParams.append("state", selectedStates.join(","));
         if (selectedCities.length > 0)
@@ -7295,6 +7328,8 @@ function CollegesListContent() {
             let displayAccreditation = "AICTE Approved";
             let displayLogoUrl = c.logo_url || "";
             let displayCoverUrl = c.image_url || "";
+            let displayHighest = "";
+            let displayAverage = "";
             if (
               displayDesc.trim().startsWith("{") &&
               displayDesc.trim().endsWith("}")
@@ -7306,6 +7341,8 @@ function CollegesListContent() {
                   parsed.accreditation ||
                   parsed.accreditation_details ||
                   "AICTE Approved";
+                displayHighest = parsed.highestPackage || parsed.highest_package || "";
+                displayAverage = parsed.averagePackage || parsed.average_package || "";
                 if (parsed.logo) {
                   displayLogoUrl = parsed.logo;
                 }
@@ -7346,6 +7383,8 @@ function CollegesListContent() {
               logo_url: displayLogoUrl,
               logo: displayLogoUrl,
               image_url: displayCoverUrl,
+              highest_package: displayHighest,
+              average_package: displayAverage,
             };
           });
           setCollegesList(mapped);
@@ -7363,6 +7402,7 @@ function CollegesListContent() {
   }, [
     page,
     searchTerm,
+    selectedCourses,
     selectedStates,
     selectedCities,
     selectedOwnerships,
@@ -7417,6 +7457,7 @@ function CollegesListContent() {
     setPage(1);
   }, [
     searchTerm,
+    selectedCourses,
     selectedStates,
     selectedCities,
     selectedOwnerships,
@@ -7426,9 +7467,25 @@ function CollegesListContent() {
 
   // Define filteredColleges alias for zero-break compatibility with existing template code
   const filteredColleges = useMemo(() => {
-    if (selectedStreams.length === 0) return collegesList;
-    return collegesList.filter((c) => selectedStreams.includes(c.stream));
-  }, [collegesList, selectedStreams]);
+    let result = collegesList;
+    if (selectedStreams.length > 0) {
+      result = result.filter((c) => selectedStreams.includes(c.stream));
+    }
+    if (selectedCourses.length > 0) {
+      result = result.filter((c) => {
+        return selectedCourses.some((courseName) => {
+          const lowerCourse = courseName.toLowerCase();
+          const inCourses = (c.courses || []).some((cr: string) =>
+            cr.toLowerCase().includes(lowerCourse)
+          );
+          const inDesc = (c.description || "").toLowerCase().includes(lowerCourse);
+          const inName = (c.name || "").toLowerCase().includes(lowerCourse);
+          return inCourses || inDesc || inName;
+        });
+      });
+    }
+    return result;
+  }, [collegesList, selectedStreams, selectedCourses]);
 
   // Read More inline toggle helper
   const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>(
@@ -9718,6 +9775,34 @@ function CollegesListContent() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
+                      Highest Package (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 80.75 LPA or ₹35 LPA"
+                      value={addHighestPackage}
+                      onChange={(e) => setAddHighestPackage(e.target.value)}
+                      className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
+                      Average Package (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 9.2 LPA or ₹8.5 LPA"
+                      value={addAveragePackage}
+                      onChange={(e) => setAddAveragePackage(e.target.value)}
+                      className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
                     About/Description
@@ -9953,6 +10038,34 @@ function CollegesListContent() {
                       placeholder="e.g. AICTE APPROVED"
                       value={editAccreditation}
                       onChange={(e) => setEditAccreditation(e.target.value)}
+                      className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
+                      Highest Package (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 80.75 LPA or ₹35 LPA"
+                      value={editHighestPackage}
+                      onChange={(e) => setEditHighestPackage(e.target.value)}
+                      className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
+                      Average Package (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 9.2 LPA or ₹8.5 LPA"
+                      value={editAveragePackage}
+                      onChange={(e) => setEditAveragePackage(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
                     />
                   </div>
