@@ -24,6 +24,7 @@ import {
   Compass,
   GraduationCap,
   Link as LinkIcon,
+  Check,
   CheckCircle,
   Lock,
   Unlock,
@@ -536,6 +537,51 @@ const toTitleCase = (str: string): string => {
     .join(" ");
 };
 
+const PRESET_STREAMS = [
+  "Engineering",
+  "Management",
+  "Medical",
+  "Law",
+  "Commerce",
+  "Science",
+  "Arts",
+  "Computer",
+  "Design",
+  "Pharmacy",
+  "Paramedical",
+  "Architecture",
+  "Hotel Management",
+  "Dental",
+  "Education",
+  "Veterinary",
+  "Agriculture",
+  "Aviation",
+];
+
+const PRESET_COURSES = [
+  "BTech",
+  "MTech",
+  "MBA",
+  "PGDM",
+  "BBA",
+  "BCA",
+  "MCA",
+  "MBBS",
+  "BDS",
+  "BSc",
+  "MSc",
+  "BCom",
+  "MCom",
+  "BA",
+  "MA",
+  "LLB",
+  "BA LLB",
+  "B.Pharmacy",
+  "M.Pharmacy",
+  "B.Ed",
+  "PhD",
+];
+
 function CollegesListContent() {
   const searchParams = useSearchParams();
 
@@ -581,6 +627,10 @@ function CollegesListContent() {
   const [editHighestPackage, setEditHighestPackage] = useState("");
   const [editAveragePackage, setEditAveragePackage] = useState("");
   const [editFeaturedPgdm, setEditFeaturedPgdm] = useState(false);
+  const [editStreams, setEditStreams] = useState<string[]>([]);
+  const [editCourses, setEditCourses] = useState<string[]>([]);
+  const [customEditStream, setCustomEditStream] = useState("");
+  const [customEditCourse, setCustomEditCourse] = useState("");
 
   const [isUpdatingCollege, setIsUpdatingCollege] = useState(false);
 
@@ -602,7 +652,67 @@ function CollegesListContent() {
   const [addHighestPackage, setAddHighestPackage] = useState("");
   const [addAveragePackage, setAddAveragePackage] = useState("");
   const [addFeaturedPgdm, setAddFeaturedPgdm] = useState(true);
+  const [addStreams, setAddStreams] = useState<string[]>([]);
+  const [addCourses, setAddCourses] = useState<string[]>([]);
+  const [customAddStream, setCustomAddStream] = useState("");
+  const [customAddCourse, setCustomAddCourse] = useState("");
   const [isAddingCollege, setIsAddingCollege] = useState(false);
+
+  const toggleEditStream = (st: string) => {
+    setEditStreams((prev) =>
+      prev.includes(st) ? prev.filter((s) => s !== st) : [...prev, st]
+    );
+  };
+
+  const handleAddCustomEditStream = () => {
+    const val = customEditStream.trim();
+    if (val && !editStreams.includes(val)) {
+      setEditStreams((prev) => [...prev, val]);
+    }
+    setCustomEditStream("");
+  };
+
+  const toggleEditCourse = (cr: string) => {
+    setEditCourses((prev) =>
+      prev.includes(cr) ? prev.filter((c) => c !== cr) : [...prev, cr]
+    );
+  };
+
+  const handleAddCustomEditCourse = () => {
+    const val = customEditCourse.trim();
+    if (val && !editCourses.includes(val)) {
+      setEditCourses((prev) => [...prev, val]);
+    }
+    setCustomEditCourse("");
+  };
+
+  const toggleAddStream = (st: string) => {
+    setAddStreams((prev) =>
+      prev.includes(st) ? prev.filter((s) => s !== st) : [...prev, st]
+    );
+  };
+
+  const handleAddCustomAddStream = () => {
+    const val = customAddStream.trim();
+    if (val && !addStreams.includes(val)) {
+      setAddStreams((prev) => [...prev, val]);
+    }
+    setCustomAddStream("");
+  };
+
+  const toggleAddCourse = (cr: string) => {
+    setAddCourses((prev) =>
+      prev.includes(cr) ? prev.filter((c) => c !== cr) : [...prev, cr]
+    );
+  };
+
+  const handleAddCustomAddCourse = () => {
+    const val = customAddCourse.trim();
+    if (val && !addCourses.includes(val)) {
+      setAddCourses((prev) => [...prev, val]);
+    }
+    setCustomAddCourse("");
+  };
   const [hiddenAds, setHiddenAds] = useState<number[]>([]);
   const [closedGoogleAds, setClosedGoogleAds] = useState<number[]>([]);
   const [isFlipkartAdClosed, setIsFlipkartAdClosed] = useState(false);
@@ -651,7 +761,7 @@ function CollegesListContent() {
     // Generate slug
     const slug = formattedName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-    // Serialize description, accreditation, and package stats
+    // Serialize description, accreditation, package stats, streams and courses
     const serializedDesc = JSON.stringify({
       description: addDescription,
       accreditation: addAccreditation,
@@ -660,6 +770,8 @@ function CollegesListContent() {
       highest_package: addHighestPackage,
       average_package: addAveragePackage,
       is_featured_pgdm: addFeaturedPgdm,
+      streams: addStreams,
+      courses: addCourses,
     });
 
     try {
@@ -705,8 +817,9 @@ function CollegesListContent() {
               location: formattedLocation,
               state: formattedState,
               city: formattedCity,
-              stream: getStreamFromCollegeName(formattedName),
-              courses: [addCoursesCount || "Courses"],
+              stream: addStreams[0] || getStreamFromCollegeName(formattedName),
+              streams: addStreams.length > 0 ? addStreams : [getStreamFromCollegeName(formattedName)],
+              courses: addCourses.length > 0 ? addCourses : [addCoursesCount || "Courses"],
               specializations: [],
               exams: examsArr.length > 0 ? examsArr : ["None"],
               feeRange: addTuitionFees,
@@ -745,6 +858,10 @@ function CollegesListContent() {
         setAddAccreditation("AICTE Approved");
         setAddHighestPackage("");
         setAddAveragePackage("");
+        setAddStreams([]);
+        setAddCourses([]);
+        setCustomAddStream("");
+        setCustomAddCourse("");
         if (typeof window !== "undefined") {
           window.dispatchEvent(new Event("colleges-updated"));
         }
@@ -829,16 +946,43 @@ function CollegesListContent() {
     setEditHighestPackage(college.highest_package || "");
     setEditAveragePackage(college.average_package || "");
     let isFeat = false;
+    let initialStreams: string[] = [];
+    let initialCourses: string[] = [];
+
+    if (Array.isArray(college.streams) && college.streams.length > 0) {
+      initialStreams = [...college.streams];
+    } else if (college.stream) {
+      initialStreams = [college.stream];
+    }
+
+    if (Array.isArray(college.courses) && college.courses.length > 0) {
+      initialCourses = college.courses.filter(
+        (c: string) =>
+          !c.toLowerCase().includes("courses") &&
+          !c.toLowerCase().includes("varies")
+      );
+    }
+
     if (college.description) {
       try {
         const p = JSON.parse(college.description);
         isFeat = !!p.is_featured_pgdm;
+        if (Array.isArray(p.streams) && p.streams.length > 0) {
+          initialStreams = p.streams;
+        }
+        if (Array.isArray(p.courses) && p.courses.length > 0) {
+          initialCourses = p.courses;
+        }
       } catch (e) {}
     }
     if (!isFeat && (college.name || "").toUpperCase().includes("GIMS")) {
       isFeat = true;
     }
     setEditFeaturedPgdm(isFeat);
+    setEditStreams(initialStreams);
+    setEditCourses(initialCourses);
+    setCustomEditStream("");
+    setCustomEditCourse("");
   };
 
   const handleSaveChanges = async (e: React.FormEvent) => {
@@ -860,6 +1004,8 @@ function CollegesListContent() {
         highest_package: editHighestPackage,
         average_package: editAveragePackage,
         is_featured_pgdm: editFeaturedPgdm,
+        streams: editStreams,
+        courses: editCourses,
       });
 
       const res = await fetch("/api/colleges/update", {
@@ -903,7 +1049,10 @@ function CollegesListContent() {
                 nirfRank: editNIRFRank
                   ? parseInt(editNIRFRank.replace(/[^0-9]/g, ""))
                   : undefined,
-                courses: [editCoursesCount || "Courses"],
+                courses_count: editCoursesCount,
+                courses: editCourses.length > 0 ? editCourses : [editCoursesCount || "Courses"],
+                streams: editStreams.length > 0 ? editStreams : [getStreamFromCollegeName(formattedName)],
+                stream: editStreams[0] || getStreamFromCollegeName(formattedName),
                 exams: examsArr.length > 0 ? examsArr : ["None"],
                 feeRange: editTuitionFees,
                 image_url: editImageUrl,
@@ -7345,6 +7494,8 @@ function CollegesListContent() {
             let displayCoverUrl = c.image_url || "";
             let displayHighest = "";
             let displayAverage = "";
+            let displayStreams: string[] = [];
+            let displayCourses: string[] = [];
             if (
               displayDesc.trim().startsWith("{") &&
               displayDesc.trim().endsWith("}")
@@ -7358,6 +7509,12 @@ function CollegesListContent() {
                   "AICTE Approved";
                 displayHighest = parsed.highestPackage || parsed.highest_package || "";
                 displayAverage = parsed.averagePackage || parsed.average_package || "";
+                if (Array.isArray(parsed.streams)) {
+                  displayStreams = parsed.streams;
+                }
+                if (Array.isArray(parsed.courses)) {
+                  displayCourses = parsed.courses;
+                }
                 if (parsed.logo) {
                   displayLogoUrl = parsed.logo;
                 }
@@ -7379,8 +7536,9 @@ function CollegesListContent() {
               location: c.location,
               state: c.state,
               city: c.city,
-              stream: getStreamFromCollegeName(c.name),
-              courses: [c.courses_count || "Courses"],
+              stream: displayStreams[0] || getStreamFromCollegeName(c.name),
+              streams: displayStreams.length > 0 ? displayStreams : [getStreamFromCollegeName(c.name)],
+              courses: displayCourses.length > 0 ? displayCourses : [c.courses_count || "Courses"],
               specializations: [],
               exams: examsArr.length > 0 ? examsArr : ["None"],
               feeRange: c.tuition_fees || "N/A",
@@ -9803,6 +9961,124 @@ function CollegesListContent() {
                   </div>
                 </div>
 
+                {/* STREAMS SELECTION (MULTI-SELECT) */}
+                <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] uppercase tracking-wider font-black text-slate-600 flex items-center gap-1.5">
+                      <span>Streams / Disciplines</span>
+                      <span className="text-[9px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">
+                        {addStreams.length} Selected
+                      </span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-medium">Click buttons to select/unselect</span>
+                  </div>
+
+                  {/* Preset & Custom Stream Buttons */}
+                  <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
+                    {Array.from(new Set([...PRESET_STREAMS, ...addStreams])).map((stream) => {
+                      const isSelected = addStreams.includes(stream);
+                      return (
+                        <button
+                          key={stream}
+                          type="button"
+                          onClick={() => toggleAddStream(stream)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                            isSelected
+                              ? "bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-500/20"
+                              : "bg-white text-slate-700 border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/30"
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}
+                          {stream}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Stream Input */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="text"
+                      placeholder="Add another stream (e.g. Design, Aviation)..."
+                      value={customAddStream}
+                      onChange={(e) => setCustomAddStream(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCustomAddStream();
+                        }
+                      }}
+                      className="flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomAddStream}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-sm"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                </div>
+
+                {/* COURSES SELECTION (MULTI-SELECT) */}
+                <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] uppercase tracking-wider font-black text-slate-600 flex items-center gap-1.5">
+                      <span>Courses / Degrees Offered</span>
+                      <span className="text-[9px] text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200 font-bold">
+                        {addCourses.length} Selected
+                      </span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-medium">Click buttons to select/unselect</span>
+                  </div>
+
+                  {/* Preset & Custom Course Buttons */}
+                  <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
+                    {Array.from(new Set([...PRESET_COURSES, ...addCourses])).map((course) => {
+                      const isSelected = addCourses.includes(course);
+                      return (
+                        <button
+                          key={course}
+                          type="button"
+                          onClick={() => toggleAddCourse(course)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                            isSelected
+                              ? "bg-teal-600 text-white shadow-sm ring-2 ring-teal-500/20"
+                              : "bg-white text-slate-700 border border-slate-200 hover:border-teal-300 hover:bg-teal-50/30"
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}
+                          {course}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Course Input */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="text"
+                      placeholder="Add another course (e.g. B.Des, BAMS, LLB)..."
+                      value={customAddCourse}
+                      onChange={(e) => setCustomAddCourse(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCustomAddCourse();
+                        }
+                      }}
+                      className="flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomAddCourse}
+                      className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-sm"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
                     About/Description
@@ -10086,6 +10362,124 @@ function CollegesListContent() {
                       onChange={(e) => setEditAveragePackage(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
                     />
+                  </div>
+                </div>
+
+                {/* STREAMS SELECTION (MULTI-SELECT) */}
+                <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] uppercase tracking-wider font-black text-slate-600 flex items-center gap-1.5">
+                      <span>Streams / Disciplines</span>
+                      <span className="text-[9px] text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200 font-bold">
+                        {editStreams.length} Selected
+                      </span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-medium">Click buttons to select/unselect</span>
+                  </div>
+
+                  {/* Preset & Custom Stream Buttons */}
+                  <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
+                    {Array.from(new Set([...PRESET_STREAMS, ...editStreams])).map((stream) => {
+                      const isSelected = editStreams.includes(stream);
+                      return (
+                        <button
+                          key={stream}
+                          type="button"
+                          onClick={() => toggleEditStream(stream)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                            isSelected
+                              ? "bg-orange-500 text-white shadow-sm ring-2 ring-orange-500/20"
+                              : "bg-white text-slate-700 border border-slate-200 hover:border-orange-300 hover:bg-orange-50/30"
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}
+                          {stream}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Stream Input */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="text"
+                      placeholder="Add another stream (e.g. Design, Aviation)..."
+                      value={customEditStream}
+                      onChange={(e) => setCustomEditStream(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCustomEditStream();
+                        }
+                      }}
+                      className="flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-orange-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomEditStream}
+                      className="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-sm"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                </div>
+
+                {/* COURSES SELECTION (MULTI-SELECT) */}
+                <div className="bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] uppercase tracking-wider font-black text-slate-600 flex items-center gap-1.5">
+                      <span>Courses / Degrees Offered</span>
+                      <span className="text-[9px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-bold">
+                        {editCourses.length} Selected
+                      </span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-medium">Click buttons to select/unselect</span>
+                  </div>
+
+                  {/* Preset & Custom Course Buttons */}
+                  <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
+                    {Array.from(new Set([...PRESET_COURSES, ...editCourses])).map((course) => {
+                      const isSelected = editCourses.includes(course);
+                      return (
+                        <button
+                          key={course}
+                          type="button"
+                          onClick={() => toggleEditCourse(course)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                            isSelected
+                              ? "bg-amber-500 text-white shadow-sm ring-2 ring-amber-500/20"
+                              : "bg-white text-slate-700 border border-slate-200 hover:border-amber-300 hover:bg-amber-50/30"
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}
+                          {course}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Course Input */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="text"
+                      placeholder="Add another course (e.g. B.Des, BAMS, LLB)..."
+                      value={customEditCourse}
+                      onChange={(e) => setCustomEditCourse(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCustomEditCourse();
+                        }
+                      }}
+                      className="flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomEditCourse}
+                      className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-sm"
+                    >
+                      + Add
+                    </button>
                   </div>
                 </div>
 
