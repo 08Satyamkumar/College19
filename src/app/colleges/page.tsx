@@ -7462,6 +7462,8 @@ function CollegesListContent() {
         queryParams.append("page", page.toString());
         queryParams.append("limit", "12");
         if (searchTerm.trim()) queryParams.append("search", searchTerm);
+        if (selectedStreams.length > 0)
+          queryParams.append("stream", selectedStreams.join(","));
         if (selectedCourses.length > 0)
           queryParams.append("course", selectedCourses.join(","));
         if (selectedStates.length > 0)
@@ -7575,6 +7577,7 @@ function CollegesListContent() {
   }, [
     page,
     searchTerm,
+    selectedStreams,
     selectedCourses,
     selectedStates,
     selectedCities,
@@ -7601,11 +7604,18 @@ function CollegesListContent() {
             !STATIC_stateOptions.some((opt) => toTitleCase(opt.name) === s),
         );
 
-      const streamsToAdd = collegesList
-        .map((c) => c.stream)
-        .filter(
-          (s) => s && !STATIC_streamOptions.some((opt) => opt.name === s),
-        );
+      const streamsToAdd: string[] = [];
+      collegesList.forEach((c) => {
+        if (Array.isArray(c.streams)) {
+          c.streams.forEach((st: string) => {
+            if (st && !STATIC_streamOptions.some((opt) => opt.name.toLowerCase() === st.toLowerCase())) {
+              streamsToAdd.push(st);
+            }
+          });
+        } else if (c.stream && !STATIC_streamOptions.some((opt) => opt.name.toLowerCase() === c.stream.toLowerCase())) {
+          streamsToAdd.push(c.stream);
+        }
+      });
 
       if (citiesToAdd.length > 0) {
         setDiscoveredCities((prev) =>
@@ -7630,6 +7640,7 @@ function CollegesListContent() {
     setPage(1);
   }, [
     searchTerm,
+    selectedStreams,
     selectedCourses,
     selectedStates,
     selectedCities,
@@ -7641,7 +7652,63 @@ function CollegesListContent() {
   // Define filteredColleges alias for zero-break compatibility with existing template code
   const filteredColleges = useMemo(() => {
     if (selectedStreams.length === 0) return collegesList;
-    return collegesList.filter((c) => selectedStreams.includes(c.stream));
+    return collegesList.filter((c) => {
+      // 1. If college has explicit streams array from description
+      if (Array.isArray(c.streams) && c.streams.length > 0) {
+        const hasMatchingStream = c.streams.some((st: string) =>
+          selectedStreams.some(
+            (sel) => sel.toLowerCase().trim() === st.toLowerCase().trim()
+          )
+        );
+        if (hasMatchingStream) return true;
+      }
+      // 2. Check c.stream single property
+      if (c.stream) {
+        const matchesPrimary = selectedStreams.some(
+          (sel) => sel.toLowerCase().trim() === c.stream.toLowerCase().trim()
+        );
+        if (matchesPrimary) return true;
+      }
+      // 3. Fallback: check college name or courses_count for smart matching
+      const nameLower = (c.name || "").toLowerCase();
+      const coursesLower = (c.courses_count || "").toLowerCase();
+      return selectedStreams.some((sel) => {
+        const s = sel.toLowerCase().trim();
+        if (s.includes("manage") || s === "mba" || s === "pgdm") {
+          return (
+            nameLower.includes("business") ||
+            nameLower.includes("management") ||
+            nameLower.includes("mba") ||
+            coursesLower.includes("mba") ||
+            coursesLower.includes("pgdm")
+          );
+        }
+        if (s.includes("engineer") || s.includes("tech")) {
+          return (
+            nameLower.includes("engineering") ||
+            nameLower.includes("technology") ||
+            nameLower.includes("tech") ||
+            coursesLower.includes("btech") ||
+            coursesLower.includes("b.tech")
+          );
+        }
+        if (s.includes("medic")) {
+          return (
+            nameLower.includes("medical") ||
+            nameLower.includes("hospital") ||
+            coursesLower.includes("mbbs")
+          );
+        }
+        if (s.includes("law")) {
+          return (
+            nameLower.includes("law") ||
+            nameLower.includes("legal") ||
+            coursesLower.includes("llb")
+          );
+        }
+        return nameLower.includes(s) || coursesLower.includes(s);
+      });
+    });
   }, [collegesList, selectedStreams]);
 
   // Read More inline toggle helper
@@ -9061,6 +9128,20 @@ function CollegesListContent() {
                                   <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md text-[8px] uppercase tracking-wider font-extrabold">
                                     {college.type}
                                   </span>
+                                  {Array.isArray(college.streams) && college.streams.length > 0 ? (
+                                    college.streams.slice(0, 3).map((st: string) => (
+                                      <span
+                                        key={st}
+                                        className="bg-orange-50 text-orange-700 border border-orange-200/60 px-2 py-0.5 rounded-md text-[8px] uppercase tracking-wider font-extrabold"
+                                      >
+                                        {st}
+                                      </span>
+                                    ))
+                                  ) : college.stream ? (
+                                    <span className="bg-orange-50 text-orange-700 border border-orange-200/60 px-2 py-0.5 rounded-md text-[8px] uppercase tracking-wider font-extrabold">
+                                      {college.stream}
+                                    </span>
+                                  ) : null}
                                 </div>
                               </div>
 

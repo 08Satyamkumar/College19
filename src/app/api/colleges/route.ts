@@ -1,17 +1,191 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-function applyFilters(query: any, { search, course, state, city, ownership, exam }: any) {
+function getStreamFilterClauses(s: string): string[] {
+  const clean = s.trim();
+  const lower = clean.toLowerCase();
+  const clauses: string[] = [
+    `description.ilike.%${clean}%`,
+    `name.ilike.%${clean}%`,
+    `courses_count.ilike.%${clean}%`,
+  ];
+
+  if (lower.includes("manage") || lower === "mba" || lower === "pgdm") {
+    clauses.push(
+      "description.ilike.%Management%",
+      "description.ilike.%MBA%",
+      "description.ilike.%PGDM%",
+      "name.ilike.%Management%",
+      "name.ilike.%Business%",
+      "name.ilike.%MBA%",
+      "name.ilike.%PGDM%",
+      "courses_count.ilike.%Management%",
+      "courses_count.ilike.%MBA%",
+      "courses_count.ilike.%PGDM%",
+      "courses_count.ilike.%BBA%"
+    );
+  } else if (lower.includes("engineer") || lower.includes("tech")) {
+    clauses.push(
+      "description.ilike.%Engineering%",
+      "description.ilike.%Technology%",
+      "description.ilike.%BTech%",
+      "name.ilike.%Engineering%",
+      "name.ilike.%Technology%",
+      "name.ilike.%Tech%",
+      "courses_count.ilike.%Engineering%",
+      "courses_count.ilike.%B.Tech%",
+      "courses_count.ilike.%BTech%"
+    );
+  } else if (lower.includes("medic") || lower.includes("health")) {
+    clauses.push(
+      "description.ilike.%Medical%",
+      "description.ilike.%MBBS%",
+      "name.ilike.%Medical%",
+      "name.ilike.%Hospital%",
+      "name.ilike.%Health%",
+      "courses_count.ilike.%Medical%",
+      "courses_count.ilike.%MBBS%",
+      "courses_count.ilike.%BDS%"
+    );
+  } else if (lower.includes("law") || lower.includes("legal")) {
+    clauses.push(
+      "description.ilike.%Law%",
+      "description.ilike.%LLB%",
+      "name.ilike.%Law%",
+      "name.ilike.%Legal%",
+      "courses_count.ilike.%Law%",
+      "courses_count.ilike.%LLB%"
+    );
+  } else if (lower.includes("pharm")) {
+    clauses.push(
+      "description.ilike.%Pharmacy%",
+      "description.ilike.%Pharma%",
+      "name.ilike.%Pharmacy%",
+      "name.ilike.%Pharma%",
+      "courses_count.ilike.%Pharmacy%",
+      "courses_count.ilike.%Pharma%",
+      "courses_count.ilike.%B.Pharm%"
+    );
+  } else if (lower.includes("design")) {
+    clauses.push(
+      "description.ilike.%Design%",
+      "description.ilike.%Fashion%",
+      "name.ilike.%Design%",
+      "name.ilike.%Fashion%",
+      "courses_count.ilike.%Design%",
+      "courses_count.ilike.%B.Des%"
+    );
+  } else if (lower.includes("computer") || lower === "ca" || lower === "it") {
+    clauses.push(
+      "description.ilike.%Computer%",
+      "name.ilike.%Computer%",
+      "name.ilike.%Information Technology%",
+      "courses_count.ilike.%BCA%",
+      "courses_count.ilike.%MCA%"
+    );
+  } else if (lower.includes("commerce")) {
+    clauses.push(
+      "description.ilike.%Commerce%",
+      "name.ilike.%Commerce%",
+      "courses_count.ilike.%Commerce%",
+      "courses_count.ilike.%B.Com%",
+      "courses_count.ilike.%BCom%",
+      "courses_count.ilike.%MCom%"
+    );
+  } else if (lower.includes("science")) {
+    clauses.push(
+      "description.ilike.%Science%",
+      "name.ilike.%Science%",
+      "courses_count.ilike.%Science%",
+      "courses_count.ilike.%B.Sc%",
+      "courses_count.ilike.%BSc%",
+      "courses_count.ilike.%MSc%"
+    );
+  } else if (lower.includes("art") || lower.includes("humanit")) {
+    clauses.push(
+      "description.ilike.%Arts%",
+      "name.ilike.%Arts%",
+      "courses_count.ilike.%Arts%",
+      "courses_count.ilike.%BA%",
+      "courses_count.ilike.%MA%"
+    );
+  }
+  return clauses;
+}
+
+function getCourseFilterClauses(c: string): string[] {
+  const clean = c.trim();
+  const lower = clean.toLowerCase();
+  const clauses: string[] = [
+    `courses_count.ilike.%${clean}%`,
+    `description.ilike.%${clean}%`,
+    `name.ilike.%${clean}%`,
+  ];
+
+  if (lower === "btech" || lower === "b.tech") {
+    clauses.push(
+      "courses_count.ilike.%B.Tech%",
+      "courses_count.ilike.%BTech%",
+      "description.ilike.%BTech%",
+      "description.ilike.%B.Tech%",
+      "name.ilike.%Engineering%",
+      "name.ilike.%Technology%"
+    );
+  } else if (lower === "mtech" || lower === "m.tech") {
+    clauses.push(
+      "courses_count.ilike.%M.Tech%",
+      "courses_count.ilike.%MTech%",
+      "description.ilike.%MTech%"
+    );
+  } else if (lower === "mba" || lower === "pgdm") {
+    clauses.push(
+      "courses_count.ilike.%MBA%",
+      "courses_count.ilike.%PGDM%",
+      "description.ilike.%MBA%",
+      "description.ilike.%PGDM%",
+      "name.ilike.%Management%",
+      "name.ilike.%Business%"
+    );
+  } else if (lower === "bba") {
+    clauses.push("courses_count.ilike.%BBA%", "description.ilike.%BBA%");
+  } else if (lower === "bca" || lower === "mca") {
+    clauses.push(
+      "courses_count.ilike.%BCA%",
+      "courses_count.ilike.%MCA%",
+      "description.ilike.%BCA%",
+      "description.ilike.%MCA%"
+    );
+  } else if (lower === "mbbs") {
+    clauses.push("courses_count.ilike.%MBBS%", "name.ilike.%Medical%");
+  } else if (lower === "llb" || lower === "ba llb") {
+    clauses.push("courses_count.ilike.%LLB%", "name.ilike.%Law%");
+  }
+
+  return clauses;
+}
+
+function applyFilters(query: any, { search, stream, course, state, city, ownership, exam }: any) {
   if (search) {
     query = query.or(`name.ilike.%${search}%,city.ilike.%${search}%,description.ilike.%${search}%,courses_count.ilike.%${search}%`);
+  }
+  if (stream) {
+    const streamList = stream.split(",").map((s: string) => s.trim()).filter(Boolean);
+    if (streamList.length > 0) {
+      const streamClauses: string[] = [];
+      for (const s of streamList) {
+        streamClauses.push(...getStreamFilterClauses(s));
+      }
+      query = query.or(Array.from(new Set(streamClauses)).join(","));
+    }
   }
   if (course) {
     const courseList = course.split(",").map((c: string) => c.trim()).filter(Boolean);
     if (courseList.length > 0) {
-      const courseFilters = courseList
-        .map((c: string) => `courses_count.ilike.%${c}%,description.ilike.%${c}%,name.ilike.%${c}%`)
-        .join(",");
-      query = query.or(courseFilters);
+      const courseFilters: string[] = [];
+      for (const c of courseList) {
+        courseFilters.push(...getCourseFilterClauses(c));
+      }
+      query = query.or(Array.from(new Set(courseFilters)).join(","));
     }
   }
   if (state) {
@@ -50,6 +224,7 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "12", 10);
     const search = searchParams.get("search") || "";
+    const stream = searchParams.get("stream") || "";
     const course = searchParams.get("course") || "";
     const state = searchParams.get("state") || "";
     const city = searchParams.get("city") || "";
@@ -87,7 +262,7 @@ export async function GET(request: Request) {
         .from("colleges")
         .select("id", { count: "exact", head: true })
         .or("state.ilike.%Delhi%,city.ilike.%Delhi%,location.ilike.%Delhi%");
-      delhiCountQuery = applyFilters(delhiCountQuery, { search, course, ownership, exam });
+      delhiCountQuery = applyFilters(delhiCountQuery, { search, stream, course, ownership, exam });
       const { count: delhiCount, error: dCountErr } = await delhiCountQuery;
       if (dCountErr) throw dCountErr;
       const dCount = delhiCount || 0;
@@ -96,7 +271,7 @@ export async function GET(request: Request) {
       if (offset < dCount) {
         // Query Delhi colleges first
         let delhiQuery = supabase.from("colleges").select("*");
-        delhiQuery = applyFilters(delhiQuery, { search, course, ownership, exam })
+        delhiQuery = applyFilters(delhiQuery, { search, stream, course, ownership, exam })
           .or("state.ilike.%Delhi%,city.ilike.%Delhi%,location.ilike.%Delhi%");
         delhiQuery = delhiQuery
           .order("rating", { ascending: false, nullsFirst: false })
@@ -114,7 +289,7 @@ export async function GET(request: Request) {
             .not("state", "ilike", "%Delhi%")
             .not("city", "ilike", "%Delhi%")
             .not("location", "ilike", "%Delhi%");
-          otherQuery = applyFilters(otherQuery, { search, course, ownership, exam });
+          otherQuery = applyFilters(otherQuery, { search, stream, course, ownership, exam });
           otherQuery = otherQuery
             .order("rating", { ascending: false, nullsFirst: false })
             .range(0, needed - 1);
@@ -131,7 +306,7 @@ export async function GET(request: Request) {
           .not("state", "ilike", "%Delhi%")
           .not("city", "ilike", "%Delhi%")
           .not("location", "ilike", "%Delhi%");
-        otherQuery = applyFilters(otherQuery, { search, course, ownership, exam });
+        otherQuery = applyFilters(otherQuery, { search, stream, course, ownership, exam });
         otherQuery = otherQuery
           .order("rating", { ascending: false, nullsFirst: false })
           .range(otherOffset, otherOffset + limit - 1);
@@ -142,14 +317,14 @@ export async function GET(request: Request) {
 
       // 3. Get total count of all colleges matching filters
       let totalQuery = supabase.from("colleges").select("id", { count: "exact", head: true });
-      totalQuery = applyFilters(totalQuery, { search, course, ownership, exam });
+      totalQuery = applyFilters(totalQuery, { search, stream, course, ownership, exam });
       const { count: total, error: tErr } = await totalQuery;
       if (tErr) throw tErr;
       count = total || 0;
     } else {
       // Normal query logic (when specific state/city filters are selected)
       let query = supabase.from("colleges").select("*", { count: "exact" });
-      query = applyFilters(query, { search, course, state, city, ownership, exam });
+      query = applyFilters(query, { search, stream, course, state, city, ownership, exam });
       query = query
         .order("rating", { ascending: false, nullsFirst: false })
         .range(offset, offset + limit - 1);
