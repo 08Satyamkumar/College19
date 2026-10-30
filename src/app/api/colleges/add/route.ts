@@ -81,6 +81,28 @@ export async function POST(request: Request) {
       }
     }
 
+    let descObj: any = {};
+    if (typeof collegeData.description === "string") {
+      try {
+        descObj = JSON.parse(collegeData.description);
+      } catch (e) {
+        descObj = { description: collegeData.description };
+      }
+    } else if (collegeData.description && typeof collegeData.description === "object") {
+      descObj = { ...collegeData.description };
+    }
+
+    if (collegeData.logo || collegeData.logo_url) {
+      descObj.logo = collegeData.logo || collegeData.logo_url;
+    }
+
+    if (collegeData.image_url && collegeData.image_url.trim()) {
+      descObj.image = collegeData.image_url.trim();
+      if (!descObj.coverImages || descObj.coverImages.length === 0) {
+        descObj.coverImages = [collegeData.image_url.trim()];
+      }
+    }
+
     const recordToInsert = {
       name: collegeName,
       slug,
@@ -94,7 +116,7 @@ export async function POST(request: Request) {
       exams_accepted: typeof collegeData.exams_accepted === "string" ? collegeData.exams_accepted.trim() : "Entrance Exam / Merit",
       tuition_fees: typeof collegeData.tuition_fees === "string" ? collegeData.tuition_fees.trim() : "N/A",
       image_url: typeof collegeData.image_url === "string" && collegeData.image_url.trim() ? collegeData.image_url.trim() : "/images/iitdelhi_real.jpg",
-      description: typeof collegeData.description === "string" ? collegeData.description : JSON.stringify(collegeData.description || {}),
+      description: JSON.stringify(descObj),
     };
 
     // Perform database insertion

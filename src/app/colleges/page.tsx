@@ -622,6 +622,7 @@ function CollegesListContent() {
   const [editExamsAccepted, setEditExamsAccepted] = useState("");
   const [editTuitionFees, setEditTuitionFees] = useState("");
   const [editImageUrl, setEditImageUrl] = useState("");
+  const [editLogoUrl, setEditLogoUrl] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editAccreditation, setEditAccreditation] = useState("");
   const [editHighestPackage, setEditHighestPackage] = useState("");
@@ -647,6 +648,7 @@ function CollegesListContent() {
   const [addExamsAccepted, setAddExamsAccepted] = useState("None");
   const [addTuitionFees, setAddTuitionFees] = useState("-/-");
   const [addImageUrl, setAddImageUrl] = useState("");
+  const [addLogoUrl, setAddLogoUrl] = useState("");
   const [addDescription, setAddDescription] = useState("");
   const [addAccreditation, setAddAccreditation] = useState("AICTE Approved");
   const [addHighestPackage, setAddHighestPackage] = useState("");
@@ -761,7 +763,7 @@ function CollegesListContent() {
     // Generate slug
     const slug = formattedName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-    // Serialize description, accreditation, package stats, streams and courses
+    // Serialize description, accreditation, package stats, streams, courses and logo
     const serializedDesc = JSON.stringify({
       description: addDescription,
       accreditation: addAccreditation,
@@ -772,6 +774,7 @@ function CollegesListContent() {
       is_featured_pgdm: addFeaturedPgdm,
       streams: addStreams,
       courses: addCourses,
+      logo: addLogoUrl,
     });
 
     try {
@@ -791,6 +794,8 @@ function CollegesListContent() {
             exams_accepted: addExamsAccepted,
             tuition_fees: addTuitionFees,
             image_url: addImageUrl,
+            logo: addLogoUrl,
+            logo_url: addLogoUrl,
             description: serializedDesc,
           },
         }),
@@ -833,6 +838,8 @@ function CollegesListContent() {
               logoText: logo || "COL",
               slug: slug,
               accreditation: addAccreditation,
+              logo_url: addLogoUrl,
+              logo: addLogoUrl,
               image_url: addImageUrl,
               highest_package: addHighestPackage,
               average_package: addAveragePackage,
@@ -854,6 +861,7 @@ function CollegesListContent() {
         setAddExamsAccepted("None");
         setAddTuitionFees("-/-");
         setAddImageUrl("");
+        setAddLogoUrl("");
         setAddDescription("");
         setAddAccreditation("AICTE Approved");
         setAddHighestPackage("");
@@ -941,6 +949,8 @@ function CollegesListContent() {
     );
     setEditTuitionFees(college.feeRange || "");
     setEditImageUrl(college.image_url || "");
+
+    let initialLogo = college.logo || college.logo_url || "";
     setEditDescription(college.description || "");
     setEditAccreditation(college.accreditation || "AICTE Approved");
     setEditHighestPackage(college.highest_package || "");
@@ -965,8 +975,11 @@ function CollegesListContent() {
 
     if (college.description) {
       try {
-        const p = JSON.parse(college.description);
+        const p = typeof college.description === "string" ? JSON.parse(college.description) : college.description;
         isFeat = !!p.is_featured_pgdm;
+        if (p.logo) {
+          initialLogo = p.logo;
+        }
         if (Array.isArray(p.streams) && p.streams.length > 0) {
           initialStreams = p.streams;
         }
@@ -978,6 +991,7 @@ function CollegesListContent() {
     if (!isFeat && (college.name || "").toUpperCase().includes("GIMS")) {
       isFeat = true;
     }
+    setEditLogoUrl(initialLogo);
     setEditFeaturedPgdm(isFeat);
     setEditStreams(initialStreams);
     setEditCourses(initialCourses);
@@ -1006,6 +1020,7 @@ function CollegesListContent() {
         is_featured_pgdm: editFeaturedPgdm,
         streams: editStreams,
         courses: editCourses,
+        logo: editLogoUrl,
       });
 
       const res = await fetch("/api/colleges/update", {
@@ -1025,6 +1040,8 @@ function CollegesListContent() {
             exams_accepted: editExamsAccepted,
             tuition_fees: editTuitionFees,
             image_url: editImageUrl,
+            logo: editLogoUrl,
+            logo_url: editLogoUrl,
             description: serializedDesc,
           },
         }),
@@ -1056,6 +1073,8 @@ function CollegesListContent() {
                 exams: examsArr.length > 0 ? examsArr : ["None"],
                 feeRange: editTuitionFees,
                 image_url: editImageUrl,
+                logo: editLogoUrl,
+                logo_url: editLogoUrl,
                 description: editDescription,
                 accreditation: editAccreditation,
                 highest_package: editHighestPackage,
@@ -9044,7 +9063,7 @@ function CollegesListContent() {
                               <div className="flex items-center lg:flex-col gap-3 lg:gap-2.5 text-center">
                                 {/* Logo Box */}
                                 <div className="w-24 h-24 rounded-2xl bg-white border border-slate-200/80 p-2 flex items-center justify-center text-xl lg:text-2xl font-black text-slate-800 uppercase tracking-widest shadow-sm group-hover:scale-105 group-hover:shadow-md group-hover:border-orange-500/30 transition-all duration-300 overflow-hidden relative flex-shrink-0">
-                                  {college.logo || college.logo_url || (college.image_url && (college.image_url.includes("logo") || (!college.image_url.includes("real") && !college.image_url.includes("unsplash")))) ? (
+                                  {college.logo || college.logo_url || (college.image_url && college.image_url.toLowerCase().includes("logo")) ? (
                                     <>
                                       <img
                                         src={college.logo || college.logo_url || college.image_url}
@@ -9840,7 +9859,7 @@ function CollegesListContent() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   <div>
                     <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
                       College Name *
@@ -9848,20 +9867,37 @@ function CollegesListContent() {
                     <input
                       required
                       type="text"
-                      placeholder="e.g. IIT Patna"
+                      placeholder="e.g. I Business Institute (IBI)"
                       value={addName}
                       onChange={(e) => setAddName(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
                     />
                   </div>
+                </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
-                      Image URL / Path
+                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 flex items-center justify-between">
+                      <span>College Logo Image URL</span>
+                      <span className="text-[8px] text-emerald-600 font-bold lowercase">Card Square Box</span>
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. /images/iit-patna.jpg"
+                      placeholder="e.g. https://.../logo.png"
+                      value={addLogoUrl}
+                      onChange={(e) => setAddLogoUrl(e.target.value)}
+                      className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 flex items-center justify-between">
+                      <span>Cover Banner Photo URL</span>
+                      <span className="text-[8px] text-blue-600 font-bold lowercase">Details Page Banner</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. https://.../campus.jpg"
                       value={addImageUrl}
                       onChange={(e) => setAddImageUrl(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
@@ -10249,7 +10285,7 @@ function CollegesListContent() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   <div>
                     <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
                       College Name *
@@ -10262,13 +10298,31 @@ function CollegesListContent() {
                       className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
                     />
                   </div>
+                </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
-                      Image URL / Path
+                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 flex items-center justify-between">
+                      <span>College Logo Image URL</span>
+                      <span className="text-[8px] text-emerald-600 font-bold lowercase">Card Square Box</span>
                     </label>
                     <input
                       type="text"
+                      placeholder="e.g. https://.../logo.png"
+                      value={editLogoUrl}
+                      onChange={(e) => setEditLogoUrl(e.target.value)}
+                      className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 flex items-center justify-between">
+                      <span>Cover Banner Photo URL</span>
+                      <span className="text-[8px] text-blue-600 font-bold lowercase">Details Page Banner</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. https://.../campus.jpg"
                       value={editImageUrl}
                       onChange={(e) => setEditImageUrl(e.target.value)}
                       className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-orange-500"

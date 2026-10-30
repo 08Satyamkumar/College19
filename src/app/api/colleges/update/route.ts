@@ -55,14 +55,14 @@ export async function POST(request: Request) {
     // 1. Check if a record already exists with this slug (exact or case-insensitive)
     let { data: existingRows, error: findError } = await dbClient
       .from("colleges")
-      .select("id, slug, name, description")
+      .select("id, slug, name, description, image_url")
       .eq("slug", cleanSlug)
       .limit(1);
 
     if (!existingRows || existingRows.length === 0) {
       const res = await dbClient
         .from("colleges")
-        .select("id, slug, name, description")
+        .select("id, slug, name, description, image_url")
         .ilike("slug", cleanSlug)
         .limit(1);
       if (res.data && res.data.length > 0) {
@@ -72,6 +72,24 @@ export async function POST(request: Request) {
 
     if (findError) {
       console.error("Error searching for existing college:", findError);
+    }
+
+    // Parse existing description JSON from database so existing details (logo, coverImages, highlights, placements, etc.) are NEVER wiped out
+    let existingDescObj: any = {};
+    if (existingRows && existingRows[0]?.description) {
+      try {
+        existingDescObj =
+          typeof existingRows[0].description === "string"
+            ? JSON.parse(existingRows[0].description)
+            : (existingRows[0].description || {});
+      } catch (e) {
+        if (typeof existingRows[0].description === "string" && existingRows[0].description.trim()) {
+          existingDescObj = {
+            about: existingRows[0].description,
+            description: existingRows[0].description,
+          };
+        }
+      }
     }
 
     let parsedDesc: any = {};
@@ -89,55 +107,117 @@ export async function POST(request: Request) {
       (typeof updatedFields?.name === "string" && updatedFields.name.trim()) ||
       parsedDesc.name ||
       parsedDesc.fullName ||
+      existingDescObj.name ||
+      existingDescObj.fullName ||
       cleanSlug
         .replace(/-/g, " ")
         .replace(/\b\w/g, (l: string) => l.toUpperCase());
 
-    const collegeCity = updatedFields?.city || parsedDesc.city || "Delhi NCR";
-    const collegeState = updatedFields?.state || parsedDesc.state || "India";
+    const collegeCity = updatedFields?.city || parsedDesc.city || existingDescObj.city || "Delhi NCR";
+    const collegeState = updatedFields?.state || parsedDesc.state || existingDescObj.state || "India";
     const collegeLocation =
       updatedFields?.location ||
       parsedDesc.location ||
+      existingDescObj.location ||
       `${collegeCity}, ${collegeState}`;
 
-    const collegeRating = (updatedFields?.rating || parsedDesc.rating || 4.8).toString();
+    const collegeRating = (updatedFields?.rating || parsedDesc.rating || existingDescObj.rating || 4.8).toString();
     const collegeNirf =
-      (updatedFields?.nirf_rank || parsedDesc.nirfRank || "N/A").toString().replace(/[^0-9]/g, "") || "N/A";
+      (updatedFields?.nirf_rank || parsedDesc.nirfRank || existingDescObj.nirfRank || "N/A").toString().replace(/[^0-9]/g, "") || "N/A";
 
     const collegeOwnership =
       updatedFields?.ownership ||
-      (parsedDesc.type?.includes("Private") ? "Private" : "Public");
+      (parsedDesc.type?.includes("Private") ? "Private" : existingDescObj.type?.includes("Private") ? "Private" : "Public");
 
     const collegeTuitionFees =
       updatedFields?.tuition_fees ||
       parsedDesc.totalFees ||
+      existingDescObj.totalFees ||
+      existingDescObj.feeRange ||
       "N/A";
 
-    const collegeImageUrl =
-      updatedFields?.image_url ||
-      parsedDesc.image ||
-      (parsedDesc.coverImages && parsedDesc.coverImages[0]) ||
-      "/images/iitdelhi_real.jpg";
+    // Safe Deep Merge: Start with existing database description to PRESERVE all detailed college content
+    let completeDescriptionObj: any = { ...existingDescObj };
 
-    // Ensure all custom objects (articles, arrays, coverImages, etc.) are safely packed inside the description JSON
-    // Protect against prototype pollution
-    let completeDescriptionObj: any = { ...parsedDesc };
-    if (updatedFields) {
+    // 1. Merge in parsedDesc from updatedFields.description
+    if (parsedDesc && typeof parsedDesc === "object") {
+      Object.keys(parsedDesc).forEach((k) => {
+        if (!["id", "slug", "created_at", "__proto__", "constructor", "prototype"].includes(k)) {
+          if (parsedDesc[k] !== undefined && parsedDesc[k] !== null && parsedDesc[k] !== "") {
+            completeDescriptionObj[k] = parsedDesc[k];
+          }
+        }
+      });
+    }
+
+    // 2. Merge in direct updatedFields
+    if (updatedFields && typeof updatedFields === "object") {
       Object.keys(updatedFields).forEach((key) => {
         if (!["id", "slug", "created_at", "__proto__", "constructor", "prototype"].includes(key)) {
-          if (key === "description" && typeof updatedFields[key] === "string") {
-            try {
-              const innerParsed = JSON.parse(updatedFields[key]);
-              completeDescriptionObj = { ...completeDescriptionObj, ...innerParsed };
-            } catch (e) {}
-          } else {
+          if (key === "description") {
+            // Already handled above
+          } else if (key === "logo" || key === "logo_url") {
+            if (updatedFields[key]) {
+              completeDescriptionObj.logo = updatedFields[key];
+            }
+          } else if (key === "coverImages") {
+            if (Array.isArray(updatedFields[key]) && updatedFields[key].length > 0) {
+              completeDescriptionObj.coverImages = updatedFields[key];
+            }
+          } else if (updatedFields[key] !== undefined && updatedFields[key] !== null) {
             completeDescriptionObj[key] = updatedFields[key];
           }
         }
       });
     }
 
-    const fieldsToSave = {
+    // 3. Absolute Safeguard for Logo: If updated payload didn't provide a logo, keep existing logo
+    if (!completeDescriptionObj.logo && existingDescObj.logo) {
+      completeDescriptionObj.logo = existingDescObj.logo;
+    }
+
+    // 4. Absolute Safeguard for Cover Images: If updated payload didn't provide coverImages, keep existing ones!
+    if (
+      (!completeDescriptionObj.coverImages || completeDescriptionObj.coverImages.length === 0) &&
+      existingDescObj.coverImages &&
+      existingDescObj.coverImages.length > 0
+    ) {
+      completeDescriptionObj.coverImages = existingDescObj.coverImages;
+    }
+
+    // 5. Preserve other deep sub-objects/arrays if they existed
+    const preservedKeys = [
+      "author",
+      "highlights",
+      "gallery",
+      "campus_facilities",
+      "facilities",
+      "faculty",
+      "alumni",
+      "placements",
+      "cutoffs",
+      "scholarships",
+      "reviews",
+      "courses_offered_table",
+      "fees_eligibility_table",
+    ];
+    preservedKeys.forEach((pk) => {
+      if (
+        (!completeDescriptionObj[pk] || (Array.isArray(completeDescriptionObj[pk]) && completeDescriptionObj[pk].length === 0)) &&
+        existingDescObj[pk]
+      ) {
+        completeDescriptionObj[pk] = existingDescObj[pk];
+      }
+    });
+
+    const collegeImageUrl =
+      (typeof updatedFields?.image_url === "string" && updatedFields.image_url.trim()) ||
+      (completeDescriptionObj.coverImages && completeDescriptionObj.coverImages[0]) ||
+      completeDescriptionObj.image ||
+      (existingRows && (existingRows[0] as any)?.image_url) ||
+      "/images/iitdelhi_real.jpg";
+
+    const fieldsToSave: any = {
       name: collegeName,
       location: collegeLocation,
       city: collegeCity,
@@ -149,6 +229,13 @@ export async function POST(request: Request) {
       image_url: collegeImageUrl,
       description: JSON.stringify(completeDescriptionObj),
     };
+
+    if (updatedFields?.courses_count) {
+      fieldsToSave.courses_count = updatedFields.courses_count;
+    }
+    if (updatedFields?.exams_accepted) {
+      fieldsToSave.exams_accepted = updatedFields.exams_accepted;
+    }
 
     let resultData = null;
 
