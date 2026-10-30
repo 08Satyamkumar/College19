@@ -390,21 +390,21 @@ export default function LayoutWrapper({
         links: [
           {
             name: "Mumbai",
-            href: "/colleges?stream=Management&state=Maharashtra",
+            href: "/colleges?stream=Management&city=Mumbai",
           },
           {
             name: "Bangalore",
-            href: "/colleges?stream=Management&state=Karnataka",
+            href: "/colleges?stream=Management&city=Bangalore",
           },
           {
             name: "Pune",
-            href: "/colleges?stream=Management&state=Maharashtra",
+            href: "/colleges?stream=Management&city=Pune",
           },
           {
             name: "Noida",
-            href: "/colleges?stream=Management&state=Uttar-Pradesh",
+            href: "/colleges?stream=Management&city=Noida",
           },
-          { name: "Hyderabad", href: "/colleges?stream=Management" },
+          { name: "Hyderabad", href: "/colleges?stream=Management&city=Hyderabad" },
         ],
       },
     ],
@@ -414,32 +414,32 @@ export default function LayoutWrapper({
         links: [
           {
             name: "MBA (Master of Business Admin)",
-            href: "/colleges?stream=Management",
+            href: "/colleges?stream=Management&course=MBA",
           },
           {
             name: "BBA (Bachelor of Business Admin)",
-            href: "/colleges?stream=Management",
+            href: "/colleges?stream=Management&course=BBA",
           },
           {
             name: "BBM (Bachelor of Business Mgmt)",
-            href: "/colleges?stream=Management",
+            href: "/colleges?stream=Management&course=BBA",
           },
         ],
       },
       {
         heading: "Diploma & PGDM",
         links: [
-          { name: "PGDM Program", href: "/colleges?stream=Management" },
-          { name: "PGDBM Program", href: "/colleges?stream=Management" },
-          { name: "Executive PGDM", href: "/colleges?stream=Management" },
+          { name: "PGDM Program", href: "/colleges?stream=Management&course=PGDM" },
+          { name: "PGDBM Program", href: "/colleges?stream=Management&course=PGDM" },
+          { name: "Executive PGDM", href: "/colleges?stream=Management&course=PGDM" },
         ],
       },
       {
         heading: "Alternative Learning",
         links: [
-          { name: "Distance MBA", href: "/colleges?stream=Management" },
-          { name: "Online MBA", href: "/colleges?stream=Management" },
-          { name: "Part Time MBA", href: "/colleges?stream=Management" },
+          { name: "Distance MBA", href: "/colleges?stream=Management&course=MBA" },
+          { name: "Online MBA", href: "/colleges?stream=Management&course=MBA" },
+          { name: "Part Time MBA", href: "/colleges?stream=Management&course=MBA" },
         ],
       },
     ],
@@ -551,19 +551,19 @@ export default function LayoutWrapper({
         links: [
           {
             name: "Colleges in Bangalore",
-            href: "/colleges?stream=Management&state=Karnataka",
+            href: "/colleges?stream=Management&city=Bangalore",
           },
           {
             name: "Colleges in Mumbai",
-            href: "/colleges?stream=Management&state=Maharashtra",
+            href: "/colleges?stream=Management&city=Mumbai",
           },
           {
             name: "Colleges in Pune",
-            href: "/colleges?stream=Management&state=Maharashtra",
+            href: "/colleges?stream=Management&city=Pune",
           },
           {
             name: "Colleges in Noida",
-            href: "/colleges?stream=Management&state=Uttar-Pradesh",
+            href: "/colleges?stream=Management&city=Noida",
           },
         ],
       },
@@ -572,13 +572,13 @@ export default function LayoutWrapper({
         links: [
           {
             name: "Colleges in Chennai",
-            href: "/colleges?stream=Management&state=Tamil-Nadu",
+            href: "/colleges?stream=Management&city=Chennai",
           },
           {
             name: "Colleges in Hyderabad",
-            href: "/colleges?stream=Management",
+            href: "/colleges?stream=Management&city=Hyderabad",
           },
-          { name: "Colleges in Kolkata", href: "/colleges?stream=Management" },
+          { name: "Colleges in Kolkata", href: "/colleges?stream=Management&city=Kolkata" },
           {
             name: "Explore All Locations >",
             href: "/colleges?stream=Management",
@@ -1058,23 +1058,23 @@ export default function LayoutWrapper({
         links: [
           {
             name: "Mumbai Medical Colleges",
-            href: "/colleges?stream=Medical&state=Maharashtra",
+            href: "/colleges?stream=Medical&city=Mumbai",
           },
           {
             name: "Bangalore Medical Colleges",
-            href: "/colleges?stream=Medical&state=Karnataka",
+            href: "/colleges?stream=Medical&city=Bangalore",
           },
           {
             name: "Pune Medical Colleges",
-            href: "/colleges?stream=Medical&state=Maharashtra",
+            href: "/colleges?stream=Medical&city=Pune",
           },
           {
             name: "Noida Medical Colleges",
-            href: "/colleges?stream=Medical&state=Uttar-Pradesh",
+            href: "/colleges?stream=Medical&city=Noida",
           },
           {
             name: "Hyderabad Medical Colleges",
-            href: "/colleges?stream=Medical",
+            href: "/colleges?stream=Medical&city=Hyderabad",
           },
         ],
       },
@@ -1085,44 +1085,44 @@ export default function LayoutWrapper({
         links: [
           {
             name: "MBBS (Bachelor of Medicine)",
-            href: "/colleges?stream=Medical",
+            href: "/colleges?stream=Medical&course=MBBS",
           },
           {
             name: "BDS (Bachelor of Dental Surgery)",
-            href: "/colleges?stream=Medical",
+            href: "/colleges?stream=Medical&course=BDS",
           },
           {
             name: "BAMS (Ayurvedic Medicine)",
-            href: "/colleges?stream=Medical",
+            href: "/colleges?stream=Medical&course=BAMS",
           },
           {
             name: "BHMS (Homeopathic Medicine)",
-            href: "/colleges?stream=Medical",
+            href: "/colleges?stream=Medical&course=BHMS",
           },
         ],
       },
       {
         heading: "Postgraduate (PG)",
         links: [
-          { name: "MD (Doctor of Medicine)", href: "/colleges?stream=Medical" },
-          { name: "MS (Master of Surgery)", href: "/colleges?stream=Medical" },
+          { name: "MD (Doctor of Medicine)", href: "/colleges?stream=Medical&course=MD" },
+          { name: "MS (Master of Surgery)", href: "/colleges?stream=Medical&course=MS" },
           {
             name: "MDS (Master of Dental Surgery)",
-            href: "/colleges?stream=Medical",
+            href: "/colleges?stream=Medical&course=MDS",
           },
         ],
       },
       {
         heading: "Allied Health",
         links: [
-          { name: "B.Sc Nursing", href: "/colleges?stream=Medical" },
+          { name: "B.Sc Nursing", href: "/colleges?stream=Medical&course=BSc" },
           {
             name: "BPT (Bachelor of Physiotherapy)",
-            href: "/colleges?stream=Medical",
+            href: "/colleges?stream=Medical&course=BPT",
           },
           {
             name: "MPT (Master of Physiotherapy)",
-            href: "/colleges?stream=Medical",
+            href: "/colleges?stream=Medical&course=MPT",
           },
         ],
       },
@@ -1229,19 +1229,19 @@ export default function LayoutWrapper({
         links: [
           {
             name: "Colleges in Mumbai",
-            href: "/colleges?stream=Medical&state=Maharashtra",
+            href: "/colleges?stream=Medical&city=Mumbai",
           },
           {
             name: "Colleges in Bangalore",
-            href: "/colleges?stream=Medical&state=Karnataka",
+            href: "/colleges?stream=Medical&city=Bangalore",
           },
           {
             name: "Colleges in Pune",
-            href: "/colleges?stream=Medical&state=Maharashtra",
+            href: "/colleges?stream=Medical&city=Pune",
           },
           {
             name: "Colleges in Noida",
-            href: "/colleges?stream=Medical&state=Uttar-Pradesh",
+            href: "/colleges?stream=Medical&city=Noida",
           },
         ],
       },
@@ -1250,10 +1250,10 @@ export default function LayoutWrapper({
         links: [
           {
             name: "Colleges in Chennai",
-            href: "/colleges?stream=Medical&state=Tamil-Nadu",
+            href: "/colleges?stream=Medical&city=Chennai",
           },
-          { name: "Colleges in Hyderabad", href: "/colleges?stream=Medical" },
-          { name: "Colleges in Kolkata", href: "/colleges?stream=Medical" },
+          { name: "Colleges in Hyderabad", href: "/colleges?stream=Medical&city=Hyderabad" },
+          { name: "Colleges in Kolkata", href: "/colleges?stream=Medical&city=Kolkata" },
           { name: "Explore All Locations >", href: "/colleges?stream=Medical" },
         ],
       },
@@ -1312,13 +1312,13 @@ export default function LayoutWrapper({
       {
         heading: "Colleges By Rank",
         links: [
-          { name: "Top B.Tech Colleges", href: "/colleges?stream=Engineering" },
+          { name: "Top B.Tech Colleges", href: "/colleges?stream=Engineering&course=BTech" },
           {
             name: "Top Private B.Tech Colleges",
-            href: "/colleges?stream=Engineering&type=Private",
+            href: "/colleges?stream=Engineering&course=BTech&type=Private",
           },
-          { name: "Top IITs in India", href: "/colleges?stream=Engineering" },
-          { name: "Top NITs in India", href: "/colleges?stream=Engineering" },
+          { name: "Top IITs in India", href: "/colleges?stream=Engineering&course=BTech" },
+          { name: "Top NITs in India", href: "/colleges?stream=Engineering&course=BTech" },
         ],
       },
       {
@@ -1351,21 +1351,21 @@ export default function LayoutWrapper({
         links: [
           {
             name: "Bangalore",
-            href: "/colleges?stream=Engineering&state=Karnataka",
+            href: "/colleges?stream=Engineering&city=Bangalore",
           },
           {
             name: "Pune",
-            href: "/colleges?stream=Engineering&state=Maharashtra",
+            href: "/colleges?stream=Engineering&city=Pune",
           },
           {
             name: "Mumbai",
-            href: "/colleges?stream=Engineering&state=Maharashtra",
+            href: "/colleges?stream=Engineering&city=Mumbai",
           },
           {
             name: "Noida",
-            href: "/colleges?stream=Engineering&state=Uttar-Pradesh",
+            href: "/colleges?stream=Engineering&city=Noida",
           },
-          { name: "Chennai", href: "/colleges?stream=Engineering" },
+          { name: "Chennai", href: "/colleges?stream=Engineering&city=Chennai" },
         ],
       },
     ],
@@ -1373,21 +1373,21 @@ export default function LayoutWrapper({
       {
         heading: "Undergraduate (UG)",
         links: [
-          { name: "B.Tech / B.E.", href: "/colleges?stream=Engineering" },
+          { name: "B.Tech / B.E.", href: "/colleges?stream=Engineering&course=BTech" },
           {
             name: "B.Tech Lateral Entry",
-            href: "/colleges?stream=Engineering",
+            href: "/colleges?stream=Engineering&course=BTech",
           },
           {
             name: "Integrated B.Tech+M.Tech",
-            href: "/colleges?stream=Engineering",
+            href: "/colleges?stream=Engineering&course=BTech",
           },
         ],
       },
       {
         heading: "Postgraduate (PG)",
         links: [
-          { name: "M.Tech / M.E.", href: "/colleges?stream=Engineering" },
+          { name: "M.Tech / M.E.", href: "/colleges?stream=Engineering&course=MTech" },
         ],
       },
       {
@@ -1487,33 +1487,33 @@ export default function LayoutWrapper({
       {
         heading: "North India",
         links: [
-          { name: "Colleges in Delhi NCR", href: "/colleges?state=Delhi" },
+          { name: "Colleges in Delhi NCR", href: "/colleges?stream=Engineering&city=Delhi" },
           {
             name: "Colleges in Noida / Gr Noida",
-            href: "/colleges?state=Uttar-Pradesh",
+            href: "/colleges?stream=Engineering&city=Noida",
           },
-          { name: "Colleges in Patna (Bihar)", href: "/colleges?state=Bihar" },
+          { name: "Colleges in Patna (Bihar)", href: "/colleges?stream=Engineering&state=Bihar" },
           {
             name: "Colleges in Jaipur (Rajasthan)",
-            href: "/colleges?state=Rajasthan",
+            href: "/colleges?stream=Engineering&state=Rajasthan",
           },
         ],
       },
       {
         heading: "South India",
         links: [
-          { name: "Colleges in Bangalore", href: "/colleges?state=Karnataka" },
-          { name: "Colleges in Chennai", href: "/colleges" },
-          { name: "Colleges in Hyderabad", href: "/colleges" },
-          { name: "Colleges in Kochi (Kerala)", href: "/colleges" },
+          { name: "Colleges in Bangalore", href: "/colleges?stream=Engineering&city=Bangalore" },
+          { name: "Colleges in Chennai", href: "/colleges?stream=Engineering&city=Chennai" },
+          { name: "Colleges in Hyderabad", href: "/colleges?stream=Engineering&city=Hyderabad" },
+          { name: "Colleges in Kochi (Kerala)", href: "/colleges?stream=Engineering&city=Kochi" },
         ],
       },
       {
         heading: "West & East",
         links: [
-          { name: "Colleges in Mumbai", href: "/colleges?state=Maharashtra" },
-          { name: "Colleges in Pune", href: "/colleges?state=Maharashtra" },
-          { name: "Colleges in Kolkata", href: "/colleges" },
+          { name: "Colleges in Mumbai", href: "/colleges?stream=Engineering&city=Mumbai" },
+          { name: "Colleges in Pune", href: "/colleges?stream=Engineering&city=Pune" },
+          { name: "Colleges in Kolkata", href: "/colleges?stream=Engineering&city=Kolkata" },
         ],
       },
     ],
@@ -1727,23 +1727,25 @@ export default function LayoutWrapper({
       {
         category: "Top Design Institutes",
         links: [
+          { name: "Top Design Colleges", href: "/colleges?stream=Design" },
           { name: "NIFT Patna", href: "/colleges/nift-patna" },
-          { name: "NID Ahmedabad", href: "/colleges" },
+          { name: "Private Design Colleges", href: "/colleges?stream=Design&type=Private" },
         ],
       },
       {
-        category: "Specializations",
+        category: "Courses & Specializations",
         links: [
-          { name: "Fashion Design", href: "/colleges" },
-          { name: "Communication Design", href: "/colleges" },
-          { name: "Industrial Design", href: "/colleges" },
+          { name: "B.Des Colleges", href: "/colleges?stream=Design&course=B.Des" },
+          { name: "Fashion Design", href: "/colleges?stream=Design&search=Fashion" },
+          { name: "Graphic & Interior Design", href: "/colleges?stream=Design&search=Design" },
         ],
       },
       {
-        category: "Direct Admission",
+        category: "Exams & Admissions",
         links: [
-          { name: "Scholarship Schemes", href: "/credit-card" },
-          { name: "Free Counseling", href: "/contact" },
+          { name: "All Design Colleges >", href: "/colleges?stream=Design" },
+          { name: "UCEED Exam Predictor", href: "/predictor" },
+          { name: "Free Admission Counseling", href: "/contact" },
         ],
       },
     ],
@@ -1958,17 +1960,28 @@ export default function LayoutWrapper({
                   onMouseEnter={() => handleCategoryMouseEnter(category)}
                 >
                   <button
-                    onClick={() =>
-                      setActiveMegaMenu(
-                        activeMegaMenu === category ? null : category,
-                      )
-                    }
-                    className="flex items-center gap-1 px-4 h-full text-[10px] font-black tracking-wider text-white/95 hover:text-white hover:bg-white/10 transition-colors uppercase whitespace-nowrap"
+                    onClick={() => {
+                      if (category === "COUNSELING") {
+                        setIsAlertOpen(true);
+                      } else {
+                        setActiveMegaMenu(
+                          activeMegaMenu === category ? null : category,
+                        );
+                      }
+                    }}
+                    className="flex items-center gap-1 px-4 h-full text-[10px] font-black tracking-wider text-white/95 hover:text-white hover:bg-white/10 transition-colors uppercase whitespace-nowrap cursor-pointer"
                   >
                     {category}
-                    <ChevronDown
-                      className={`w-3 h-3 text-white/60 transition-transform ${activeMegaMenu === category ? "rotate-180 text-white" : ""}`}
-                    />
+                    {category === "COUNSELING" ? (
+                      <span className="relative flex h-1.5 w-1.5 ml-0.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
+                      </span>
+                    ) : (
+                      <ChevronDown
+                        className={`w-3 h-3 text-white/60 transition-transform ${activeMegaMenu === category ? "rotate-180 text-white" : ""}`}
+                      />
+                    )}
                   </button>
                 </div>
               ))}

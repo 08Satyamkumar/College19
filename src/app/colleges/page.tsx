@@ -7426,20 +7426,107 @@ function CollegesListContent() {
     { name: "PGP Tourism", count: 1 },
   ];
 
-  // Read URL search params on mount
+  // Read URL search params on mount or when searchParams change
   useEffect(() => {
     const streamParam = searchParams.get("stream");
     const stateParam = searchParams.get("state");
     const cityParam = searchParams.get("city");
     const searchParam = searchParams.get("search");
     const courseParam = searchParams.get("course");
+    const ownershipParam =
+      searchParams.get("ownership") || searchParams.get("type");
+    const examParam = searchParams.get("exam");
 
-    if (streamParam) setSelectedStreams([streamParam]);
-    if (stateParam) setSelectedStates([stateParam.replace("-", " ")]);
-    if (cityParam) setSelectedCities([cityParam]);
+    if (streamParam) {
+      const streams = streamParam
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .map((s) => {
+          const found = PRESET_STREAMS.find(
+            (ps) => ps.toLowerCase() === s.toLowerCase(),
+          );
+          return found || s.charAt(0).toUpperCase() + s.slice(1);
+        });
+      setSelectedStreams(streams);
+    }
+    if (stateParam) {
+      const states = stateParam
+        .split(",")
+        .map((s) => toTitleCase(s.replace(/-/g, " ").trim()))
+        .filter(Boolean);
+      setSelectedStates(states);
+    }
+    if (cityParam) {
+      const cities = cityParam
+        .split(",")
+        .map((c) => toTitleCase(c.trim()))
+        .filter(Boolean);
+      setSelectedCities(cities);
+    }
     if (searchParam) setSearchTerm(searchParam);
-    if (courseParam) setSelectedCourses([courseParam]);
+    if (courseParam) {
+      const courses = courseParam
+        .split(",")
+        .map((c) => c.trim())
+        .filter(Boolean)
+        .map((c) => {
+          const found = PRESET_COURSES.find(
+            (pc) => pc.toLowerCase() === c.toLowerCase(),
+          );
+          return found || c;
+        });
+      setSelectedCourses(courses);
+    }
+    if (ownershipParam) {
+      const ownerships = ownershipParam
+        .split(",")
+        .map((o) => toTitleCase(o.trim()))
+        .filter(Boolean);
+      setSelectedOwnerships(ownerships);
+    }
+    if (examParam) {
+      const exams = examParam
+        .split(",")
+        .map((e) => e.trim())
+        .filter(Boolean);
+      setSelectedExams(exams);
+    }
   }, [searchParams]);
+
+  // Keep browser URL cleanly in sync with active filter selections
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams();
+    if (selectedStreams.length > 0)
+      params.set("stream", selectedStreams.join(","));
+    if (selectedCourses.length > 0)
+      params.set("course", selectedCourses.join(","));
+    if (selectedStates.length > 0)
+      params.set("state", selectedStates.join(","));
+    if (selectedCities.length > 0) params.set("city", selectedCities.join(","));
+    if (selectedOwnerships.length > 0)
+      params.set("ownership", selectedOwnerships.join(","));
+    if (selectedExams.length > 0) params.set("exam", selectedExams.join(","));
+    if (searchTerm.trim()) params.set("search", searchTerm.trim());
+
+    const qs = params.toString();
+    const currentQs = window.location.search.replace(/^\?/, "");
+    if (qs !== currentQs) {
+      const targetUrl = qs
+        ? `${window.location.pathname}?${qs}`
+        : window.location.pathname;
+      window.history.replaceState(null, "", targetUrl);
+    }
+  }, [
+    selectedStreams,
+    selectedCourses,
+    selectedStates,
+    selectedCities,
+    selectedOwnerships,
+    selectedExams,
+    searchTerm,
+  ]);
 
   // Extract unique filter options from mockup database
   const filterOptions = useMemo(() => {
@@ -7747,29 +7834,33 @@ function CollegesListContent() {
   // Toggle checklist filter options helper
   const toggleFilter = (type: string, value: string) => {
     if (type === "state") {
-      setSelectedStates((prev) =>
-        prev.includes(value)
-          ? prev.filter((v) => v !== value)
-          : [...prev, value],
-      );
+      setSelectedStates((prev) => {
+        const exists = prev.some((v) => v.toLowerCase() === value.toLowerCase());
+        return exists
+          ? prev.filter((v) => v.toLowerCase() !== value.toLowerCase())
+          : [...prev, value];
+      });
     } else if (type === "city") {
-      setSelectedCities((prev) =>
-        prev.includes(value)
-          ? prev.filter((v) => v !== value)
-          : [...prev, value],
-      );
+      setSelectedCities((prev) => {
+        const exists = prev.some((v) => v.toLowerCase() === value.toLowerCase());
+        return exists
+          ? prev.filter((v) => v.toLowerCase() !== value.toLowerCase())
+          : [...prev, value];
+      });
     } else if (type === "stream") {
-      setSelectedStreams((prev) =>
-        prev.includes(value)
-          ? prev.filter((v) => v !== value)
-          : [...prev, value],
-      );
+      setSelectedStreams((prev) => {
+        const exists = prev.some((v) => v.toLowerCase() === value.toLowerCase());
+        return exists
+          ? prev.filter((v) => v.toLowerCase() !== value.toLowerCase())
+          : [...prev, value];
+      });
     } else if (type === "course") {
-      setSelectedCourses((prev) =>
-        prev.includes(value)
-          ? prev.filter((v) => v !== value)
-          : [...prev, value],
-      );
+      setSelectedCourses((prev) => {
+        const exists = prev.some((v) => v.toLowerCase() === value.toLowerCase());
+        return exists
+          ? prev.filter((v) => v.toLowerCase() !== value.toLowerCase())
+          : [...prev, value];
+      });
     } else if (type === "specialization") {
       setSelectedSpecializations((prev) =>
         prev.includes(value)
@@ -7783,11 +7874,12 @@ function CollegesListContent() {
           : [...prev, value],
       );
     } else if (type === "ownership") {
-      setSelectedOwnerships((prev) =>
-        prev.includes(value)
-          ? prev.filter((v) => v !== value)
-          : [...prev, value],
-      );
+      setSelectedOwnerships((prev) => {
+        const exists = prev.some((v) => v.toLowerCase() === value.toLowerCase());
+        return exists
+          ? prev.filter((v) => v.toLowerCase() !== value.toLowerCase())
+          : [...prev, value];
+      });
     } else if (type === "exam") {
       setSelectedExams((prev) =>
         prev.includes(value)
@@ -7920,7 +8012,9 @@ function CollegesListContent() {
                           >
                             <input
                               type="checkbox"
-                              checked={selectedStates.includes(state.name)}
+                              checked={selectedStates.some(
+                                (s) => s.toLowerCase() === state.name.toLowerCase(),
+                              )}
                               onChange={() => toggleFilter("state", state.name)}
                               className="accent-orange-500 rounded border-slate-300 w-3.5 h-3.5 group-hover:scale-108 transition-transform duration-200"
                             />
@@ -7989,7 +8083,9 @@ function CollegesListContent() {
                           >
                             <input
                               type="checkbox"
-                              checked={selectedCities.includes(city.name)}
+                              checked={selectedCities.some(
+                                (c) => c.toLowerCase() === city.name.toLowerCase(),
+                              )}
                               onChange={() => toggleFilter("city", city.name)}
                               className="accent-orange-500 rounded border-slate-300 w-3.5 h-3.5 group-hover:scale-108 transition-transform duration-200"
                             />
@@ -8058,7 +8154,9 @@ function CollegesListContent() {
                           >
                             <input
                               type="checkbox"
-                              checked={selectedStreams.includes(stream.name)}
+                              checked={selectedStreams.some(
+                                (s) => s.toLowerCase() === stream.name.toLowerCase(),
+                              )}
                               onChange={() =>
                                 toggleFilter("stream", stream.name)
                               }
@@ -8129,7 +8227,9 @@ function CollegesListContent() {
                           >
                             <input
                               type="checkbox"
-                              checked={selectedCourses.includes(course.name)}
+                              checked={selectedCourses.some(
+                                (c) => c.toLowerCase() === course.name.toLowerCase(),
+                              )}
                               onChange={() =>
                                 toggleFilter("course", course.name)
                               }
@@ -8344,7 +8444,9 @@ function CollegesListContent() {
                           >
                             <input
                               type="checkbox"
-                              checked={selectedOwnerships.includes(opt.name)}
+                              checked={selectedOwnerships.some(
+                                (o) => o.toLowerCase() === opt.name.toLowerCase(),
+                              )}
                               onChange={() =>
                                 toggleFilter("ownership", opt.name)
                               }
@@ -8758,20 +8860,54 @@ function CollegesListContent() {
         {/* BREADCRUMBS & COUNT HEADER */}
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider font-extrabold text-slate-400">
+            <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wider font-extrabold text-slate-400">
               <Link href="/" className="hover:text-orange-500">
                 Home
               </Link>
               <ChevronRight className="w-3 h-3 text-slate-300" />
-              <span className="text-slate-600">All Colleges</span>
+              <Link
+                href="/colleges"
+                onClick={clearAllFilters}
+                className="hover:text-orange-500 text-slate-500"
+              >
+                All Colleges
+              </Link>
+              {(selectedStreams.length > 0 || selectedCourses.length > 0) && (
+                <>
+                  <ChevronRight className="w-3 h-3 text-slate-300" />
+                  <span className="text-orange-600">
+                    {selectedCourses.length > 0
+                      ? selectedCourses.join(", ")
+                      : selectedStreams.join(", ")}
+                  </span>
+                </>
+              )}
             </div>
-            <h1 className="font-outfit font-black text-2xl md:text-3xl text-slate-800 leading-tight mt-1 flex items-center gap-2">
-              <Award className="w-7 h-7 text-orange-500" />
-              Showing {totalCount} Colleges
+            <h1 className="font-outfit font-black text-2xl md:text-3xl text-slate-800 leading-tight mt-1 flex flex-wrap items-center gap-2">
+              <Award className="w-7 h-7 text-orange-500 flex-shrink-0" />
+              <span>
+                Showing {totalCount} Colleges
+                {selectedCourses.length > 0 || selectedStreams.length > 0 ? (
+                  <span className="text-orange-600 font-extrabold">
+                    {" "}for{" "}
+                    {selectedCourses.length > 0
+                      ? selectedCourses.join(", ")
+                      : selectedStreams.join(", ")}
+                  </span>
+                ) : null}
+                {selectedCities.length > 0 || selectedStates.length > 0 ? (
+                  <span className="text-slate-600 font-bold text-lg md:text-xl">
+                    {" "}in{" "}
+                    {selectedCities.length > 0
+                      ? selectedCities.join(", ")
+                      : selectedStates.join(", ")}
+                  </span>
+                ) : null}
+              </span>
               {isAdmin && (
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="ml-3 px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-[9px] uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1.5"
+                  className="ml-3 px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-[9px] uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1.5 flex-shrink-0"
                 >
                   ➕ Add New College
                 </button>
