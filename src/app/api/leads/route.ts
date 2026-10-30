@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin, supabase } from "@/lib/supabase";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { isRequestAuthorized } from "@/lib/auth";
 
 const dbClient = supabaseAdmin || supabase;
 
@@ -153,6 +154,175 @@ export async function POST(request: Request) {
     console.error("API error submitting lead:", error);
     return NextResponse.json(
       { error: error.message || "Failed to submit lead." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    const isAuthorized = await isRequestAuthorized(request);
+    if (!isAuthorized) {
+      return NextResponse.json(
+        { error: "Unauthorized access. Valid session or passkey required to view leads." },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get("search") || "";
+    const status = searchParams.get("status") || "";
+    const course = searchParams.get("course") || "";
+    const college = searchParams.get("college") || "";
+    const dateFilter = searchParams.get("date") || "all";
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(1000, Math.max(1, parseInt(searchParams.get("limit") || "50")));
+    const offset = (page - 1) * limit;
+
+    let query = dbClient
+      .from("leads")
+      .select("*", { count: "exact" });
+
+    // Status filter
+    if (status && status !== "all") {
+      query = query.ilike("status", `%${status}%`);
+    }
+
+    // Course filter
+    if (course && course !== "all") {
+      query = query.ilike("course_interest", `%${course}%`);
+    }
+
+    // College filter
+    if (college && college !== "all") {
+      query = query.ilike("college_interest", `%${college}%`);
+    }
+
+    // Full text search
+    if (search.trim()) {
+      const s = search.trim();
+      query = query.or(
+        `name.ilike.%${s}%,phone.ilike.%${s}%,email.ilike.%${s}%,course_interest.ilike.%${s}%,college_interest.ilike.%${s}%`
+      );
+    }
+
+    // Date filter
+    const now = new Date();
+    if (dateFilter === "today") {
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+      query = query.gte("created_at", startOfDay);
+    } else if (dateFilter === "yesterday") {
+      const startOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).toISOString();
+      const endOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+      query = query.gte("created_at", startOfYesterday).lt("created_at", endOfYesterday);
+    } else if (dateFilter === "7days") {
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      query = query.gte("created_at", sevenDaysAgo);
+    } else if (dateFilter === "30days") {
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      query = query.gte("created_at", thirtyDaysAgo);
+    }
+
+    // Order by newest first
+    query = query.order("created_at", { ascending: false });
+
+    // Pagination
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: leads, count, error } = await query;
+    if (error) throw error;
+
+    // Fetch aggregate statistics for KPI cards
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const [allCountRes, todayCountRes, contactedCountRes, enrolledCountRes] = await Promise.all([
+      dbClient.from("leads").select("id", { count: "exact", head: true }),
+      dbClient.from("leads").select("id", { count: "exact", head: true }).gte("created_at", startOfToday),
+      dbClient.from("leads").select("id", { count: "exact", head: true }).or("status.ilike.%Contact%,status.ilike.%Interest%,status.ilike.%Discussion%"),
+      dbClient.from("leads").select("id", { count: "exact", head: true }).or("status.ilike.%Enroll%,status.ilike.%Admit%,status.ilike.%Confirm%"),
+    ]);
+
+    const stats = {
+      total: allCountRes.count || count || 0,
+      today: todayCountRes.count || 0,
+      contacted: contactedCountRes.count || 0,
+      enrolled: enrolledCountRes.count || 0,
+    };
+
+    const totalCount = count || 0;
+    const totalPages = Math.ceil(totalCount / limit) || 1;
+
+    return NextResponse.json({
+      success: true,
+      leads: leads || [],
+      total: totalCount,
+      page,
+      limit,
+      totalPages,
+      stats,
+    });
+  } catch (error: any) {
+    console.error("API error fetching leads:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to fetch leads." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const isAuthorized = await isRequestAuthorized(request);
+    if (!isAuthorized) {
+      return NextResponse.json(
+        { error: "Unauthorized access. Valid session required to update lead." },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json().catch(() => ({}));
+    const { id, status, notes } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Lead ID is required." },
+        { status: 400 }
+      );
+    }
+
+    const updatePayload: any = {};
+    if (status !== undefined) updatePayload.status = status;
+    if (notes !== undefined) updatePayload.notes = notes;
+
+    // First try updating with both status and notes
+    let { data, error } = await dbClient
+      .from("leads")
+      .update(updatePayload)
+      .eq("id", id)
+      .select();
+
+    // If notes column does not exist in schema, fallback to updating status only
+    if (error && error.message && error.message.includes("notes")) {
+      delete updatePayload.notes;
+      const res = await dbClient
+        .from("leads")
+        .update(updatePayload)
+        .eq("id", id)
+        .select();
+      data = res.data;
+      error = res.error;
+    }
+
+    if (error) throw error;
+
+    return NextResponse.json({
+      success: true,
+      message: "Lead updated successfully.",
+      lead: data ? data[0] : null,
+    });
+  } catch (error: any) {
+    console.error("API error updating lead:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to update lead." },
       { status: 500 }
     );
   }

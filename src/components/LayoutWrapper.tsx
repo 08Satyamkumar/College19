@@ -1806,7 +1806,7 @@ export default function LayoutWrapper({
     }
   };
 
-  if (pathname && pathname.startsWith("/safeaxis")) {
+  if (pathname && (pathname.startsWith("/safeaxis") || pathname.startsWith("/partner-leads") || pathname.startsWith("/leads-crm"))) {
     return <>{children}</>;
   }
 

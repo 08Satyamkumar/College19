@@ -8,15 +8,18 @@ export function verifyCredentials(username?: string, password?: string): boolean
   if (!username || !password) return false;
 
   const adminUser = process.env.ADMIN_USERNAME || "Samrat1311";
-  const adminPass = process.env.ADMIN_PASSWORD || "1311161161";
+  const adminPass = process.env.ADMIN_PASSWORD;
   const writerUser = process.env.WRITER_USERNAME || "writer";
-  const writerPass = process.env.WRITER_PASSWORD || "Writer2026";
+  const writerPass = process.env.WRITER_PASSWORD;
+  const partnerUser = process.env.PARTNER_USERNAME || "partner";
+  const partnerPass = process.env.PARTNER_PASSWORD;
 
   const isMatch =
-    (username === adminUser && password === adminPass) ||
-    (username.toLowerCase() === writerUser.toLowerCase() && password === writerPass);
+    (Boolean(adminPass) && username === adminUser && password === adminPass) ||
+    (Boolean(writerPass) && username.toLowerCase() === writerUser.toLowerCase() && password === writerPass) ||
+    (Boolean(partnerPass) && (username.toLowerCase() === partnerUser.toLowerCase() || username.toLowerCase() === "client") && password === partnerPass);
 
-  return isMatch;
+  return Boolean(isMatch);
 }
 
 export function createSessionToken(username: string): string {
