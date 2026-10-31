@@ -398,7 +398,7 @@ export default function PartnerLeadsPortal() {
               <input
                 required
                 type="text"
-                placeholder="e.g. partner or Samrat1311"
+                placeholder="Enter your username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs font-semibold text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition-all"
