@@ -244,8 +244,10 @@ export default function PartnerLeadsPortal() {
     return Array.from(set).filter(Boolean);
   }, [leads]);
 
-  // 8. Excel Export Generator (UTF-8 BOM CSV compatible with Microsoft Excel & Google Sheets)
-  const exportToExcel = async (exportAll = false) => {
+  // 8. World-Class Excel & Spreadsheet Export Generator
+  // Fixes: 1. Auto-width columns (no congestion). 2. Phone numbers formatted as text (no scientific E+09).
+  // 3. College19 brand styling with crisp headers and clean zebra rows.
+  const exportToExcel = async (format: "excel" | "csv" = "excel", exportAll = false) => {
     try {
       let exportData: Lead[] = leads;
 
@@ -261,53 +263,247 @@ export default function PartnerLeadsPortal() {
         return;
       }
 
-      const headers = [
-        "S.No",
-        "Student Name",
-        "Mobile Number",
-        "Email Address",
-        "Interested Course",
-        "Target College / Inquiry Source",
-        "State / Region",
-        "Lead Status",
-        "Counselor Remarks",
-        "Received Date & Time",
-      ];
+      const timestamp = new Date().toISOString().slice(0, 10);
+      const nowStr = new Date().toLocaleString("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
 
-      const csvRows = [headers.join(",")];
+      // Escape helper for safe XML/HTML embedding
+      const escapeXml = (unsafe?: string | null) => {
+        if (!unsafe) return "";
+        return String(unsafe)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      };
 
-      exportData.forEach((lead, idx) => {
-        const clean = (val: string | null | undefined) =>
-          `"${(val || "").replace(/"/g, '""')}"`;
+      if (format === "excel") {
+        // High-End Microsoft Excel Spreadsheet (HTML Workbook format with MSO styles)
+        const excelHtml = `
+          <html xmlns:o="urn:schemas-microsoft-com:office:office"
+                xmlns:x="urn:schemas-microsoft-com:office:excel"
+                xmlns="http://www.w3.org/TR/REC-html40">
+          <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            <!--[if gte mso 9]>
+            <xml>
+              <x:ExcelWorkbook>
+                <x:ExcelWorksheets>
+                  <x:ExcelWorksheet>
+                    <x:Name>College19 Inquiries</x:Name>
+                    <x:WorksheetOptions>
+                      <x:DisplayGridlines/>
+                      <x:FitToPage/>
+                    </x:WorksheetOptions>
+                  </x:ExcelWorksheet>
+                </x:ExcelWorksheets>
+              </x:ExcelWorkbook>
+            </xml>
+            <![endif]-->
+            <style>
+              table {
+                border-collapse: collapse;
+                width: 100%;
+                font-family: Calibri, 'Segoe UI', Arial, sans-serif;
+              }
+              .banner-title {
+                background-color: #0f172a;
+                color: #ffffff;
+                font-size: 15pt;
+                font-weight: bold;
+                text-align: center;
+                padding: 16px;
+                border: 1px solid #0f172a;
+              }
+              .banner-sub {
+                background-color: #f8fafc;
+                color: #475569;
+                font-size: 9.5pt;
+                text-align: center;
+                padding: 8px;
+                border: 1px solid #cbd5e1;
+                font-style: italic;
+              }
+              th.header-cell {
+                background-color: #ea580c;
+                color: #ffffff;
+                font-weight: bold;
+                font-size: 11pt;
+                border: 1.5px solid #c2410c;
+                padding: 10px 14px;
+                text-align: left;
+                vertical-align: middle;
+                white-space: nowrap;
+              }
+              td.data-cell {
+                font-size: 10pt;
+                border: 1px solid #cbd5e1;
+                padding: 9px 12px;
+                vertical-align: middle;
+                color: #1e293b;
+              }
+              .text-force {
+                mso-number-format: "\\@";
+              }
+              .center-align {
+                text-align: center;
+              }
+              .row-even {
+                background-color: #ffffff;
+              }
+              .row-odd {
+                background-color: #fffaf5;
+              }
+              .phone-text {
+                mso-number-format: "\\@";
+                font-weight: bold;
+                color: #c2410c;
+              }
+              .status-badge {
+                font-weight: bold;
+                text-align: center;
+              }
+            </style>
+          </head>
+          <body>
+            <table>
+              <col width="60" style="width: 60px;" />
+              <col width="220" style="width: 220px;" />
+              <col width="170" style="width: 170px;" />
+              <col width="240" style="width: 240px;" />
+              <col width="200" style="width: 200px;" />
+              <col width="250" style="width: 250px;" />
+              <col width="140" style="width: 140px;" />
+              <col width="160" style="width: 160px;" />
+              <col width="300" style="width: 300px;" />
+              <col width="190" style="width: 190px;" />
 
-        const row = [
-          idx + 1,
-          clean(lead.name),
-          clean(lead.phone),
-          clean(lead.email || "N/A"),
-          clean(lead.course_interest || "General"),
-          clean(lead.college_interest || "Website Form"),
-          clean(lead.state_interest || "India"),
-          clean(lead.status || "New"),
-          clean(lead.notes || "None"),
-          clean(lead.created_at ? new Date(lead.created_at).toLocaleString("en-IN") : "Recent"),
+              <thead>
+                <tr>
+                  <th colspan="10" class="banner-title">COLLEGE19 — STUDENT LEADS & ADMISSIONS REPORT</th>
+                </tr>
+                <tr>
+                  <td colspan="10" class="banner-sub">
+                    Generated on: ${nowStr} | Total Inquiries: ${exportData.length} | Confidential Calling Desk
+                  </td>
+                </tr>
+                <tr>
+                  <th class="header-cell center-align" style="width: 60px;">S.No</th>
+                  <th class="header-cell" style="width: 220px;">Student Name</th>
+                  <th class="header-cell" style="width: 170px;">Mobile Number</th>
+                  <th class="header-cell" style="width: 240px;">Email Address</th>
+                  <th class="header-cell" style="width: 200px;">Target Course</th>
+                  <th class="header-cell" style="width: 250px;">Target College / Source</th>
+                  <th class="header-cell" style="width: 140px;">State / Region</th>
+                  <th class="header-cell center-align" style="width: 160px;">Lead Status</th>
+                  <th class="header-cell" style="width: 300px;">Counselor Remarks</th>
+                  <th class="header-cell center-align" style="width: 190px;">Received Date & Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${exportData
+                  .map((lead, idx) => {
+                    const rowClass = idx % 2 === 1 ? "row-odd" : "row-even";
+                    const cleanPhone = lead.phone
+                      ? lead.phone.startsWith("+91")
+                        ? lead.phone
+                        : `+91 ${lead.phone}`
+                      : "N/A";
+                    const dateFormatted = lead.created_at
+                      ? new Date(lead.created_at).toLocaleString("en-IN", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })
+                      : "Recent";
+
+                    return `
+                      <tr class="${rowClass}">
+                        <td class="data-cell center-align">${idx + 1}</td>
+                        <td class="data-cell" style="font-weight: bold; color: #0f172a;">${escapeXml(lead.name || "N/A")}</td>
+                        <td class="data-cell phone-text">${escapeXml(cleanPhone)}</td>
+                        <td class="data-cell text-force">${escapeXml(lead.email || "N/A")}</td>
+                        <td class="data-cell">${escapeXml(lead.course_interest || "General")}</td>
+                        <td class="data-cell">${escapeXml(lead.college_interest || "Website Form")}</td>
+                        <td class="data-cell">${escapeXml(lead.state_interest || "India")}</td>
+                        <td class="data-cell status-badge">${escapeXml(lead.status || "New Lead")}</td>
+                        <td class="data-cell" style="color: #475569;">${escapeXml(lead.notes || "None")}</td>
+                        <td class="data-cell center-align text-force">${escapeXml(dateFormatted)}</td>
+                      </tr>
+                    `;
+                  })
+                  .join("")}
+              </tbody>
+            </table>
+          </body>
+          </html>
+        `;
+
+        const blob = new Blob([excelHtml], {
+          type: "application/vnd.ms-excel;charset=utf-8;",
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `College19_Leads_Report_${timestamp}.xls`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } else {
+        // CSV Export with formula protection to prevent scientific notation in Excel
+        const headers = [
+          "S.No",
+          "Student Name",
+          "Mobile Number",
+          "Email Address",
+          "Interested Course",
+          "Target College / Inquiry Source",
+          "State / Region",
+          "Lead Status",
+          "Counselor Remarks",
+          "Received Date & Time",
         ];
 
-        csvRows.push(row.join(","));
-      });
+        const csvRows = [headers.join(",")];
 
-      // Add UTF-8 BOM so Microsoft Excel automatically recognizes Indian characters & symbols cleanly
-      const blob = new Blob(["\uFEFF" + csvRows.join("\n")], {
-        type: "text/csv;charset=utf-8;",
-      });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      const timestamp = new Date().toISOString().slice(0, 10);
-      link.setAttribute("href", url);
-      link.setAttribute("download", `College19_Leads_Report_${timestamp}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+        exportData.forEach((lead, idx) => {
+          const clean = (val: string | null | undefined) =>
+            `"${(val || "").replace(/"/g, '""')}"`;
+
+          // Format phone as ="9570538697" formula so Excel parses it as exact string
+          const formattedPhone = lead.phone ? `="'+91 ${lead.phone}"` : `"N/A"`;
+
+          const row = [
+            idx + 1,
+            clean(lead.name),
+            formattedPhone,
+            clean(lead.email || "N/A"),
+            clean(lead.course_interest || "General"),
+            clean(lead.college_interest || "Website Form"),
+            clean(lead.state_interest || "India"),
+            clean(lead.status || "New Lead"),
+            clean(lead.notes || "None"),
+            clean(lead.created_at ? new Date(lead.created_at).toLocaleString("en-IN") : "Recent"),
+          ];
+
+          csvRows.push(row.join(","));
+        });
+
+        const blob = new Blob(["\uFEFF" + csvRows.join("\n")], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `College19_Leads_Report_${timestamp}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
       setExportDropdownOpen(false);
     } catch (err) {
       console.error("Export error:", err);
@@ -630,29 +826,51 @@ export default function PartnerLeadsPortal() {
                     initial={{ opacity: 0, y: 8, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                    className="absolute right-0 mt-1.5 w-60 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 text-left"
+                    className="absolute right-0 mt-1.5 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 text-left"
                   >
+                    <div className="px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
+                      Excel Spreadsheet (.xls)
+                    </div>
                     <button
-                      onClick={() => exportToExcel(false)}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 flex items-center gap-2 transition-colors cursor-pointer"
+                      type="button"
+                      onClick={() => exportToExcel("excel", false)}
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-600 flex items-center gap-2.5 transition-colors cursor-pointer"
                     >
-                      <Download className="w-3.5 h-3.5 text-emerald-600" />
+                      <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />
                       <div>
-                        <span>Export Current Filtered List</span>
+                        <span>Export Filtered List</span>
                         <span className="block text-[10px] text-slate-400 font-normal">
-                          {leads.length} records in view
+                          {leads.length} records (Auto-width & Styled)
                         </span>
                       </div>
                     </button>
                     <button
-                      onClick={() => exportToExcel(true)}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 flex items-center gap-2 transition-colors cursor-pointer border-t border-slate-100 mt-1"
+                      type="button"
+                      onClick={() => exportToExcel("excel", true)}
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-600 flex items-center gap-2.5 transition-colors cursor-pointer"
                     >
-                      <FileSpreadsheet className="w-3.5 h-3.5 text-blue-600" />
+                      <FileSpreadsheet className="w-4 h-4 text-orange-600 shrink-0" />
                       <div>
                         <span>Export Master Database</span>
                         <span className="block text-[10px] text-slate-400 font-normal">
                           All {totalLeadsCount} total leads
+                        </span>
+                      </div>
+                    </button>
+
+                    <div className="border-t border-slate-100 my-1 pt-1.5 px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
+                      CSV Format (.csv)
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => exportToExcel("csv", false)}
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 flex items-center gap-2.5 transition-colors cursor-pointer"
+                    >
+                      <Download className="w-4 h-4 text-slate-500 shrink-0" />
+                      <div>
+                        <span>Export as CSV</span>
+                        <span className="block text-[10px] text-slate-400 font-normal">
+                          Protected numbers for CRM import
                         </span>
                       </div>
                     </button>
