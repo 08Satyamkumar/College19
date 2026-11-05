@@ -7,6 +7,16 @@ export const metadata: Metadata = {
   title: "College 19 - Premium College Discovery & Admission Portal",
   description:
     "Find your ideal college in India. Dynamic search, engineering, medical, law, MBA courses, predictors, comparison tools, and credit card admission guidance.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: ["/favicon.ico"],
+  },
 };
 
 export default function RootLayout({
