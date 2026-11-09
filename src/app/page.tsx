@@ -350,11 +350,11 @@ const adBanners: AdBanner[] = [
     glowColor: "#0d9488",
   },
   {
-    imageA: "/images/ads/ad_3_a.png?v=5",
-    imageB: "/images/ads/ad_3_b.png?v=5",
-    link: "https://cgcuet.cgcuniversity.in/?utm_source=shiksha&utm_medium=CM-Da1&utm_campaign=CGC_2026",
-    alt: "CGC Mohali",
-    glowColor: "#2563eb",
+    imageA: "/images/ads/ad_3_a.png?v=6",
+    imageB: "/images/ads/ad_3_b.png?v=6",
+    link: "https://www.gims.net.in/",
+    alt: "GIMS Greater Noida - PGDM Admissions",
+    glowColor: "#0284c7",
   },
   {
     imageA: "/images/ads/ad_4_a.png?v=5",
