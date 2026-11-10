@@ -243,6 +243,54 @@ export default async function CollegeDetailLayout({
     },
   };
 
+  // 3. FAQPage Schema for Google Rich Search Accordion Dropdowns
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `What are the popular courses and admission criteria at ${collegeName}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${collegeName} offers degree programs across undergraduate and postgraduate streams. Admission evaluates academic eligibility, qualifying examination scores, and valid entrance percentiles.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `What is the approximate fee structure for courses at ${collegeName}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `The estimated tuition fees at ${collegeName} are ${college?.tuition_fees || "program-dependent and competitive"}. Various merit scholarships and government financial aid schemes are available for eligible students.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `Which entrance exams are accepted for admission to ${collegeName}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Admissions at ${collegeName} consider scores from ${college?.exams_accepted || "national and state-level exams such as JEE Main, CUET, CAT, MAT, or state counseling"}.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `How are campus placements and highest packages at ${collegeName}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${collegeName} has an active placement cell coordinating with industry recruiters across IT, management, consulting, and core engineering domains.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `Does ${collegeName} offer hostel and campus accommodation?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Yes, ${collegeName} offers student hostel facilities with 24/7 security, Wi-Fi, dining halls, and recreational amenities.`,
+        },
+      },
+    ],
+  };
+
   return (
     <>
       {/* Google Structured Data / JSON-LD Schemas (SSR injected for Googlebot) */}
@@ -253,6 +301,10 @@ export default async function CollegeDetailLayout({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(universitySchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       {children}
     </>

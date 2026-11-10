@@ -343,6 +343,45 @@ interface CollegeFaqsArticleData {
   faqs?: FaqItem[];
 }
 
+const getDynamicCollegeFaqs = (
+  name: string,
+  city?: string,
+  fees?: string,
+  exams?: string
+): FaqItem[] => {
+  const cName = name || "This institute";
+  const cCity = city || "Delhi NCR";
+  const cFees = fees && fees !== "N/A" ? fees : "program-dependent and competitive";
+  const cExams = exams && exams !== "N/A" ? exams : "JEE Main, CUET, CAT, MAT, or state-level entrance tests";
+
+  return [
+    {
+      question: `What are the popular courses and admission criteria at ${cName}?`,
+      answer: `${cName} offers academic degree programs across undergraduate and postgraduate streams. Admission criteria generally evaluate qualifying examination scores, academic eligibility, and valid entrance percentiles.`,
+    },
+    {
+      question: `What is the approximate fee structure for courses at ${cName}?`,
+      answer: `The tuition fees at ${cName} are around ${cFees}. Various merit scholarships, category fee waivers, and state student credit card schemes are applicable for eligible applicants.`,
+    },
+    {
+      question: `Which entrance exams are accepted for admission to ${cName}?`,
+      answer: `Candidates seeking admission to ${cName} can apply based on scores from ${cExams}, followed by centralized counseling and document verification.`,
+    },
+    {
+      question: `How are campus placements and recruiter drives at ${cName}?`,
+      answer: `${cName} features an active Training and Placement Cell that organizes campus recruitment with leading tech, management, and core industry employers.`,
+    },
+    {
+      question: `Does ${cName} provide hostel and mess facilities for students?`,
+      answer: `Yes, ${cName} offers on-campus and affiliated hostel accommodations with high-speed Wi-Fi, 24/7 security, multi-cuisine dining, and recreational amenities.`,
+    },
+    {
+      question: `Where is ${cName} situated and how can prospective students reach the campus?`,
+      answer: `${cName} is situated in ${cCity}, well connected via public transit, metro networks, and regional roadways for easy student commute.`,
+    },
+  ];
+};
+
 const DEFAULT_COLLEGE_FAQS: FaqItem[] = [
   {
     question: "Is it worth doing MSc from IIT Delhi?",
@@ -2044,6 +2083,7 @@ function ScrollProgressIndicator({ targetId, standalone = true }: { targetId: st
 }
 
 interface CollegeDetail {
+  slug?: string;
   name: string;
   fullName?: string;
   location: string;
@@ -3564,6 +3604,7 @@ export default function CollegeDetailPage() {
 
           const baseDetail: CollegeDetail = {
             ...parsedData, // Preserves 100% of all custom edited tables, articles, rankings, feedback, etc.
+            slug: data.slug || cleanSlug,
             name: collegeName,
             fullName:
               parsedData.fullName ||
@@ -3656,25 +3697,96 @@ export default function CollegeDetailPage() {
               (isIITDelhiSlug ? IIT_DELHI_MASTER_DATA.whatsNew : undefined),
             courses:
               parsedData.courses ||
-              (isIITDelhiSlug ? IIT_DELHI_MASTER_DATA.courses : IIT_DELHI_MASTER_DATA.courses),
+              (isIITDelhiSlug
+                ? IIT_DELHI_MASTER_DATA.courses
+                : [
+                    {
+                      name: "B.Tech / Undergraduate Engineering",
+                      duration: "4 Years",
+                      fees: data.tuition_fees || "₹1.50 - 2.50 Lakhs / Yr",
+                      eligibility: "10+2 with 50-60% aggregate & Entrance Rank",
+                    },
+                    {
+                      name: "MBA / Management Studies",
+                      duration: "2 Years",
+                      fees: data.tuition_fees || "₹2.00 - 3.50 Lakhs / Yr",
+                      eligibility: "Graduation with 50% & CAT/MAT/CUET Score",
+                    },
+                    {
+                      name: "BBA / BCA / Applied Computing",
+                      duration: "3 Years",
+                      fees: "₹80,000 - 1.50 Lakhs / Yr",
+                      eligibility: "10+2 in relevant discipline",
+                    },
+                    {
+                      name: "M.Tech / Postgraduate Engineering",
+                      duration: "2 Years",
+                      fees: "₹1.20 - 2.00 Lakhs / Yr",
+                      eligibility: "B.Tech/BE with valid GATE / Entrance",
+                    },
+                  ]),
             recruiters:
               parsedData.recruiters ||
               (isIITDelhiSlug ? IIT_DELHI_MASTER_DATA.recruiters : IIT_DELHI_MASTER_DATA.recruiters),
             cutoffs:
               parsedData.cutoffs ||
-              (isIITDelhiSlug ? IIT_DELHI_MASTER_DATA.cutoffs : IIT_DELHI_MASTER_DATA.cutoffs),
+              (isIITDelhiSlug
+                ? IIT_DELHI_MASTER_DATA.cutoffs
+                : [
+                    {
+                      branch: "Computer Science & Engineering (CSE)",
+                      category: "General",
+                      openRank: "15,000",
+                      closeRank: "45,000",
+                      round: "Round 1-6",
+                    },
+                    {
+                      branch: "Information Technology (IT)",
+                      category: "General",
+                      openRank: "22,000",
+                      closeRank: "58,000",
+                      round: "Round 1-6",
+                    },
+                    {
+                      branch: "Electronics & Communication (ECE)",
+                      category: "General",
+                      openRank: "28,000",
+                      closeRank: "72,000",
+                      round: "Round 1-6",
+                    },
+                    {
+                      branch: "Mechanical Engineering",
+                      category: "General",
+                      openRank: "35,000",
+                      closeRank: "88,000",
+                      round: "Round 1-6",
+                    },
+                  ]),
             facilities:
               parsedData.facilities ||
-              (isIITDelhiSlug ? IIT_DELHI_MASTER_DATA.facilities : IIT_DELHI_MASTER_DATA.facilities),
+              (isIITDelhiSlug
+                ? IIT_DELHI_MASTER_DATA.facilities
+                : [
+                    { name: "Central Library", icon: "BookOpen" },
+                    { name: "Hostel & Mess", icon: "Building" },
+                    { name: "High-Speed Wi-Fi", icon: "Wifi" },
+                    { name: "Sports Complex", icon: "Coffee" },
+                    { name: "Advanced Labs", icon: "GraduationCap" },
+                    { name: "Auditorium", icon: "Briefcase" },
+                  ]),
             reviews:
               parsedData.reviews ||
               (isIITDelhiSlug ? IIT_DELHI_MASTER_DATA.reviews : IIT_DELHI_MASTER_DATA.reviews),
             faqs:
               parsedData.faqs ||
-              (isIITDelhiSlug ? IIT_DELHI_MASTER_DATA.faqs : IIT_DELHI_MASTER_DATA.faqs),
+              (isIITDelhiSlug
+                ? IIT_DELHI_MASTER_DATA.faqs
+                : getDynamicCollegeFaqs(collegeName, data.city || data.location, data.tuition_fees, data.exams_accepted)),
             gallery:
               parsedData.gallery ||
-              (isIITDelhiSlug ? IIT_DELHI_MASTER_DATA.gallery : IIT_DELHI_MASTER_DATA.gallery),
+              (isIITDelhiSlug
+                ? IIT_DELHI_MASTER_DATA.gallery
+                : (data.image_url ? [{ url: data.image_url, caption: `${collegeName} Campus` }] : IIT_DELHI_MASTER_DATA.gallery)),
             facultyList:
               parsedData.facultyList ||
               (isIITDelhiSlug ? IIT_DELHI_MASTER_DATA.facultyList : undefined),
@@ -5350,10 +5462,13 @@ const renderReviewCategoryIcon = (label: string, iconType?: string) => {
     
 const getCollegeFaqsArticle = (college: CollegeDetail): CollegeFaqsArticleData => {
   const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
-  const defaultList = DEFAULT_COLLEGE_FAQS;
+  const isIIT = (college?.slug || "").toLowerCase().includes("iit-delhi") || (college?.name || "").toLowerCase().includes("indian institute of technology delhi");
+
   const list = (college.faqsArticle?.faqs && college.faqsArticle.faqs.length > 0)
     ? college.faqsArticle.faqs
-    : (college.faqs && college.faqs.length > 0 ? college.faqs : defaultList);
+    : (college.faqs && college.faqs.length > 0
+        ? college.faqs
+        : (isIIT ? DEFAULT_COLLEGE_FAQS : getDynamicCollegeFaqs(shortName, college.city || college.location, college.totalFees, college.flagshipCourse)));
 
   return {
     title: college.faqsArticle?.title || `${shortName} FAQs`,
@@ -5392,38 +5507,42 @@ const getCollegeCompareFaqs = (college: CollegeDetail): FaqItem[] => {
 };
 
 const getCollegeAlumniArticle = (college: CollegeDetail): AlumniArticleData => {
-    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
-    const fullName = college.fullName || college.name || "Institute";
-    if (college.alumniArticle && college.alumniArticle.alumniList && college.alumniArticle.alumniList.length > 0) {
-      return {
-        title: college.alumniArticle.title || `${shortName} Alumni`,
-        subtitle: college.alumniArticle.subtitle || `The following table lists notable alumni of the ${fullName}.`,
-        alumniList: college.alumniArticle.alumniList,
-      };
-    }
-    return {
-      title: `${shortName} Alumni`,
-      subtitle: `The following table lists notable alumni of the ${fullName}.`,
-      alumniList: DEFAULT_ALUMNI_LIST,
-    };
-  };
+  const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+  const fullName = college.fullName || college.name || "Institute";
+  const isIIT = (college?.slug || "").toLowerCase().includes("iit-delhi") || (college?.name || "").toLowerCase().includes("indian institute of technology delhi");
 
-  const getCollegeFacultyData = (college: CollegeDetail): CollegeFacultySectionData => {
-    const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
-    const abbr = (college as any).shortName || shortName.replace(/[^A-Z]/g, '') || "IITD";
-    if (college.facultyDetails && college.facultyDetails.members && college.facultyDetails.members.length > 0) {
-      return {
-        title: college.facultyDetails.title || `${college.name} [${abbr}] Faculty Details`,
-        subtitle: college.facultyDetails.subtitle || `Basic Information about the Faculty of ${college.name} [${abbr}]`,
-        members: college.facultyDetails.members,
-      };
-    }
+  if (college.alumniArticle && college.alumniArticle.alumniList && college.alumniArticle.alumniList.length > 0) {
     return {
-      title: `${college.name} [${abbr}] Faculty Details`,
-      subtitle: `Basic Information about the Faculty of ${college.name} [${abbr}]`,
-      members: DEFAULT_FACULTY_MEMBERS,
+      title: college.alumniArticle.title || `${shortName} Alumni`,
+      subtitle: college.alumniArticle.subtitle || `The following table lists notable alumni of the ${fullName}.`,
+      alumniList: college.alumniArticle.alumniList,
     };
+  }
+  return {
+    title: `${shortName} Alumni`,
+    subtitle: `The following table lists notable alumni of the ${fullName}.`,
+    alumniList: isIIT ? DEFAULT_ALUMNI_LIST : [],
   };
+};
+
+const getCollegeFacultyData = (college: CollegeDetail): CollegeFacultySectionData => {
+  const shortName = (college?.name || "College").split(" - ")[0].split("(")[0].trim() || "College";
+  const isIIT = (college?.slug || "").toLowerCase().includes("iit-delhi") || (college?.name || "").toLowerCase().includes("indian institute of technology delhi");
+  const abbr = (college as any).shortName || shortName.replace(/[^A-Z]/g, '') || "Institute";
+
+  if (college.facultyDetails && college.facultyDetails.members && college.facultyDetails.members.length > 0) {
+    return {
+      title: college.facultyDetails.title || `${college.name} [${abbr}] Faculty Details`,
+      subtitle: college.facultyDetails.subtitle || `Basic Information about the Faculty of ${college.name} [${abbr}]`,
+      members: college.facultyDetails.members,
+    };
+  }
+  return {
+    title: `${college.name} [${abbr}] Faculty Details`,
+    subtitle: `Basic Information about the Faculty of ${college.name} [${abbr}]`,
+    members: isIIT ? DEFAULT_FACULTY_MEMBERS : [],
+  };
+};
 
   const getCollegeCampusFacilitiesArticle = (college: CollegeDetail): CampusFacilitiesArticleData => {
     const shortName = college.name ? college.name.split(" - ")[0].split("(")[0].trim() : "College";
